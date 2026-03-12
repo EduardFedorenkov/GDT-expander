@@ -34,17 +34,13 @@ class Const:
 
 def k_ion(Te, n: float = 3.0):
     """Коэффициент ионизации H, см³/с (обёртка над eionhr)."""
-    return eionhr(Te, n)
+    # return eionhr(Te, n)
+    return 1e-7
 
 def k_ion_H2(Te):
     """Ионизация H₂, см³/с, Te в эВ"""
     # 1e-11 -- 1e-8 from 1 -- 100 eV
     return 1.0e-9
-
-def k_EIR(Te):
-    """EIR рекомбинация, см³/с, Te в эВ"""
-    Te = max(Te, 0.5)
-    return 3.0e-19 * Te**(-4.5)
 
 def k_MAR(Te):
     """Коэффициент MAR, см³/с, Te в эВ"""
@@ -68,36 +64,25 @@ class TPM:
         Параметры:
         - q1: поток энергии на входе, эрг/(см^2·с)
         - P1: давление на входе, дин/см^2
-        - f_exp: коэффициент расширения магнитной трубки (B2/B1)
         - L: длина силовой линии, см
         - n_n: плотность нейтралов, см⁻³
         """
         self.n1          = params['n1']
         self.T1          = params['T1']
-        self.f_exp       = params['f_exp']
         self.L           = params['L']
-        self.A1          = params['A1']
         self.n_n         = params['n_n']
-        self.dis_ratio   = params['dis_ratio']
-        self.vibr_ratio  = params['vibr_ratio']
-        
-        self.V = self.L * self.A1 / 3 * (1 + self.f_exp + np.sqrt(self.f_exp))
-
-        self.n_H     = self.n_n * self.dis_ratio
-        self.n_H2    = self.n_n * (1 - self.dis_ratio) * (1 - self.vibr_ratio)
-        self.n_H2_nu = self.n_n * (1 - self.dis_ratio) * self.vibr_ratio
 
         T = self.T1 * Const.eV2erg
-        self.q1             = 0.01 * self.n1 * T * np.sqrt(T / Const.m_e)
+        self.q1             = 0.5 * self.n1 / 10 * T * np.sqrt(T / Const.m_e)
         self.P1             = self.n1 * T
-        self.n1_fast_ions   = self.n1 * np.exp(-self.n_H2 * sigma_CX(self.T1) * self.L)
+        self.n1_fast_ions   = self.n1 * np.exp(-self.n_n * sigma_CX(self.T1) * self.L)
     
     def solve(self):
         """Решает систему уравнений TPM"""
         
         # 1. Определяем физически разумный интервал для T2
         #    Detachment обычно происходит в диапазоне 0.5 - 50 эВ
-        T_min, T_max = 1e-4, 1e1
+        T_min, T_max = 1e-1, 1e1
         
         # 2. Строим график функции баланса энергии на этом интервале (двойной логарифмический масштаб)
         T_values = np.linspace(T_min, T_max, 100000)
@@ -105,9 +90,9 @@ class TPM:
 
         plt.figure(figsize=(8, 5))
         # Используем |f(T2)|, чтобы можно было перейти в логарифмический масштаб по оси Y
-        plt.loglog(T_values, np.abs(f_values), label="|energy_balance(T2)|")
-        plt.xlabel("T2, eV (log scale)")
-        plt.ylabel("|energy_balance(T2)| (log scale)")
+        plt.plot(T_values, f_values, label="|energy_balance(T2)|")
+        plt.xlabel("T2, eV")
+        plt.ylabel("|energy_balance(T2)| ")
         plt.title("Баланс энергии как функция T2 (log-log)")
         plt.grid(True, which="both", ls="--", lw=0.5)
         plt.legend()
@@ -116,7 +101,7 @@ class TPM:
 
         # В качестве приблизительного решения для T2 берём точку,
         # где |energy_balance| минимально на построенной сетке.
-        idx_min = int(np.argmin(np.abs(f_values)))
+        idx_min = int(np.argmin(f_values))
         T2 = float(T_values[idx_min])
 
         n2 = self._compute_n2(T2)
@@ -126,15 +111,14 @@ class TPM:
             'T2': T2,                                                       # температура на стенке, эВ
             'n2': n2,                                                       # плотность на стенке, см⁻³
             'j2': j2,                                                       # плотность тока, А / м^2
-            'S_ion_H': k_ion(T2) * n2 * self.n_H,                           # ионизация H, см⁻³·с⁻¹
-            'S_ion_H2': k_ion_H2(T2) * n2 * (self.n_H2_nu + self.n_H2),     # ионизация H, см⁻³·с⁻¹
-            'S_rec': k_EIR(T2) * n2 * self.n_H,                             # ионизация H, см⁻³·с⁻¹
-            'S_MAR': k_MAR(T2) * n2 * self.n_H2_nu,                         # ионизация H, см⁻³·с⁻¹
-            'S_cx': k_CX(self.T1) * self.n1_fast_ions * self.n_H,           # ионизация H, см⁻³·с⁻¹
+            'S_ion_H': k_ion(T2) * n2 * self.n_n,                           # ионизация H, см⁻³·с⁻¹
+            'S_ion_H2': k_ion_H2(T2) * n2 * (self.n_n + self.n_n),          # ионизация H, см⁻³·с⁻¹
+            'S_MAR': k_MAR(T2) * n2 * self.n_n,                             # ионизация H, см⁻³·с⁻¹
+            'S_cx': k_CX(self.T1) * self.n1_fast_ions * self.n_n,           # ионизация H, см⁻³·с⁻¹
         }
     
     def _energy_balance(self, T2):
-        """Уравнение баланса энергии: q1 = q2*f_exp + Q_ion_H + Q_ion_H2 + Q_rec + Q_MAR + Q_cx"""        
+        """Уравнение баланса энергии: q1 = q2 + Q_ion_H + Q_ion_H2 + Q_rec + Q_MAR + Q_cx"""        
         n2 = self._compute_n2(T2)
         c_s = self._c_s(T2)
         
@@ -142,27 +126,23 @@ class TPM:
         q_wall = Const.alpha * n2 * T2 * Const.eV2erg * c_s
         
         # Q_ion_H
-        S_ion_H = k_ion(T2) * n2 * self.n_H
-        Q_ion_H = Const.E_ion * S_ion_H * self.V
+        S_ion_H = k_ion(T2) * n2 * self.n_n
+        Q_ion_H = Const.E_ion * S_ion_H * self.L
 
         # Q_ion_H2
-        S_ion_H2 = k_ion_H2(T2) * n2 * (self.n_H2_nu + self.n_H2)
-        Q_ion_H2 = Const.E_ion * S_ion_H2 * self.V
-
-        # Q_rec
-        S_rec = k_EIR(T2) * n2 * self.n_H
-        Q_rec = Const.E_rec * S_rec * self.V
+        S_ion_H2 = k_ion_H2(T2) * n2 * self.n_n
+        Q_ion_H2 = Const.E_ion * S_ion_H2 * self.L
 
         # Q_MAR
-        S_MAR = k_MAR(T2) * n2 * self.n_H2_nu
-        Q_MAR = Const.E_MAR * S_MAR * self.V
+        S_MAR = k_MAR(T2) * n2 * self.n_n
+        Q_MAR = Const.E_MAR * S_MAR * self.L
 
         # Q_cx
-        S_cx = k_CX(self.T1) * self.n1_fast_ions * self.n_H
-        Q_cx = self.T1 * Const.eV2erg * S_cx * self.V
+        S_cx = k_CX(self.T1) * self.n1_fast_ions * self.n_n
+        Q_cx = self.T1 * Const.eV2erg * S_cx * self.L
         
         # Баланс
-        return (q_wall * self.f_exp + Q_ion_H + Q_ion_H2 + Q_rec + Q_MAR + Q_cx) - self.q1
+        return (q_wall + Q_ion_H + Q_ion_H2 + Q_MAR + Q_cx) /self.q1 - 1
 
     def _compute_f_mom(self):
         """
@@ -192,19 +172,11 @@ if __name__ == "__main__":
     print("=" * 60)
     
     params = {
-        'n1':           1.7e11,  # см^(-3)
+        'n1':           1.7e13,  # см^(-3)
         'T1':           100,     # эВ
-        'f_exp':        100,     # расширение магнитной трубки
         'L':            180,     # длина, см (1.8 м)
-        'A1':           16,      # площадь поперечного сечения, см^2
         'n_n':          1e11,    # плотность нейтралов, см⁻³
-        'dis_ratio':    0.3,     # доля H
-        'vibr_ratio':   0.7,    # доля H2_vibr
     }
-
-    n_H     = params['n_n'] * params['dis_ratio']
-    n_H2    = params['n_n'] * (1 - params['dis_ratio']) * (1 - params['vibr_ratio'])
-    n_H2_nu = params['n_n'] * (1 - params['dis_ratio']) * params['vibr_ratio']
     
     # Решаем
     model = TPM(params)
@@ -214,16 +186,12 @@ if __name__ == "__main__":
     print(f"\nInitial params:")
     print(f"  n1         = {params['n1']:.2e} cm^-3")
     print(f"  T1         = {params['T1']:.2e} eV")
-    print(f"  f_exp      = {params['f_exp']}")
     print(f"  L          = {params['L']} cm")
-    print(f"  A1         = {params['A1']} cm^2")
-    print(f"  n_H        = {n_H:.2e} cm^-3")
-    print(f"  n_H2       = {n_H2:.2e} cm^-3")
-    print(f"  n_H2_vibr  = {n_H2_nu:.2e} cm^-3")
+    print(f"  n_n        = {params['n_n']:.2e} cm^-3")
 
     
     q_wall = Const.alpha * result['n2'] * result['T2'] * Const.eV2erg * np.sqrt(result['T2'] * Const.eV2erg / Const.m_i)
-    q1     = 0.5 * params['n1'] * params['T1'] * Const.eV2erg * np.sqrt(params['T1'] * Const.eV2erg / Const.m_e)
+    q1     = 0.5 * params['n1'] / (100) * params['T1'] * Const.eV2erg * np.sqrt(params['T1'] * Const.eV2erg / Const.m_e)
 
     print(f"\nResults:")
     print(f"  T2        = {result['T2']} eV")
@@ -232,12 +200,9 @@ if __name__ == "__main__":
     print(f"  q2        = {q_wall:.2e} erg / cm^2")
     print(f"  q1        = {q1:.2e} erg / cm^2")
     print(f"  S_ion_H   = {result['S_ion_H']:.2e} cm^-3 * s^-1")
-    print(f"  S_ion_H2  = {result['S_ion_H2']:.2e} cm^-3 * s^-1")
     print(f"  S_MAR     = {result['S_MAR']:.2e} cm^-3 * s^-1")
-    print(f"  S_rec     = {result['S_rec']:.2e} cm^-3 * s^-1")
-    print(f"  S_cx      = {result['S_cx']:.2e} cm^-3 * s^-1")
     
     # Проверка детачмента
-    detached = (result['S_MAR'] + result['S_rec']) > (result['S_ion_H'] + result['S_ion_H2'])
+    detached = result['S_MAR'] > result['S_ion_H']
     print(f"\n  Режим: {'DETACHED (MAR доминирует)' if detached else 'ATTACHED'}")
     print("=" * 60)
