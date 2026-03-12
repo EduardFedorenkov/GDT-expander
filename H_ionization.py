@@ -4,6 +4,47 @@ import matplotlib.pyplot as plt
 
 RY_EV = 1.358e1  # энергия Ридберга, эВ (ry в исходном коде)
 
+def eionhr_np(T_e: np.ndarray, n: float) -> np.ndarray:
+    """
+    Аналог подпрограммы eionhr из Fortran, принимает массив T_e.
+
+    Parameters
+    ----------
+    T_e : np.ndarray
+        Массив температур электронов в эВ.
+    n : float
+        Главное квантовое число начального состояния (pcf(1)).
+
+    Returns
+    -------
+    np.ndarray
+        Массив коэффициентов скорости ионизации в см^3/с.
+    """
+    # Convert inputs to arrays for consistent processing
+    T_e = np.asarray(T_e)
+    
+    # Initialize result array
+    result = np.zeros_like(T_e, dtype=float)
+    
+    # Mask for positive T_e values
+    mask = T_e > 0.0
+    
+    if np.any(mask):
+        an = n
+        enion = RY_EV / (an * an)
+        
+        beta = enion / T_e[mask]
+        power = -1.5
+        
+        numerator = 9.56e-06 * (T_e[mask] ** power) * np.exp(-beta)
+        denominator = (
+            beta ** 2.33
+            + 4.38 * (beta ** 1.72)
+            + 1.32 * beta
+        )
+        result[mask] = numerator / denominator
+    
+    return result
 
 def eionhr(T_e: float, n: float) -> float:
     """
@@ -64,4 +105,3 @@ if __name__ == "__main__":
     plt.legend()
     plt.tight_layout()
     plt.show()
-
