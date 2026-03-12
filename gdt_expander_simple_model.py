@@ -6,6 +6,7 @@
 
 import numpy as np
 from scipy.optimize import root_scalar
+from scipy.optimize import brentq, minimize_scalar
 import matplotlib.pyplot as plt
 from H_ionization import eionhr
 
@@ -77,40 +78,112 @@ class TPM:
         self.P1             = self.n1 * T
         self.n1_fast_ions   = self.n1 * np.exp(-self.n_n * sigma_CX(self.T1) * self.L)
     
-    def solve(self):
+    def solve(self, is_plot: bool):
         """Решает систему уравнений TPM"""
         
-        # 1. Определяем физически разумный интервал для T2
-        #    Detachment обычно происходит в диапазоне 0.5 - 50 эВ
         T_min, T_max = 1e-1, 1e1
+        T_min_root, T_max_root = 1e-4, 1e3
+
+        roots = []
+        tolerance = 1e-5  # для определения знака и проверки корня
+        num_intervals = 400  # количество интервалов для поиска смены знака
+        T_test = np.linspace(T_min_root, T_max_root, num_intervals)
+
+        f_test = self._energy_balance(T_test)
+
+        # Поиск интервалов, где функция меняет знак
+        sign_changes = []
+        for i in range(len(f_test) - 1):
+            if f_test[i] * f_test[i + 1] < -tolerance**2:  # смена знака
+                sign_changes.append((T_test[i], T_test[i+1]))
         
-        # 2. Строим график функции баланса энергии на этом интервале (двойной логарифмический масштаб)
-        T_values = np.linspace(T_min, T_max, 100000)
-        f_values = [self._energy_balance(T) for T in T_values]
 
-        plt.figure(figsize=(8, 5))
-        # Используем |f(T2)|, чтобы можно было перейти в логарифмический масштаб по оси Y
-        plt.plot(T_values, f_values, label="|energy_balance(T2)|")
-        plt.xlabel("T2, eV")
-        plt.ylabel("|energy_balance(T2)| ")
-        plt.title("Баланс энергии как функция T2 (log-log)")
-        plt.grid(True, which="both", ls="--", lw=0.5)
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
+        for a, b in sign_changes[:2]:
+            try:
+                root = brentq(self._energy_balance, a, b)
+                roots.append(root)
+            except ValueError:
+                continue
+            if len(roots) == 2:
+                break
+        
+        if len(roots) == 2:
+            T_min_plot, T_max_plot = roots[0] * 0.65, roots[1] * 1.35
+        else:
+            T_min_plot, T_max_plot = 1e-4, 5e3
 
-        # В качестве приблизительного решения для T2 берём точку,
-        # где |energy_balance| минимально на построенной сетке.
-        idx_min = int(np.argmin(f_values))
-        T2 = float(T_values[idx_min])
+        valid_roots = [r for r in roots if T_min <= r <= T_max]
 
+        if len(valid_roots) == 0:
+            print(f"n_n : {self.n_n:.2e}")
+            print("Warning: No roots found within the specified range.")
+        elif len(valid_roots) == 1:
+            selected_T2 = valid_roots[0]
+        elif len(valid_roots) >= 2:
+            warnings.warn("Multiple roots found within the range. Selecting the smallest one.", UserWarning)
+            selected_T2 = min(valid_roots)
+
+
+        valid_roots_plot = [r for r in roots if T_min_plot <= r <= T_max_plot]
+        
+        min_value = None
+        if len(roots) == 2:
+            T_bracket_min = max(roots[0], T_min_plot)
+            T_bracket_max = min(roots[1], T_max_plot)
+
+            res = minimize_scalar(lambda T: self._energy_balance(T), bounds=(T_bracket_min, T_bracket_max), method='bounded')
+            T2_min = res.x
+            min_value = res.fun
+        
+        if is_plot:
+            # 2. Строим график функции баланса энергии на этом интервале
+            T_values = np.linspace(T_min_plot, T_max_plot, 100000)
+            f_values = np.array([self._energy_balance(T) for T in T_values])
+
+            plt.figure(figsize=(8, 5))
+            plt.plot(T_values, f_values, label="energy_balance(T2)")
+            if len(valid_roots_plot) > 0:
+                for i, root in enumerate(valid_roots_plot):
+                    root_value = self._energy_balance(root)
+                    plt.scatter([root], [root_value], color='red', s=100, zorder=5, 
+                            label=f"Root {i+1}: T={root:.3f}" if i == 0 else f"Root {i+1}: T={root:.3f}", 
+                            edgecolors='darkred', linewidth=2)
+                    # Add annotation for each root
+                    plt.annotate(f'{root:.3f}', xy=(root, root_value), xytext=(root, root_value + max(abs(min(f_values)), max(f_values))*0.05),
+                                arrowprops=dict(arrowstyle='->', color='red', alpha=0.7),
+                                fontsize=9, ha='center', color='red', weight='bold')
+            
+            if min_value is not None:
+                plt.scatter([T2_min], [min_value], color='blue', s=100, zorder=5, 
+                        label=f"Min: T={T2_min:.3f}", 
+                        edgecolors='darkblue', linewidth=2)
+                # Add annotation for the minimum
+                plt.annotate(f'({T2_min:.3f}, {min_value:.3f})', xy=(T2_min, min_value), 
+                            xytext=(T2_min, min_value + max(abs(min(f_values)), max(f_values))*0.1),
+                            arrowprops=dict(color='blue', alpha=0.7),
+                            fontsize=9, ha='center', color='blue', weight='bold')
+
+            plt.xlabel("T, eV")
+            plt.ylabel("energy_balance(T)")
+            plt.title("Баланс энергии как функция T: q2 + Q_ion_H + Q_ion_H2 + Q_MAR + Q_cx - q1 = 0")
+            plt.grid(True, which="both", ls="--", lw=0.5)
+            plt.legend()
+            plt.tight_layout()
+            plt.show()
+        else:
+            if min_value is not None:
+                print(f"T_min : {T2_min}; q_crit : {min_value}")
+            if len(roots) == 2:
+                print(f"T_left : {roots[0]}")
+                print(f"T_right : {roots[1]}")
+        
+        T2 = selected_T2
         n2 = self._compute_n2(T2)
-        j2 = self._c_s(T2) * n2 * Const.e * 3.3356e-6
+        # j2 = self._c_s(T2) * n2 * Const.e * 3.3356e-6
         
         return {
             'T2': T2,                                                       # температура на стенке, эВ
             'n2': n2,                                                       # плотность на стенке, см⁻³
-            'j2': j2,                                                       # плотность тока, А / м^2
             'S_ion_H': k_ion(T2) * n2 * self.n_n,                           # ионизация H, см⁻³·с⁻¹
             'S_ion_H2': k_ion_H2(T2) * n2 * (self.n_n + self.n_n),          # ионизация H, см⁻³·с⁻¹
             'S_MAR': k_MAR(T2) * n2 * self.n_n,                             # ионизация H, см⁻³·с⁻¹
@@ -174,13 +247,13 @@ if __name__ == "__main__":
     params = {
         'n1':           1.7e13,  # см^(-3)
         'T1':           100,     # эВ
-        'L':            180,     # длина, см (1.8 м)
-        'n_n':          1e11,    # плотность нейтралов, см⁻³
+        'L':            60,     # длина, см (1.8 м)
+        'n_n':          7e11,    # плотность нейтралов, см⁻³
     }
     
     # Решаем
     model = TPM(params)
-    result = model.solve()
+    result = model.solve(True)
     
     # Вывод результатов
     print(f"\nInitial params:")
@@ -196,11 +269,12 @@ if __name__ == "__main__":
     print(f"\nResults:")
     print(f"  T2        = {result['T2']} eV")
     print(f"  n2        = {result['n2']:.2e} cm^-3")
-    print(f"  j2        = {result['j2']:.2e} A / m^2")
     print(f"  q2        = {q_wall:.2e} erg / cm^2")
     print(f"  q1        = {q1:.2e} erg / cm^2")
     print(f"  S_ion_H   = {result['S_ion_H']:.2e} cm^-3 * s^-1")
+    print(f"  S_ion_H2  = {result['S_ion_H2']:.2e} cm^-3 * s^-1")
     print(f"  S_MAR     = {result['S_MAR']:.2e} cm^-3 * s^-1")
+    print(f"  S_cx     = {result['S_cx']:.2e} cm^-3 * s^-1")
     
     # Проверка детачмента
     detached = result['S_MAR'] > result['S_ion_H']
