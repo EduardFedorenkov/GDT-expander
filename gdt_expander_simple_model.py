@@ -8,7 +8,9 @@ import numpy as np
 from scipy.optimize import root_scalar
 from scipy.optimize import brentq, minimize_scalar
 import matplotlib.pyplot as plt
-from H_ionization import eionhr
+from H_ionization import eionhr, eionhr_np
+from recombination import jrrec3, jrrec3_np
+import warnings
 
 # ============================================================================
 # ФИЗИЧЕСКИЕ КОНСТАНТЫ (CGS)
@@ -24,7 +26,7 @@ class Const:
     # Типичные значения
     E_ion        = 30.0 * eV2erg  # стоимость ионизации, эрг (~30 эВ)
     E_rec        = 13.6 * eV2erg  # стоимость рекомбинации, эрг (~13.6 эВ)
-    E_MAR        = 15.0 * eV2erg  # стоимость ионизации, эрг (~25 эВ)
+    E_MAR        = 13.6 * eV2erg  # стоимость ионизации, эрг (~25 эВ)
     E_fast_ions  = 5.0  * eV2erg  # стоимость ионизации, эрг (~5 эВ)
     alpha        = 7.0            # коэффициент передачи энергии
     f_mom        = 2.0            # коэффициент потерь импульса (без трения)
@@ -33,15 +35,32 @@ class Const:
 # КОЭФФИЦИЕНТЫ СКОРОСТЕЙ РЕАКЦИЙ
 # ============================================================================
 
+def W_rec_radiation(Te):
+    return 1.69e-25 * np.sqrt(Te) * (13.6 / Te)
+
+def W_bremsstr_radiation(Te):
+    return 1.69e-25 * np.sqrt(Te)
+
+def k_rec(Te):
+    Te_array = np.asarray(Te)
+    result = np.where(
+        Te_array > 10, 
+        jrrec3_np(Te_array, [1, 0, 2]), 
+        5e-13
+    )
+    if np.isscalar(Te):
+        return result.item()
+    return result
+
 def k_ion(Te, n: float = 3.0):
     """Коэффициент ионизации H, см³/с (обёртка над eionhr)."""
-    # return eionhr(Te, n)
-    return 1e-7
+    return eionhr_np(Te, n)
+    # return 1e-7
 
 def k_ion_H2(Te):
     """Ионизация H₂, см³/с, Te в эВ"""
-    # 1e-11 -- 1e-8 from 1 -- 100 eV
-    return 1.0e-9
+    return 1e-2 * eionhr_np(Te, 3)
+    # return 1.0e-9
 
 def k_MAR(Te):
     """Коэффициент MAR, см³/с, Te в эВ"""
@@ -81,7 +100,7 @@ class TPM:
     def solve(self, is_plot: bool):
         """Решает систему уравнений TPM"""
         
-        T_min, T_max = 1e-1, 1e1
+        T_min, T_max = 1e-1, 5e1
         T_min_root, T_max_root = 1e-4, 1e3
 
         roots = []
@@ -185,9 +204,10 @@ class TPM:
             'T2': T2,                                                       # температура на стенке, эВ
             'n2': n2,                                                       # плотность на стенке, см⁻³
             'S_ion_H': k_ion(T2) * n2 * self.n_n,                           # ионизация H, см⁻³·с⁻¹
-            'S_ion_H2': k_ion_H2(T2) * n2 * (self.n_n + self.n_n),          # ионизация H, см⁻³·с⁻¹
-            'S_MAR': k_MAR(T2) * n2 * self.n_n,                             # ионизация H, см⁻³·с⁻¹
-            'S_cx': k_CX(self.T1) * self.n1_fast_ions * self.n_n,           # ионизация H, см⁻³·с⁻¹
+            'S_ion_H2': k_ion_H2(T2) * n2 * self.n_n,                       # ионизация H2, см⁻³·с⁻¹
+            'S_MAR': k_MAR(T2) * n2 * self.n_n,                             # MAR H, см⁻³·с⁻¹
+            'S_cx': k_CX(self.T1) * self.n1_fast_ions * self.n_n,           # перезарядка H, см⁻³·с⁻¹
+            'S_rec': k_rec(T2) * n2 * n2                                    # рекомбинация H, см⁻³·с⁻¹
         }
     
     def _energy_balance(self, T2):
@@ -208,14 +228,22 @@ class TPM:
 
         # Q_MAR
         S_MAR = k_MAR(T2) * n2 * self.n_n
-        Q_MAR = Const.E_MAR * S_MAR * self.L
+        Q_MAR = (Const.E_MAR + 3 * T2 * Const.eV2erg) * S_MAR * self.L
+
+        # Q_rec
+        S_rec = k_rec(T2) * n2 * n2
+        Q_rec = (Const.E_rec + 3 * T2 * Const.eV2erg) * S_rec * self.L
+        Q_rec_rad = W_rec_radiation(T2) * n2 * n2 * self.L
+
+        # Q_bremss
+        Q_bremss = W_bremsstr_radiation(T2) * n2 * n2 * self.L
 
         # Q_cx
         S_cx = k_CX(self.T1) * self.n1_fast_ions * self.n_n
         Q_cx = self.T1 * Const.eV2erg * S_cx * self.L
         
         # Баланс
-        return (q_wall + Q_ion_H + Q_ion_H2 + Q_MAR + Q_cx) /self.q1 - 1
+        return (q_wall + Q_ion_H + Q_ion_H2 + Q_MAR + Q_rec + Q_rec_rad + Q_bremss + Q_cx) /self.q1 - 1
 
     def _compute_f_mom(self):
         """
@@ -248,7 +276,7 @@ if __name__ == "__main__":
         'n1':           1.7e13,  # см^(-3)
         'T1':           100,     # эВ
         'L':            60,     # длина, см (1.8 м)
-        'n_n':          7e11,    # плотность нейтралов, см⁻³
+        'n_n':          1e11,    # плотность нейтралов, см⁻³
     }
     
     # Решаем
@@ -275,6 +303,7 @@ if __name__ == "__main__":
     print(f"  S_ion_H2  = {result['S_ion_H2']:.2e} cm^-3 * s^-1")
     print(f"  S_MAR     = {result['S_MAR']:.2e} cm^-3 * s^-1")
     print(f"  S_cx     = {result['S_cx']:.2e} cm^-3 * s^-1")
+    print(f"  S_rec     = {result['S_rec']:.2e} cm^-3 * s^-1")
     
     # Проверка детачмента
     detached = result['S_MAR'] > result['S_ion_H']
