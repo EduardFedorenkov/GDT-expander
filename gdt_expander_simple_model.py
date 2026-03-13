@@ -27,9 +27,7 @@ class Const:
     E_ion        = 30.0 * eV2erg  # стоимость ионизации, эрг (~30 эВ)
     E_rec        = 13.6 * eV2erg  # стоимость рекомбинации, эрг (~13.6 эВ)
     E_MAR        = 13.6 * eV2erg  # стоимость ионизации, эрг (~25 эВ)
-    E_fast_ions  = 5.0  * eV2erg  # стоимость ионизации, эрг (~5 эВ)
     alpha        = 7.0            # коэффициент передачи энергии
-    f_mom        = 2.0            # коэффициент потерь импульса (без трения)
 
 # ============================================================================
 # КОЭФФИЦИЕНТЫ СКОРОСТЕЙ РЕАКЦИЙ
@@ -46,21 +44,21 @@ def k_rec(Te):
     result = np.where(
         Te_array > 10, 
         jrrec3_np(Te_array, [1, 0, 2]), 
-        5e-13
+        1e-14
     )
     if np.isscalar(Te):
         return result.item()
     return result
 
-def k_ion(Te, n: float = 3.0):
+def k_ion(Te):
     """Коэффициент ионизации H, см³/с (обёртка над eionhr)."""
-    return eionhr_np(Te, n)
-    # return 1e-7
+    # return eionhr_np(Te, 3)
+    return 1e-7
 
 def k_ion_H2(Te):
     """Ионизация H₂, см³/с, Te в эВ"""
-    return 1e-2 * eionhr_np(Te, 3)
-    # return 1.0e-9
+    # return 1e-2 * eionhr_np(Te, 3)
+    return 1.0e-9
 
 def k_MAR(Te):
     """Коэффициент MAR, см³/с, Te в эВ"""
@@ -115,7 +113,6 @@ class TPM:
         for i in range(len(f_test) - 1):
             if f_test[i] * f_test[i + 1] < -tolerance**2:  # смена знака
                 sign_changes.append((T_test[i], T_test[i+1]))
-        
 
         for a, b in sign_changes[:2]:
             try:
@@ -198,11 +195,13 @@ class TPM:
         
         T2 = selected_T2
         n2 = self._compute_n2(T2)
-        # j2 = self._c_s(T2) * n2 * Const.e * 3.3356e-6
+        J2 = self._current_end(T2)
+        self._critical_q1()
         
         return {
             'T2': T2,                                                       # температура на стенке, эВ
             'n2': n2,                                                       # плотность на стенке, см⁻³
+            'J2': J2,                                                       # [мА/см^2]
             'S_ion_H': k_ion(T2) * n2 * self.n_n,                           # ионизация H, см⁻³·с⁻¹
             'S_ion_H2': k_ion_H2(T2) * n2 * self.n_n,                       # ионизация H2, см⁻³·с⁻¹
             'S_MAR': k_MAR(T2) * n2 * self.n_n,                             # MAR H, см⁻³·с⁻¹
@@ -245,6 +244,30 @@ class TPM:
         # Баланс
         return (q_wall + Q_ion_H + Q_ion_H2 + Q_MAR + Q_rec + Q_rec_rad + Q_bremss + Q_cx) /self.q1 - 1
 
+    def _current_end(self, T2):
+        J0 = self._c_s(self.T1) * (self.n1 / 40) * Const.e * 3.3356e-7     # Initial ion current [мА/см^2]
+
+        n2 = self._compute_n2(T2)
+        J_ion = (k_ion(T2) + k_ion_H2(T2)) * n2 * self.n_n * self.L * Const.e * 3.3356e-7   # Current from ionization [мА/см^2]
+        J_rec = (k_rec(T2) * n2 + k_MAR(T2) * self.n_n) * n2 * self.L * Const.e * 3.3356e-7 # Current from recombination [мА/см^2]
+
+        print(f"J0 : {J0:.2e}")
+        print(f"J_ion : {J_ion:.2e}")
+        print(f"J_rec : {J_rec:.2e}")
+        return (J0 + J_ion - J_rec) / 100
+
+    def _critical_q1(self):
+        T_min, T_max = 0.01, 50
+        T_test = np.linspace(T_min, T_max, 100000)
+        f_test = self._energy_balance(T_test)
+        min_idx = np.argmin(f_test)
+        T_crit = T_test[min_idx]
+        q_crit = (f_test[min_idx] + 1) * self.q1
+        print(f"T_crit : {T_crit:.2e}")
+        print(f"f_crit : {f_test[min_idx]:.2e}")
+        print(f"q_crit : {q_crit:.2e}")
+
+
     def _compute_f_mom(self):
         """
         Коэффициент уменьшения давления:
@@ -273,10 +296,10 @@ if __name__ == "__main__":
     print("=" * 60)
     
     params = {
-        'n1':           1.7e13,  # см^(-3)
+        'n1':           1e12,  # см^(-3)
         'T1':           100,     # эВ
         'L':            60,     # длина, см (1.8 м)
-        'n_n':          1e11,    # плотность нейтралов, см⁻³
+        'n_n':          6.925e11,    # плотность нейтралов, см⁻³
     }
     
     # Решаем
@@ -297,15 +320,16 @@ if __name__ == "__main__":
     print(f"\nResults:")
     print(f"  T2        = {result['T2']} eV")
     print(f"  n2        = {result['n2']:.2e} cm^-3")
+    print(f"  J2        = {result['J2']:.2e} mA/cm^2")
     print(f"  q2        = {q_wall:.2e} erg / cm^2")
     print(f"  q1        = {q1:.2e} erg / cm^2")
     print(f"  S_ion_H   = {result['S_ion_H']:.2e} cm^-3 * s^-1")
     print(f"  S_ion_H2  = {result['S_ion_H2']:.2e} cm^-3 * s^-1")
     print(f"  S_MAR     = {result['S_MAR']:.2e} cm^-3 * s^-1")
-    print(f"  S_cx     = {result['S_cx']:.2e} cm^-3 * s^-1")
+    print(f"  S_cx      = {result['S_cx']:.2e} cm^-3 * s^-1")
     print(f"  S_rec     = {result['S_rec']:.2e} cm^-3 * s^-1")
     
     # Проверка детачмента
-    detached = result['S_MAR'] > result['S_ion_H']
+    detached = result['S_MAR'] + result['S_rec'] > result['S_ion_H'] + result['S_ion_H2']
     print(f"\n  Режим: {'DETACHED (MAR доминирует)' if detached else 'ATTACHED'}")
     print("=" * 60)
