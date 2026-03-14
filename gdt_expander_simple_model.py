@@ -315,7 +315,7 @@ if __name__ == "__main__":
 
     
     q_wall = Const.alpha * result['n2'] * result['T2'] * Const.eV2erg * np.sqrt(result['T2'] * Const.eV2erg / Const.m_i)
-    q1     = 0.5 * params['n1'] / (100) * params['T1'] * Const.eV2erg * np.sqrt(params['T1'] * Const.eV2erg / Const.m_e)
+    q1     = 0.5 * params['n1'] / (10) * params['T1'] * Const.eV2erg * np.sqrt(params['T1'] * Const.eV2erg / Const.m_e)
 
     print(f"\nResults:")
     print(f"  T2        = {result['T2']} eV")
