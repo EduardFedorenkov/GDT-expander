@@ -25,6 +25,7 @@ GRID_FIELDS = (
     "lambda_sh", "n0_cm3", "cx_mode", "n_roots",
     "min_R_M", "max_R_M", "min_abs_R_M",
     "has_unresolved_points", "statuses",
+    "boundary_refinements", "boundary_evaluations", "boundary_resolution_limited",
 )
 
 
@@ -109,6 +110,9 @@ def scan_lambda_neutral(
                 "min_abs_R_M": row["min_abs_R_M"],
                 "has_unresolved_points": row["has_unresolved_points"],
                 "statuses": json.dumps(row["statuses"], sort_keys=True),
+                "boundary_refinements": row["boundary_refinements"],
+                "boundary_evaluations": row["boundary_evaluations"],
+                "boundary_resolution_limited": row["boundary_resolution_limited"],
             })
 
     return roots, grid

@@ -1,187 +1,187 @@
-﻿lambda_sh;n0_cm3;cx_mode;n_roots;min_R_M;max_R_M;min_abs_R_M;has_unresolved_points;statuses
-5.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-5.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-5.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}"
-5.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}"
-5.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}"
-5.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}"
-5.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}"
-5.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}"
-5.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}"
-5.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}"
-5.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}"
-5.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}"
-5.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}"
-5.0;19952623149688.83;temperature;1;-0.118680967192618;0.8055274030416948;4.9960036108132044e-15;False;"{""energy_matched"": 37, ""sonic_return"": 133}"
-5.0;25118864315095.82;temperature;1;-0.26845080537093147;1.4670439858769408;4.6629367034256575e-15;False;"{""energy_matched"": 58, ""sonic_return"": 113}"
-5.0;31622776601683.793;temperature;1;-0.2633649118572253;1.8664842322318758;3.3306690738754696e-15;False;"{""energy_matched"": 74, ""sonic_return"": 97}"
-5.0;39810717055349.695;temperature;1;-0.23846475813523593;2.140558251507936;7.771561172376096e-16;False;"{""energy_matched"": 87, ""sonic_return"": 85}"
-5.0;50118723362727.15;temperature;1;-0.6018764511604182;2.3391461196788605;2.6645352591003757e-15;False;"{""energy_matched"": 99, ""sonic_return"": 74}"
-5.0;63095734448019.43;temperature;1;-0.5732965753455876;2.4873507385826397;3.774758283725532e-15;False;"{""energy_matched"": 106, ""sonic_return"": 66}"
-5.0;79432823472428.22;temperature;1;-0.24547740811947139;2.59996964707343;2.3647750424515834e-12;False;"{""energy_matched"": 94, ""sonic_return"": 60}"
-5.0;100000000000000.0;temperature;1;-0.1746376738973765;2.6865698004190617;1.6431300764452317e-13;False;"{""energy_matched"": 99, ""sonic_return"": 55}"
-5.0;125892541179416.62;temperature;1;-0.11903197379144426;2.7537108487684;1.3988810110276972e-14;False;"{""energy_matched"": 119, ""sonic_return"": 51}"
-5.0;158489319246111.1;temperature;0;0.423792711346223;2.8060712613213905;0.423792711346223;False;"{""energy_matched"": 99, ""sonic_return"": 49}"
-5.0;199526231496888.28;temperature;0;0.3449919206502663;2.8470805864090694;0.3449919206502663;False;"{""energy_matched"": 102, ""sonic_return"": 46}"
-5.0;251188643150958.22;temperature;0;0.7653675556558033;2.879419866336802;0.7653675556558033;False;"{""energy_matched"": 115, ""sonic_return"": 44}"
-5.0;316227766016837.94;temperature;0;0.4127868110304822;2.906410569060703;0.4127868110304822;False;"{""energy_matched"": 117, ""sonic_return"": 42}"
-5.0;398107170553496.94;temperature;0;0.5784960732627986;2.929315872383455;0.5784960732627986;False;"{""energy_matched"": 115, ""sonic_return"": 41}"
-5.0;501187233627271.44;temperature;0;1.0849268662922271;2.9487063480668025;1.0849268662922271;False;"{""energy_matched"": 119, ""sonic_return"": 40}"
-5.0;630957344480194.2;temperature;0;0.630395393648423;2.9650892696293454;0.630395393648423;False;"{""energy_matched"": 121, ""sonic_return"": 38}"
-5.0;794328234724282.1;temperature;1;-0.31193388675721945;2.978909308959642;9.895462227405005e-11;False;"{""energy_matched"": 132, ""sonic_return"": 37}"
-5.0;1000000000000000.0;temperature;0;1.19458736498866;2.9905524373625045;1.19458736498866;False;"{""energy_matched"": 126, ""sonic_return"": 37}"
-6.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-6.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-6.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}"
-6.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}"
-6.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}"
-6.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}"
-6.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}"
-6.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}"
-6.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}"
-6.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}"
-6.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}"
-6.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}"
-6.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}"
-6.0;19952623149688.83;temperature;1;-0.14503953506794764;0.8378757532696004;3.6637359812630166e-15;False;"{""energy_matched"": 38, ""sonic_return"": 132}"
-6.0;25118864315095.82;temperature;1;-0.20289048907262797;1.468304152884957;4.440892098500626e-15;False;"{""energy_matched"": 57, ""sonic_return"": 113}"
-6.0;31622776601683.793;temperature;1;-0.22038764044378112;1.8539711228481797;4.440892098500626e-16;False;"{""energy_matched"": 73, ""sonic_return"": 97}"
-6.0;39810717055349.695;temperature;1;-0.21352408766823316;2.119887696948568;7.549516567451064e-15;False;"{""energy_matched"": 86, ""sonic_return"": 85}"
-6.0;50118723362727.15;temperature;1;-0.5731972167154724;2.3130497214851315;5.995204332975845e-15;False;"{""energy_matched"": 97, ""sonic_return"": 74}"
-6.0;63095734448019.43;temperature;1;-0.5571852993364408;2.457421823837399;8.215650382226158e-15;False;"{""energy_matched"": 104, ""sonic_return"": 66}"
-6.0;79432823472428.22;temperature;1;-0.2405509515983305;2.5672357510678223;2.0596857552845904e-12;False;"{""energy_matched"": 94, ""sonic_return"": 60}"
-6.0;100000000000000.0;temperature;1;-0.17208309074414319;2.6517356906961402;1.4477308241112041e-13;False;"{""energy_matched"": 99, ""sonic_return"": 55}"
-6.0;125892541179416.62;temperature;1;-0.11768004720470993;2.717279805500452;2.6645352591003757e-15;False;"{""energy_matched"": 125, ""sonic_return"": 51}"
-6.0;158489319246111.1;temperature;0;0.4241776817162606;2.7687147204289686;0.4241776817162606;False;"{""energy_matched"": 111, ""sonic_return"": 49}"
-6.0;199526231496888.28;temperature;0;0.3452359781396994;2.811957326776017;0.3452359781396994;False;"{""energy_matched"": 112, ""sonic_return"": 46}"
-6.0;251188643150958.22;temperature;0;0.7654529539440595;2.8488762722149366;0.7654529539440595;False;"{""energy_matched"": 116, ""sonic_return"": 44}"
-6.0;316227766016837.94;temperature;0;0.41287011183337263;2.8802912518505144;0.41287011183337263;False;"{""energy_matched"": 117, ""sonic_return"": 42}"
-6.0;398107170553496.94;temperature;0;0.5785385074270828;2.906954952620908;0.5785385074270828;False;"{""energy_matched"": 115, ""sonic_return"": 41}"
-6.0;501187233627271.44;temperature;0;1.0849385752703795;2.929541803389855;1.0849385752703795;False;"{""energy_matched"": 120, ""sonic_return"": 40}"
-6.0;630957344480194.2;temperature;0;0.6304112056334625;2.94864635244178;0.6304112056334625;False;"{""energy_matched"": 123, ""sonic_return"": 38}"
-6.0;794328234724282.1;temperature;1;-0.31189723702903616;2.9647867036439135;9.881317986071281e-11;False;"{""energy_matched"": 131, ""sonic_return"": 37}"
-6.0;1000000000000000.0;temperature;0;1.1945895495575072;2.9784105125040004;1.1945895495575072;False;"{""energy_matched"": 124, ""sonic_return"": 37}"
-7.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-7.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-7.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}"
-7.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}"
-7.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}"
-7.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}"
-7.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}"
-7.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}"
-7.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}"
-7.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}"
-7.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}"
-7.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}"
-7.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}"
-7.0;19952623149688.83;temperature;1;-0.06986976025618519;0.8676013246154439;1.7763568394002505e-15;False;"{""energy_matched"": 35, ""sonic_return"": 132}"
-7.0;25118864315095.82;temperature;1;-0.3208224686552218;1.4685719906838397;1.7763568394002505e-15;False;"{""energy_matched"": 57, ""sonic_return"": 112}"
-7.0;31622776601683.793;temperature;1;-0.46311119420021696;1.8407911604850558;1.5543122344752192e-15;False;"{""energy_matched"": 75, ""sonic_return"": 96}"
-7.0;39810717055349.695;temperature;1;-0.1895950367844943;2.098661659952963;3.552713678800501e-15;False;"{""energy_matched"": 88, ""sonic_return"": 85}"
-7.0;50118723362727.15;temperature;1;-0.5462650445669734;2.2864455742147736;1.5543122344752192e-15;False;"{""energy_matched"": 97, ""sonic_return"": 74}"
-7.0;63095734448019.43;temperature;1;-0.5416978361858742;2.4270082329460343;1.1102230246251565e-15;False;"{""energy_matched"": 107, ""sonic_return"": 66}"
-7.0;79432823472428.22;temperature;1;-0.235667588354864;2.5340291670846273;1.7887913372760522e-12;False;"{""energy_matched"": 94, ""sonic_return"": 60}"
-7.0;100000000000000.0;temperature;1;-0.16953967448261442;2.6164354156957224;1.325606291402437e-13;False;"{""energy_matched"": 99, ""sonic_return"": 55}"
-7.0;125892541179416.62;temperature;1;-0.11633117194400722;2.6817624366812147;9.325873406851315e-15;False;"{""energy_matched"": 134, ""sonic_return"": 51}"
-7.0;158489319246111.1;temperature;0;0.4245623950315156;2.7376544413527863;0.4245623950315156;False;"{""energy_matched"": 108, ""sonic_return"": 49}"
-7.0;199526231496888.28;temperature;0;0.34547993652168874;2.785529078778099;0.34547993652168874;False;"{""energy_matched"": 114, ""sonic_return"": 46}"
-7.0;251188643150958.22;temperature;0;0.765538333742223;2.8263725106771163;0.765538333742223;False;"{""energy_matched"": 114, ""sonic_return"": 44}"
-7.0;316227766016837.94;temperature;0;0.41295340067291386;2.8611134213324414;0.41295340067291386;False;"{""energy_matched"": 119, ""sonic_return"": 42}"
-7.0;398107170553496.94;temperature;0;0.5785809380434284;2.890597413965468;0.5785809380434284;False;"{""energy_matched"": 118, ""sonic_return"": 41}"
-7.0;501187233627271.44;temperature;0;1.0849502834218843;2.9155778501616383;1.0849502834218843;False;"{""energy_matched"": 120, ""sonic_return"": 40}"
-7.0;630957344480194.2;temperature;0;0.6304270170965418;2.9367158848327097;0.6304270170965418;False;"{""energy_matched"": 122, ""sonic_return"": 38}"
-7.0;794328234724282.1;temperature;1;-0.3118605898656973;2.954585555135428;9.866707451067214e-11;False;"{""energy_matched"": 131, ""sonic_return"": 37}"
-7.0;1000000000000000.0;temperature;0;1.194591734076285;2.969681412064813;1.194591734076285;False;"{""energy_matched"": 124, ""sonic_return"": 37}"
-8.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-8.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-8.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}"
-8.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}"
-8.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}"
-8.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}"
-8.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}"
-8.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}"
-8.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}"
-8.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}"
-8.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}"
-8.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}"
-8.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}"
-8.0;19952623149688.83;temperature;1;-0.10301276467079357;0.8948476245589327;1.7763568394002505e-15;False;"{""energy_matched"": 39, ""sonic_return"": 131}"
-8.0;25118864315095.82;temperature;1;-0.2560047486940342;1.467846587830444;5.329070518200751e-15;False;"{""energy_matched"": 57, ""sonic_return"": 112}"
-8.0;31622776601683.793;temperature;1;-0.4100814745250406;1.8269314640341334;6.217248937900877e-15;False;"{""energy_matched"": 76, ""sonic_return"": 96}"
-8.0;39810717055349.695;temperature;1;-0.588558467334318;2.0768652671698793;4.440892098500626e-16;False;"{""energy_matched"": 86, ""sonic_return"": 84}"
-8.0;50118723362727.15;temperature;1;-0.5208783041834752;2.259318399611561;5.995204332975845e-15;False;"{""energy_matched"": 95, ""sonic_return"": 74}"
-8.0;63095734448019.43;temperature;1;-0.526775708426227;2.396094615498533;1.4432899320127035e-15;False;"{""energy_matched"": 106, ""sonic_return"": 66}"
-8.0;79432823472428.22;temperature;1;-0.23082643283906845;2.5003345462320223;1.5429879596240426e-12;False;"{""energy_matched"": 94, ""sonic_return"": 60}"
-8.0;100000000000000.0;temperature;1;-0.1670073131340597;2.582158042989459;1.156852391659413e-13;False;"{""energy_matched"": 108, ""sonic_return"": 55}"
-8.0;125892541179416.62;temperature;1;-0.11498533258705756;2.652278822991284;4.440892098500626e-16;False;"{""energy_matched"": 132, ""sonic_return"": 51}"
-8.0;158489319246111.1;temperature;0;0.4249468515414039;2.7126051827266533;0.4249468515414039;False;"{""energy_matched"": 109, ""sonic_return"": 49}"
-8.0;199526231496888.28;temperature;0;0.3457237958600521;2.764239655988068;0.3457237958600521;False;"{""energy_matched"": 113, ""sonic_return"": 46}"
-8.0;251188643150958.22;temperature;0;0.7656236950536721;2.808268501406062;0.7656236950536721;False;"{""energy_matched"": 116, ""sonic_return"": 44}"
-8.0;316227766016837.94;temperature;0;0.4130366775516361;2.8457078810635394;0.4130366775516361;False;"{""energy_matched"": 118, ""sonic_return"": 42}"
-8.0;398107170553496.94;temperature;0;0.5786233651121893;2.877478786549158;0.5786233651121893;False;"{""energy_matched"": 117, ""sonic_return"": 41}"
-8.0;501187233627271.44;temperature;0;1.0849619907467623;2.9043986874920935;1.0849619907467623;False;"{""energy_matched"": 116, ""sonic_return"": 40}"
-8.0;630957344480194.2;temperature;0;0.6304428280376799;2.9271828047700805;0.6304428280376799;False;"{""energy_matched"": 119, ""sonic_return"": 38}"
-8.0;794328234724282.1;temperature;1;-0.3118239452667656;2.9464506190644633;9.852518800812504e-11;False;"{""energy_matched"": 138, ""sonic_return"": 37}"
-8.0;1000000000000000.0;temperature;0;1.194593918544994;2.9627348618973937;1.194593918544994;False;"{""energy_matched"": 130, ""sonic_return"": 37}"
-9.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-9.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-9.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}"
-9.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}"
-9.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}"
-9.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}"
-9.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}"
-9.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}"
-9.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}"
-9.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}"
-9.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}"
-9.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}"
-9.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}"
-9.0;19952623149688.83;temperature;1;-0.13944663026419857;0.9197383479730517;3.774758283725532e-15;False;"{""energy_matched"": 40, ""sonic_return"": 130}"
-9.0;25118864315095.82;temperature;1;-0.19253767901452934;1.4661254000210144;6.217248937900877e-15;False;"{""energy_matched"": 58, ""sonic_return"": 112}"
-9.0;31622776601683.793;temperature;1;-0.3590832990893432;1.8123781955758105;7.105427357601002e-15;False;"{""energy_matched"": 72, ""sonic_return"": 96}"
-9.0;39810717055349.695;temperature;1;-0.5465742938056344;2.054482755024817;1.5543122344752192e-15;False;"{""energy_matched"": 87, ""sonic_return"": 84}"
-9.0;50118723362727.15;temperature;1;-0.4968516592194063;2.231652039474043;1.0880185641326534e-14;False;"{""energy_matched"": 97, ""sonic_return"": 74}"
-9.0;63095734448019.43;temperature;1;-0.5123687276095956;2.36466474407374;1.7763568394002505e-15;False;"{""energy_matched"": 105, ""sonic_return"": 66}"
-9.0;79432823472428.22;temperature;1;-0.22602662981769284;2.466678956354757;1.333599897179738e-12;False;"{""energy_matched"": 102, ""sonic_return"": 60}"
-9.0;100000000000000.0;temperature;1;-0.16448589661403012;2.5527887807049177;1.0369483049998962e-13;False;"{""energy_matched"": 108, ""sonic_return"": 55}"
-9.0;125892541179416.62;temperature;1;-0.11364251384413027;2.627329601079964;5.995204332975845e-15;False;"{""energy_matched"": 131, ""sonic_return"": 51}"
-9.0;158489319246111.1;temperature;0;0.4253310514948807;2.6914150114767743;0.4253310514948807;False;"{""energy_matched"": 107, ""sonic_return"": 49}"
-9.0;199526231496888.28;temperature;0;0.3459675562185456;2.7462388776896445;0.3459675562185456;False;"{""energy_matched"": 112, ""sonic_return"": 46}"
-9.0;251188643150958.22;temperature;0;0.7657090378817812;2.792970593192973;0.7657090378817812;False;"{""energy_matched"": 115, ""sonic_return"": 44}"
-9.0;316227766016837.94;temperature;0;0.4131199424720686;2.8326998654059357;0.4131199424720686;False;"{""energy_matched"": 118, ""sonic_return"": 42}"
-9.0;398107170553496.94;temperature;0;0.5786657886337108;2.8664112319320436;0.5786657886337108;False;"{""energy_matched"": 126, ""sonic_return"": 41}"
-9.0;501187233627271.44;temperature;0;1.08497369724503;2.8949762623459625;1.08497369724503;False;"{""energy_matched"": 125, ""sonic_return"": 40}"
-9.0;630957344480194.2;temperature;0;0.6304586384568978;2.9191559013584505;0.6304586384568978;False;"{""energy_matched"": 124, ""sonic_return"": 38}"
-9.0;794328234724282.1;temperature;1;-0.31178730323179416;2.939608166380574;9.838130310413362e-11;False;"{""energy_matched"": 136, ""sonic_return"": 37}"
-9.0;1000000000000000.0;temperature;0;1.1945961029636325;2.9568982522116083;1.1945961029636325;False;"{""energy_matched"": 122, ""sonic_return"": 37}"
-10.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-10.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}"
-10.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}"
-10.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}"
-10.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}"
-10.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}"
-10.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}"
-10.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}"
-10.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}"
-10.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}"
-10.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}"
-10.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}"
-10.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}"
-10.0;19952623149688.83;temperature;1;-0.1769776210394014;0.9423802382623363;7.771561172376096e-16;False;"{""energy_matched"": 38, ""sonic_return"": 129}"
-10.0;25118864315095.82;temperature;1;-0.3180124448860244;1.46340422879309;6.8833827526759706e-15;False;"{""energy_matched"": 58, ""sonic_return"": 111}"
-10.0;31622776601683.793;temperature;1;-0.3114112487331162;1.7971164909136546;8.881784197001252e-16;False;"{""energy_matched"": 72, ""sonic_return"": 96}"
-10.0;39810717055349.695;temperature;1;-0.5062290068421527;2.0314973971679264;7.327471962526033e-15;False;"{""energy_matched"": 86, ""sonic_return"": 84}"
-10.0;50118723362727.15;temperature;1;-0.47402568270086143;2.2034293838271233;3.774758283725532e-15;False;"{""energy_matched"": 98, ""sonic_return"": 74}"
-10.0;63095734448019.43;temperature;1;-0.4984335127945565;2.332701442437275;4.218847493575595e-15;False;"{""energy_matched"": 103, ""sonic_return"": 66}"
-10.0;79432823472428.22;temperature;1;-0.2212673529368634;2.4365628629570284;1.1481926520673369e-12;False;"{""energy_matched"": 105, ""sonic_return"": 60}"
-10.0;100000000000000.0;temperature;1;-0.1619753166878164;2.527174152177049;9.14823772291129e-14;False;"{""energy_matched"": 112, ""sonic_return"": 55}"
-10.0;125892541179416.62;temperature;1;-0.11230270055646185;2.6055665287643572;1.1324274851176597e-14;False;"{""energy_matched"": 131, ""sonic_return"": 51}"
-10.0;158489319246111.1;temperature;0;0.42571499514044886;2.6729317737515252;0.42571499514044886;False;"{""energy_matched"": 108, ""sonic_return"": 49}"
-10.0;199526231496888.28;temperature;0;0.34621121766083873;2.7305405332097745;0.34621121766083873;False;"{""energy_matched"": 113, ""sonic_return"": 46}"
-10.0;251188643150958.22;temperature;0;0.7657943622299261;2.7796334796000597;0.7657943622299261;False;"{""energy_matched"": 119, ""sonic_return"": 44}"
-10.0;316227766016837.94;temperature;0;0.41320319543674233;2.8213637624933607;0.41320319543674233;False;"{""energy_matched"": 119, ""sonic_return"": 42}"
-10.0;398107170553496.94;temperature;0;0.5787082086083475;2.8567708897702757;0.5787082086083475;False;"{""energy_matched"": 118, ""sonic_return"": 41}"
-10.0;501187233627271.44;temperature;0;1.084985402916704;2.8867733718639688;1.084985402916704;False;"{""energy_matched"": 118, ""sonic_return"": 40}"
-10.0;630957344480194.2;temperature;0;0.6304744483542102;2.9121719543081865;0.6304744483542102;False;"{""energy_matched"": 123, ""sonic_return"": 38}"
-10.0;794328234724282.1;temperature;1;-0.3117506637603372;2.933658296752541;9.82418590922407e-11;False;"{""energy_matched"": 129, ""sonic_return"": 37}"
-10.0;1000000000000000.0;temperature;0;1.1945982873322012;2.9518260031644985;1.1945982873322012;False;"{""energy_matched"": 125, ""sonic_return"": 37}"
+﻿lambda_sh;n0_cm3;cx_mode;n_roots;min_R_M;max_R_M;min_abs_R_M;has_unresolved_points;statuses;boundary_refinements;boundary_evaluations;boundary_resolution_limited
+5.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+5.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+5.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
+5.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
+5.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
+5.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+5.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+5.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+5.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+5.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+5.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+5.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+5.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+5.0;19952623149688.83;temperature;1;-0.1442906990911622;0.8055274030416948;4.9960036108132044e-15;False;"{""energy_matched"": 42, ""sonic_return"": 142}";1;14;False
+5.0;25118864315095.82;temperature;1;-0.3374163682076522;1.4670439858769408;4.6629367034256575e-15;False;"{""energy_matched"": 64, ""sonic_return"": 121}";1;14;False
+5.0;31622776601683.793;temperature;1;-0.4926756865559325;1.8664842322318758;3.3306690738754696e-15;False;"{""energy_matched"": 78, ""sonic_return"": 108}";1;15;False
+5.0;39810717055349.695;temperature;1;-0.6144613775743826;2.140558251507936;7.771561172376096e-16;False;"{""energy_matched"": 93, ""sonic_return"": 94}";1;15;False
+5.0;50118723362727.15;temperature;1;-0.7081545817443641;2.3391461196788605;2.6645352591003757e-15;False;"{""energy_matched"": 106, ""sonic_return"": 83}";1;16;False
+5.0;63095734448019.43;temperature;1;-0.779114423333387;2.4873507385826397;3.774758283725532e-15;False;"{""energy_matched"": 113, ""sonic_return"": 75}";1;16;False
+5.0;79432823472428.22;temperature;1;-0.8323379007083825;2.59996964707343;1.3322676295501878e-15;False;"{""energy_matched"": 120, ""sonic_return"": 67}";1;16;False
+5.0;100000000000000.0;temperature;1;-0.8724737701398628;2.6865698004190617;1.7763568394002505e-15;False;"{""energy_matched"": 128, ""sonic_return"": 63}";1;17;False
+5.0;125892541179416.62;temperature;1;-0.9034093319513488;2.7537108487684;1.3988810110276972e-14;False;"{""energy_matched"": 127, ""sonic_return"": 60}";1;17;False
+5.0;158489319246111.1;temperature;1;-0.9270913252352149;2.8060712613213905;6.8833827526759706e-15;False;"{""energy_matched"": 131, ""sonic_return"": 57}";1;17;False
+5.0;199526231496888.28;temperature;1;-0.9442471295747548;2.8470805864090694;9.992007221626409e-16;False;"{""energy_matched"": 134, ""sonic_return"": 56}";1;18;False
+5.0;251188643150958.22;temperature;1;-0.9564898979883559;2.879419866336802;6.661338147750939e-15;False;"{""energy_matched"": 154, ""sonic_return"": 49}";1;18;False
+5.0;316227766016837.94;temperature;1;-0.9656467638977518;2.906410569060703;7.771561172376096e-15;False;"{""energy_matched"": 149, ""sonic_return"": 51}";1;18;False
+5.0;398107170553496.94;temperature;1;-0.9725395066226319;2.929315872383455;6.661338147750939e-15;False;"{""energy_matched"": 146, ""sonic_return"": 50}";1;17;False
+5.0;501187233627271.44;temperature;1;-0.97834783849678;2.9487063480668025;2.886579864025407e-15;False;"{""energy_matched"": 152, ""sonic_return"": 54}";1;19;False
+5.0;630957344480194.2;temperature;1;-0.9825169712474163;2.9650892696293454;9.325873406851315e-15;False;"{""energy_matched"": 153, ""sonic_return"": 48}";1;19;False
+5.0;794328234724282.1;temperature;1;-0.985897098769244;2.978909308959642;1.687538997430238e-14;False;"{""energy_matched"": 161, ""sonic_return"": 49}";1;19;False
+5.0;1000000000000000.0;temperature;1;-0.9887054373810964;2.9905524373625045;1.9317880628477724e-14;False;"{""energy_matched"": 162, ""sonic_return"": 44}";1;19;False
+6.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+6.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+6.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
+6.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
+6.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
+6.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+6.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+6.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+6.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+6.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+6.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+6.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+6.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+6.0;19952623149688.83;temperature;1;-0.15241949060124116;0.8378757532696004;3.6637359812630166e-15;False;"{""energy_matched"": 44, ""sonic_return"": 140}";1;14;False
+6.0;25118864315095.82;temperature;1;-0.3412176811546067;1.468304152884957;4.440892098500626e-15;False;"{""energy_matched"": 65, ""sonic_return"": 119}";1;14;False
+6.0;31622776601683.793;temperature;1;-0.4943904958827645;1.8539711228481797;4.440892098500626e-16;False;"{""energy_matched"": 83, ""sonic_return"": 102}";1;15;False
+6.0;39810717055349.695;temperature;1;-0.615208616805957;2.119887696948568;7.549516567451064e-15;False;"{""energy_matched"": 95, ""sonic_return"": 91}";1;15;False
+6.0;50118723362727.15;temperature;1;-0.7084706083302695;2.3130497214851315;5.995204332975845e-15;False;"{""energy_matched"": 103, ""sonic_return"": 84}";1;16;False
+6.0;63095734448019.43;temperature;1;-0.779244858114045;2.457421823837399;8.215650382226158e-15;False;"{""energy_matched"": 110, ""sonic_return"": 76}";1;16;False
+6.0;79432823472428.22;temperature;1;-0.8323892113417036;2.5672357510678223;8.881784197001252e-16;False;"{""energy_matched"": 118, ""sonic_return"": 69}";1;16;False
+6.0;100000000000000.0;temperature;1;-0.8725021544231305;2.6517356906961402;7.549516567451064e-15;False;"{""energy_matched"": 126, ""sonic_return"": 62}";1;17;False
+6.0;125892541179416.62;temperature;1;-0.9034004928753624;2.717279805500452;2.6645352591003757e-15;False;"{""energy_matched"": 136, ""sonic_return"": 57}";1;17;False
+6.0;158489319246111.1;temperature;1;-0.9270586236703104;2.7687147204289686;2.6645352591003757e-15;False;"{""energy_matched"": 145, ""sonic_return"": 58}";1;17;False
+6.0;199526231496888.28;temperature;1;-0.9442764950890783;2.811957326776017;3.3306690738754696e-15;False;"{""energy_matched"": 145, ""sonic_return"": 55}";1;18;False
+6.0;251188643150958.22;temperature;1;-0.9565329141079271;2.8488762722149366;1.7763568394002505e-15;False;"{""energy_matched"": 151, ""sonic_return"": 51}";1;18;False
+6.0;316227766016837.94;temperature;1;-0.9655851311529201;2.8802912518505144;1.709743457922741e-14;False;"{""energy_matched"": 148, ""sonic_return"": 51}";1;18;False
+6.0;398107170553496.94;temperature;1;-0.9725050195378234;2.906954952620908;8.43769498715119e-15;False;"{""energy_matched"": 148, ""sonic_return"": 49}";1;17;False
+6.0;501187233627271.44;temperature;1;-0.9781731507672191;2.929541803389855;9.992007221626409e-15;False;"{""energy_matched"": 150, ""sonic_return"": 53}";1;19;False
+6.0;630957344480194.2;temperature;1;-0.9825956837679043;2.94864635244178;2.6645352591003757e-15;False;"{""energy_matched"": 151, ""sonic_return"": 50}";1;19;False
+6.0;794328234724282.1;temperature;1;-0.9862948203548217;2.9647867036439135;1.354472090042691e-14;False;"{""energy_matched"": 160, ""sonic_return"": 49}";1;19;False
+6.0;1000000000000000.0;temperature;1;-0.9887248627942867;2.9784105125040004;9.103828801926284e-15;False;"{""energy_matched"": 161, ""sonic_return"": 43}";1;19;False
+7.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+7.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+7.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
+7.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
+7.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
+7.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+7.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+7.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+7.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+7.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+7.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+7.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+7.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+7.0;19952623149688.83;temperature;1;-0.16028565949617157;0.8676013246154439;1.7763568394002505e-15;False;"{""energy_matched"": 43, ""sonic_return"": 138}";1;14;False
+7.0;25118864315095.82;temperature;1;-0.3449468651737314;1.4685719906838397;1.7763568394002505e-15;False;"{""energy_matched"": 63, ""sonic_return"": 120}";1;14;False
+7.0;31622776601683.793;temperature;1;-0.49608248188628146;1.8407911604850558;1.5543122344752192e-15;False;"{""energy_matched"": 83, ""sonic_return"": 103}";1;15;False
+7.0;39810717055349.695;temperature;1;-0.6159595882334561;2.098661659952963;3.552713678800501e-15;False;"{""energy_matched"": 99, ""sonic_return"": 89}";1;15;False
+7.0;50118723362727.15;temperature;1;-0.708791535682629;2.2864455742147736;1.5543122344752192e-15;False;"{""energy_matched"": 102, ""sonic_return"": 85}";1;16;False
+7.0;63095734448019.43;temperature;1;-0.7793809667265558;2.4270082329460343;1.1102230246251565e-15;False;"{""energy_matched"": 112, ""sonic_return"": 77}";1;16;False
+7.0;79432823472428.22;temperature;1;-0.8324505802313946;2.5340291670846273;1.3322676295501878e-15;False;"{""energy_matched"": 116, ""sonic_return"": 70}";1;16;False
+7.0;100000000000000.0;temperature;1;-0.8725347899149205;2.6164354156957224;7.771561172376096e-16;False;"{""energy_matched"": 132, ""sonic_return"": 60}";1;17;False
+7.0;125892541179416.62;temperature;1;-0.9034376352010778;2.6817624366812147;9.325873406851315e-15;False;"{""energy_matched"": 143, ""sonic_return"": 59}";1;17;False
+7.0;158489319246111.1;temperature;1;-0.9271000698856839;2.7376544413527863;6.661338147750939e-15;False;"{""energy_matched"": 144, ""sonic_return"": 55}";1;17;False
+7.0;199526231496888.28;temperature;1;-0.9442340992626167;2.785529078778099;2.6645352591003757e-15;False;"{""energy_matched"": 144, ""sonic_return"": 58}";1;18;False
+7.0;251188643150958.22;temperature;1;-0.9565739966018527;2.8263725106771163;4.884981308350689e-15;False;"{""energy_matched"": 149, ""sonic_return"": 50}";1;18;False
+7.0;316227766016837.94;temperature;1;-0.9657135258285922;2.8611134213324414;5.329070518200751e-15;False;"{""energy_matched"": 148, ""sonic_return"": 53}";1;18;False
+7.0;398107170553496.94;temperature;1;-0.9727761108570043;2.890597413965468;1.9984014443252818e-15;False;"{""energy_matched"": 152, ""sonic_return"": 49}";1;17;False
+7.0;501187233627271.44;temperature;1;-0.9782233747823369;2.9155778501616383;6.439293542825908e-15;False;"{""energy_matched"": 153, ""sonic_return"": 52}";1;19;False
+7.0;630957344480194.2;temperature;1;-0.9826711797340392;2.9367158848327097;1.7763568394002505e-15;False;"{""energy_matched"": 154, ""sonic_return"": 48}";1;19;False
+7.0;794328234724282.1;temperature;1;-0.9862477022379363;2.954585555135428;3.1086244689504383e-15;False;"{""energy_matched"": 161, ""sonic_return"": 49}";1;19;False
+7.0;1000000000000000.0;temperature;1;-0.988744201616582;2.969681412064813;2.220446049250313e-15;False;"{""energy_matched"": 157, ""sonic_return"": 48}";1;19;False
+8.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+8.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+8.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
+8.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
+8.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
+8.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+8.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+8.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+8.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+8.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+8.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+8.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+8.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+8.0;19952623149688.83;temperature;1;-0.16790678331356212;0.8948476245589327;1.7763568394002505e-15;False;"{""energy_matched"": 47, ""sonic_return"": 137}";1;14;False
+8.0;25118864315095.82;temperature;1;-0.34860844061011564;1.467846587830444;5.329070518200751e-15;False;"{""energy_matched"": 62, ""sonic_return"": 121}";1;14;False
+8.0;31622776601683.793;temperature;1;-0.49775064167101135;1.8269314640341334;6.217248937900877e-15;False;"{""energy_matched"": 83, ""sonic_return"": 104}";1;15;False
+8.0;39810717055349.695;temperature;1;-0.6166920189721575;2.0768652671698793;4.440892098500626e-16;False;"{""energy_matched"": 94, ""sonic_return"": 91}";1;15;False
+8.0;50118723362727.15;temperature;1;-0.7091075917414864;2.259318399611561;5.995204332975845e-15;False;"{""energy_matched"": 103, ""sonic_return"": 82}";1;16;False
+8.0;63095734448019.43;temperature;1;-0.7795226988386429;2.396094615498533;1.4432899320127035e-15;False;"{""energy_matched"": 113, ""sonic_return"": 75}";1;16;False
+8.0;79432823472428.22;temperature;1;-0.8325218772891291;2.5003345462320223;2.6645352591003757e-15;False;"{""energy_matched"": 121, ""sonic_return"": 69}";1;16;False
+8.0;100000000000000.0;temperature;1;-0.8725714965909174;2.582158042989459;7.993605777301127e-15;False;"{""energy_matched"": 136, ""sonic_return"": 65}";1;17;False
+8.0;125892541179416.62;temperature;1;-0.9034329077801544;2.652278822991284;4.440892098500626e-16;False;"{""energy_matched"": 143, ""sonic_return"": 57}";1;17;False
+8.0;158489319246111.1;temperature;1;-0.9270691794645862;2.7126051827266533;5.773159728050814e-15;False;"{""energy_matched"": 146, ""sonic_return"": 54}";1;17;False
+8.0;199526231496888.28;temperature;1;-0.9442649662099714;2.764239655988068;4.884981308350689e-15;False;"{""energy_matched"": 145, ""sonic_return"": 56}";1;18;False
+8.0;251188643150958.22;temperature;1;-0.9564662607768158;2.808268501406062;1.7763568394002505e-15;False;"{""energy_matched"": 149, ""sonic_return"": 52}";1;18;False
+8.0;316227766016837.94;temperature;1;-0.9656569374767083;2.8457078810635394;7.327471962526033e-15;False;"{""energy_matched"": 151, ""sonic_return"": 49}";1;18;False
+8.0;398107170553496.94;temperature;1;-0.9727483947748325;2.877478786549158;8.881784197001252e-16;False;"{""energy_matched"": 153, ""sonic_return"": 48}";1;17;False
+8.0;501187233627271.44;temperature;1;-0.9782718378919593;2.9043986874920935;5.329070518200751e-15;False;"{""energy_matched"": 149, ""sonic_return"": 52}";1;19;False
+8.0;630957344480194.2;temperature;1;-0.9827422722372579;2.9271828047700805;8.215650382226158e-15;False;"{""energy_matched"": 152, ""sonic_return"": 49}";1;19;False
+8.0;794328234724282.1;temperature;1;-0.9861976891378239;2.9464506190644633;6.661338147750939e-15;False;"{""energy_matched"": 170, ""sonic_return"": 47}";1;19;False
+8.0;1000000000000000.0;temperature;1;-0.9887634487652184;2.9627348618973937;2.220446049250313e-15;False;"{""energy_matched"": 164, ""sonic_return"": 47}";1;19;False
+9.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+9.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+9.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
+9.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
+9.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
+9.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+9.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+9.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+9.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+9.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+9.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+9.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+9.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+9.0;19952623149688.83;temperature;1;-0.17528943196096047;0.9197383479730517;3.774758283725532e-15;False;"{""energy_matched"": 47, ""sonic_return"": 137}";1;14;False
+9.0;25118864315095.82;temperature;1;-0.3521939072357746;1.4661254000210144;6.217248937900877e-15;False;"{""energy_matched"": 67, ""sonic_return"": 117}";1;14;False
+9.0;31622776601683.793;temperature;1;-0.499407383866171;1.8123781955758105;7.105427357601002e-15;False;"{""energy_matched"": 78, ""sonic_return"": 105}";1;15;False
+9.0;39810717055349.695;temperature;1;-0.617423995023993;2.054482755024817;1.5543122344752192e-15;False;"{""energy_matched"": 97, ""sonic_return"": 89}";1;15;False
+9.0;50118723362727.15;temperature;1;-0.7094279977078128;2.231652039474043;1.0880185641326534e-14;False;"{""energy_matched"": 106, ""sonic_return"": 81}";1;16;False
+9.0;63095734448019.43;temperature;1;-0.7796525364276361;2.36466474407374;1.7763568394002505e-15;False;"{""energy_matched"": 115, ""sonic_return"": 72}";1;16;False
+9.0;79432823472428.22;temperature;1;-0.8325717847242461;2.466678956354757;1.5543122344752192e-15;False;"{""energy_matched"": 125, ""sonic_return"": 67}";1;16;False
+9.0;100000000000000.0;temperature;1;-0.8725849063227274;2.5527887807049177;4.218847493575595e-15;False;"{""energy_matched"": 130, ""sonic_return"": 66}";1;17;False
+9.0;125892541179416.62;temperature;1;-0.9034297517387214;2.627329601079964;5.995204332975845e-15;False;"{""energy_matched"": 142, ""sonic_return"": 57}";1;17;False
+9.0;158489319246111.1;temperature;1;-0.9271123036400676;2.6914150114767743;3.3306690738754696e-15;False;"{""energy_matched"": 135, ""sonic_return"": 61}";1;17;False
+9.0;199526231496888.28;temperature;1;-0.9442223953618093;2.7462388776896445;3.3306690738754696e-15;False;"{""energy_matched"": 142, ""sonic_return"": 57}";1;18;False
+9.0;251188643150958.22;temperature;1;-0.956510752491506;2.792970593192973;9.769962616701378e-15;False;"{""energy_matched"": 149, ""sonic_return"": 50}";1;18;False
+9.0;316227766016837.94;temperature;1;-0.9655960289351505;2.8326998654059357;8.43769498715119e-15;False;"{""energy_matched"": 153, ""sonic_return"": 49}";1;18;False
+9.0;398107170553496.94;temperature;1;-0.9727190123564775;2.8664112319320436;1.6653345369377348e-15;False;"{""energy_matched"": 159, ""sonic_return"": 50}";1;17;False
+9.0;501187233627271.44;temperature;1;-0.9783180124626167;2.8949762623459625;1.0436096431476471e-14;False;"{""energy_matched"": 155, ""sonic_return"": 52}";1;19;False
+9.0;630957344480194.2;temperature;1;-0.9824619599426885;2.9191559013584505;9.325873406851315e-15;False;"{""energy_matched"": 152, ""sonic_return"": 50}";1;19;False
+9.0;794328234724282.1;temperature;1;-0.9861455470897021;2.939608166380574;1.199040866595169e-14;False;"{""energy_matched"": 168, ""sonic_return"": 49}";1;19;False
+9.0;1000000000000000.0;temperature;1;-0.9887825987993016;2.9568982522116083;1.9984014443252818e-15;False;"{""energy_matched"": 156, ""sonic_return"": 47}";1;19;False
+10.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+10.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
+10.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
+10.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
+10.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
+10.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+10.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+10.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+10.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+10.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+10.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+10.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+10.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
+10.0;19952623149688.83;temperature;1;-0.18244759821510725;0.9423802382623363;7.771561172376096e-16;False;"{""energy_matched"": 47, ""sonic_return"": 134}";1;14;False
+10.0;25118864315095.82;temperature;1;-0.3557127323323044;1.46340422879309;6.8833827526759706e-15;False;"{""energy_matched"": 67, ""sonic_return"": 116}";1;14;False
+10.0;31622776601683.793;temperature;1;-0.5010425035203181;1.7971164909136546;8.881784197001252e-16;False;"{""energy_matched"": 81, ""sonic_return"": 102}";1;15;False
+10.0;39810717055349.695;temperature;1;-0.6181531365444282;2.0314973971679264;7.327471962526033e-15;False;"{""energy_matched"": 91, ""sonic_return"": 94}";1;15;False
+10.0;50118723362727.15;temperature;1;-0.7097429114585501;2.2034293838271233;3.774758283725532e-15;False;"{""energy_matched"": 103, ""sonic_return"": 85}";1;16;False
+10.0;63095734448019.43;temperature;1;-0.7797878438108254;2.332701442437275;4.218847493575595e-15;False;"{""energy_matched"": 110, ""sonic_return"": 75}";1;16;False
+10.0;79432823472428.22;temperature;1;-0.8326315919163274;2.4365628629570284;3.3306690738754696e-16;False;"{""energy_matched"": 129, ""sonic_return"": 68}";1;16;False
+10.0;100000000000000.0;temperature;1;-0.87260234667936;2.527174152177049;7.549516567451064e-15;False;"{""energy_matched"": 138, ""sonic_return"": 64}";1;17;False
+10.0;125892541179416.62;temperature;1;-0.9034727985992845;2.6055665287643572;1.1324274851176597e-14;False;"{""energy_matched"": 140, ""sonic_return"": 59}";1;17;False
+10.0;158489319246111.1;temperature;1;-0.9270834868854205;2.6729317737515252;3.774758283725532e-15;False;"{""energy_matched"": 139, ""sonic_return"": 59}";1;17;False
+10.0;199526231496888.28;temperature;1;-0.9442546022532234;2.7305405332097745;4.440892098500626e-15;False;"{""energy_matched"": 146, ""sonic_return"": 56}";1;18;False
+10.0;251188643150958.22;temperature;1;-0.9565536799032748;2.7796334796000597;1.9984014443252818e-15;False;"{""energy_matched"": 155, ""sonic_return"": 50}";1;18;False
+10.0;316227766016837.94;temperature;1;-0.9655323091076754;2.8213637624933607;3.3306690738754696e-15;False;"{""energy_matched"": 153, ""sonic_return"": 49}";1;18;False
+10.0;398107170553496.94;temperature;1;-0.9726884994492044;2.8567708897702757;3.552713678800501e-15;False;"{""energy_matched"": 152, ""sonic_return"": 49}";1;17;False
+10.0;501187233627271.44;temperature;1;-0.9783606201094543;2.8867733718639688;7.549516567451064e-15;False;"{""energy_matched"": 151, ""sonic_return"": 51}";1;19;False
+10.0;630957344480194.2;temperature;1;-0.9825425061469615;2.9121719543081865;6.661338147750939e-16;False;"{""energy_matched"": 155, ""sonic_return"": 48}";1;19;False
+10.0;794328234724282.1;temperature;1;-0.9860917175346067;2.933658296752541;6.945000130542667e-11;False;"{""energy_matched"": 160, ""sonic_return"": 48}";1;19;False
+10.0;1000000000000000.0;temperature;1;-0.9888016458777488;2.9518260031644985;4.6629367034256575e-15;False;"{""energy_matched"": 159, ""sonic_return"": 46}";1;19;False
