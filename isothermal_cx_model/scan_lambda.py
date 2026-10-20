@@ -4,22 +4,27 @@ from collections import Counter
 from pathlib import Path
 import argparse
 import csv
+import json
 
 import numpy as np
 
 from simple_cx_model.config import load_cx_config
 from .scan_neutral import scan_neutrals
+from .geometry import (add_geometry_arguments, geometry_from_args,
+                       quadratic_area_legacy)
 
 
 ROOT_FIELDS = (
     "lambda_sh", "n0_cm3", "cx_mode", "branch",
     "T_eV", "theta", "a_cm", "alpha", "D", "b",
     "R_E", "R_E_check", "delta_alpha",
+    "R_M", "R_M_check", "root_kind", "geometry",
 )
 
 GRID_FIELDS = (
     "lambda_sh", "n0_cm3", "cx_mode", "n_roots",
-    "min_R_E_monotone", "min_R_E_with_maximum",
+    "min_R_M", "max_R_M", "min_abs_R_M",
+    "has_unresolved_points", "statuses",
 )
 
 
@@ -46,6 +51,7 @@ def scan_lambda_neutral(
     cx_mode="constant",
     n_points=1600,
     b_points=100,
+    geometry=None,
 ):
     """Для каждой lambda запускать существующий скан по n0.
 
@@ -55,6 +61,7 @@ def scan_lambda_neutral(
 
     Исходный словарь parameters не изменяется.
     """
+    geometry = quadratic_area_legacy() if geometry is None else geometry
     lambdas = positive_grid(lambdas, "lambda_sh")
     densities = positive_grid(densities, "n0")
 
@@ -81,6 +88,7 @@ def scan_lambda_neutral(
             n_points=n_points,
             b_points=b_points,
             cx_mode=cx_mode,
+            geometry=geometry,
         )
 
         roots.extend(
@@ -96,8 +104,11 @@ def scan_lambda_neutral(
                 "n0_cm3": row["n0_cm3"],
                 "cx_mode": cx_mode,
                 "n_roots": counts[row["n0_cm3"]],
-                "min_R_E_monotone": row["monotone"],
-                "min_R_E_with_maximum": row["with_maximum"],
+                "min_R_M": row["min_R_M"],
+                "max_R_M": row["max_R_M"],
+                "min_abs_R_M": row["min_abs_R_M"],
+                "has_unresolved_points": row["has_unresolved_points"],
+                "statuses": json.dumps(row["statuses"], sort_keys=True),
             })
 
     return roots, grid
@@ -201,11 +212,16 @@ def main():
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("lambda_scan_results"),
+        default=Path("general_geometry_results"),
     )
     parser.add_argument("--no-plot", action="store_true")
 
+    add_geometry_arguments(parser)
     args = parser.parse_args()
+    try:
+        geometry = geometry_from_args(args)
+    except (ValueError, OSError) as exc:
+        parser.error(str(exc))
 
     if (
         args.lambda_count < 1
@@ -253,9 +269,12 @@ def main():
         cx_mode=args.cx_mode,
         n_points=args.points,
         b_points=args.b_points,
+        geometry=geometry,
     )
 
     args.output.mkdir(parents=True, exist_ok=True)
+    (args.output / "geometry.json").write_text(
+        json.dumps(geometry.to_dict(), indent=2), encoding="utf-8")
 
     save_csv(
         args.output / f"roots_{args.cx_mode}.csv",

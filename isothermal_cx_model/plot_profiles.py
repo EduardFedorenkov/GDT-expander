@@ -8,7 +8,8 @@ import numpy as np
 
 from simple_cx_model.config import load_cx_config
 from .scan_neutral import find_density_solutions
-from .solver import solve_mu
+from .solver_general import solve_at_theta
+from .geometry import add_geometry_arguments, geometry_from_args
 from .profiles import compute_profiles
 
 
@@ -112,7 +113,7 @@ def main():
         default="constant",
         help="constant: k_cx из JSON; temperature: k_cx(T, u=0).",
     )
-    parser.add_argument("--K", type=float, default=500.0)
+    add_geometry_arguments(parser)
     parser.add_argument("--points", type=int, default=1600)
     parser.add_argument("--b-points", type=int, default=100)
     parser.add_argument(
@@ -125,8 +126,10 @@ def main():
 
     if args.points < 100 or args.b_points < 20:
         parser.error("Нужно --points >= 100 и --b-points >= 20.")
-    if not np.isfinite(args.K) or args.K <= 0:
-        parser.error("K должен быть положительным и конечным.")
+    try:
+        geometry = geometry_from_args(args)
+    except (ValueError, OSError) as exc:
+        parser.error(str(exc))
 
     parameters = load_cx_config(args.config)
     density = (
@@ -141,6 +144,7 @@ def main():
         n_points=args.points,
         b_points=args.b_points,
         cx_mode=args.cx_mode,
+        geometry=geometry,
     )
 
     if not roots:
@@ -150,29 +154,18 @@ def main():
     profiles = []
 
     for root in roots:
-        candidates = solve_mu(
-            root["theta"],
-            parameters["beta"],
-            root["D"],
-            n_points=args.points,
+        state = solve_at_theta(
+            root["theta"], parameters["beta"], root["D"],
+            parameters["lambda_sh"], geometry, n_points=args.points,
+            rtol=1e-10, atol=1e-12,
         )
-
-        state = next(
-            (
-                s for s in candidates
-                if s["branch"] == root["branch"]
-                or s["branch"] == "tangent"
-            ),
-            None,
-        )
-
-        if state is None:
-            raise RuntimeError(
-                "Не удалось восстановить ветвь решения."
-            )
+        if state["status"] != "energy_matched":
+            raise RuntimeError("Не удалось восстановить решение.")
+        if abs(state["R_M"]) > 1e-6:
+            raise RuntimeError("Не выполнено входное условие импульса.")
 
         profile = compute_profiles(
-            state, parameters, K=args.K
+            state, parameters, geometry=geometry
         )
 
         if abs(profile["R_E"]) > 1e-5:
@@ -185,7 +178,7 @@ def main():
         print(
             f"T={profile['T_eV']:.6g} eV, "
             f"a={profile['a_cm']:.6g} cm, "
-            f"R_E={profile['R_E']:.2e}, "
+            f"R_E={profile['R_E']:.2e}, R_M={profile['R_M']:.2e}, "
             f"q_e(L)={profile['q_e_erg_cm2_s'][-1]:.6g} "
             "erg/(cm^2*s)"
         )
@@ -193,14 +186,14 @@ def main():
     print(
         f"u_*={parameters['U_star_cm_per_s']:.6g} cm/s, "
         f"n_*={parameters['n_star_cm3']:.6g} cm^-3, "
-        f"K={args.K:g}"
+        f"geometry={geometry.name}"
     )
 
     figure, _ = plot_profiles(
         profiles,
         title=(
             f"n0={density:.3e} cm^-3, "
-            f"K={args.K:g}, CX={args.cx_mode}"
+            f"{geometry.name}, CX={args.cx_mode}"
         ),
     )
 

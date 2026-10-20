@@ -1,160 +1,78 @@
+"""Scan the momentum residual versus trial temperature for general B(g)."""
+
 from pathlib import Path
 import argparse
-
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from simple_cx_model.config import load_cx_config
-from isothermal_cx_model.solver import solve_mu, compute_omega
 from .cx import make_D
+from .geometry import add_geometry_arguments, geometry_from_args
+from .solver_general import solve_at_theta
 
 
-def scan_theta(theta_values, beta, D, lambda_sh, n_points=1600):
-    """Вернуть таблицу theta, b, D, alpha, branch, R_E.
-
-    D — число либо функция D(theta).
-    Температуры без решений импульса не создают строк.
-    Корни энергетического условия пока не ищем.
-    """
+def scan_theta(theta_values, beta, D, lambda_sh, n_points=1600, geometry=None):
     theta_values = np.asarray(theta_values, dtype=float)
-
-    if (
-        theta_values.ndim != 1
-        or theta_values.size == 0
-        or not np.isfinite(theta_values).all()
-        or np.any(theta_values <= 0)
-        or np.any(np.diff(theta_values) <= 0)
-    ):
-        raise ValueError("Температуры должны быть положительными и возрастать.")
-
-    if not all(np.isfinite(v) and v > 0 for v in (beta, lambda_sh)):
-        raise ValueError("beta и lambda_sh должны быть положительными.")
-
-    if np.any(8 * beta * theta_values >= 1):
-        raise ValueError("Для каждой температуры требуется 8*beta*theta < 1.")
-
+    if (theta_values.ndim != 1 or not theta_values.size
+            or not np.isfinite(theta_values).all()
+            or np.any(theta_values <= 0) or np.any(np.diff(theta_values) <= 0)):
+        raise ValueError("Temperatures must be positive and strictly increasing.")
     records = []
     for index, theta in enumerate(theta_values):
-        solutions = solve_mu(theta, beta, D, n_points=n_points)
-
-        for solution in solutions:
-            _, residual = compute_omega(solution, beta, lambda_sh)
-            records.append({
-                "index": index,
-                "theta": float(theta),
-                "b": solution["b"],
-                "D": solution["D"],
-                "alpha": solution["alpha"],
-                "branch": solution["branch"],
-                "R_E": residual,
-            })
-
+        state = solve_at_theta(theta, beta, D, lambda_sh, geometry, n_points)
+        records.append({
+            "index": index,
+            **{key: state[key] for key in (
+                "theta", "b", "D", "alpha", "R_M", "R_E", "status")},
+            "branch": state.get("branch", ""),
+        })
     return records
 
 
-def plot_scan(theta_values, records, lambda_sh):
-    """Построить ветви, не соединяя участки отсутствия решений."""
-    theta_values = np.asarray(theta_values, dtype=float)
+def plot_scan(theta_values, records, lambda_sh, title="General magnetic geometry"):
+    residual = np.full(len(theta_values), np.nan)
+    for row in records:
+        residual[row["index"]] = row["R_M"]
     figure, axis = plt.subplots(figsize=(8, 4.8))
-
-    branches = (
-        ("monotone", "tab:blue", "Монотонная ветвь"),
-        ("with_maximum", "tab:orange", "Ветвь с максимумом"),
-        ("tangent", "tab:purple", "Кандидат на касание"),
-    )
-
-    for branch, color, label in branches:
-        residual = np.full(theta_values.shape, np.nan)
-
-        for row in records:
-            if row["branch"] == branch:
-                residual[row["index"]] = row["R_E"]
-
-        if np.isfinite(residual).any():
-            axis.plot(
-                theta_values, residual,
-                color=color, label=label,
-                marker="o" if branch == "tangent" else None,
-                linestyle="none" if branch == "tangent" else "-",
-            )
-
+    axis.plot(theta_values, residual, label=r"$R_M=\mu(\alpha)-1$")
     axis.axhline(0, color="black", linestyle="--", linewidth=1)
-
-    energy_limit = 1 / lambda_sh
-    if energy_limit < theta_values[-1]:
-        axis.axvspan(
-            0, energy_limit,
-            color="tab:green", alpha=0.08,
-            label=r"Необходимое условие энергии: $\theta<1/\lambda_{\rm sh}$",
-        )
-        axis.axvline(energy_limit, color="tab:green", linestyle=":")
-
-    axis.set(
-        xlabel=r"$\theta=T/T_*$",
-        ylabel=r"$R_E=\omega(0)-1$",
-        title=r"Энергетическая невязка: $A(z)\propto z^2$",
-        xlim=(0, theta_values[-1]),
-    )
+    axis.set(xlabel=r"$\theta=T/T_*$", ylabel=r"$R_M$",
+             title=title)
     axis.grid(alpha=0.25)
-    axis.legend(fontsize=9)
+    axis.legend()
     figure.tight_layout()
-
     return figure, axis
 
 
-def main(config_path=None, cx_mode="constant"):
-    if config_path is None:
-        config_path = (
-            Path(__file__).resolve().parents[1]
-            / "simple_cx_model" / "cx_config.json"
-        )
-
-    parameters = load_cx_config(config_path)
-
-    # Флаг theta_exists этого парсера относится к A=const.
-    # Для нашей геометрии его НЕ используем.
-    beta = parameters["beta"]
-    D = make_D(parameters, mode=cx_mode)
-    lambda_sh = parameters["lambda_sh"]
-
-    theta_values = np.linspace(1e-6, 1 - 1e-6, 250) / (8 * beta)
-    records = scan_theta(theta_values, beta, D, lambda_sh)
-
-    print(
-        f"beta={beta:.8g}, lambda_sh={lambda_sh:.8g}; "
-        f"CX={cx_mode}"
-    )
-
-    for branch in ("monotone", "with_maximum", "tangent"):
-        rows = [row for row in records if row["branch"] == branch]
-        if rows:
-            temperatures = [row["theta"] for row in rows]
-            minimum = min(row["R_E"] for row in rows)
-            print(
-                f"{branch}: theta=[{min(temperatures):.6g}, "
-                f"{max(temperatures):.6g}], min(R_E)={minimum:.6g}"
-            )
-
-    if not records:
-        print("На заданной сетке решений импульса нет.")
-
-    plot_scan(theta_values, records, lambda_sh)
-    plt.show()
-
-    return records
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("config_path", nargs="?", type=Path, default=(
+        Path(__file__).resolve().parents[1] / "simple_cx_model/cx_config.json"))
+    parser.add_argument("--cx-mode", choices=("constant", "temperature"),
+                        default="constant")
+    parser.add_argument("--count", type=int, default=250)
+    parser.add_argument("--no-plot", action="store_true")
+    add_geometry_arguments(parser)
+    args = parser.parse_args()
+    try:
+        geometry = geometry_from_args(args)
+        parameters = load_cx_config(args.config_path)
+        if args.count < 2:
+            parser.error("--count must be >=2.")
+        beta, lam = parameters["beta"], parameters["lambda_sh"]
+        D = make_D(parameters, mode=args.cx_mode)
+        theta_hi = min(1/(8*beta), 1/lam)*(1-1e-8)
+        theta_values = np.geomspace(theta_hi*1e-12, theta_hi, args.count)
+        records = scan_theta(theta_values, beta, D, lam, geometry=geometry)
+    except (ValueError, OSError) as exc:
+        parser.error(str(exc))
+    for row in records:
+        print(f"theta={row['theta']:.8g}, status={row['status']}, "
+              f"alpha={row['alpha']:.8g}, R_M={row['R_M']:.3e}")
+    if not args.no_plot:
+        plot_scan(theta_values, records, lam, title=geometry.name)
+        plt.show()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("config_path", nargs="?", type=Path)
-    parser.add_argument(
-        "--cx-mode",
-        choices=("constant", "temperature"),
-        default="constant",
-    )
-    args = parser.parse_args()
-
-    main(
-        config_path=args.config_path,
-        cx_mode=args.cx_mode,
-    )
+    main()

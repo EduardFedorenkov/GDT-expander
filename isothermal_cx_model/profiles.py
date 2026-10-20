@@ -1,25 +1,28 @@
-"""Восстановление профилей: A(z) = A_m*K*(z/L)**2."""
-
-import contextlib
-import io
+"""Восстановление профилей с той же геометрией, что в решателе."""
 
 import numpy as np
 
-# Не выводим демонстрационный пример из текущего solver.py.
-with contextlib.redirect_stdout(io.StringIO()):
-    from .solver import compute_omega
+from .geometry import quadratic_area_legacy
 
 
-def compute_profiles(solution, parameters, K=500.0):
+def compute_profiles(solution, parameters, K=None, geometry=None):
     """Вернуть профили на сетке одного кандидата из solve_mu.
 
     Температуру и границу a здесь не подбираем.
     R_E показывает, выполнено ли входное условие энергии.
     Размерные величины возвращаются в СГС, температура — в eV.
     """
-    K = float(K)
-    if not np.isfinite(K) or K <= 0:
-        raise ValueError("K должен быть положительным и конечным.")
+    stored_geometry = solution.get("geometry")
+    if K is not None and (geometry is not None or stored_geometry is not None):
+        raise ValueError("K нельзя сочетать с явно заданной геометрией.")
+    geometry = (stored_geometry if geometry is None else geometry)
+    if geometry is None:
+        geometry = quadratic_area_legacy(500.0 if K is None else K)
+    if stored_geometry is not None and stored_geometry is not geometry:
+        if (stored_geometry.to_dict().get("type") == "callable"
+                or geometry.to_dict().get("type") == "callable"
+                or stored_geometry.to_dict() != geometry.to_dict()):
+            raise ValueError("Геометрия профилей отличается от геометрии решения.")
 
     beta = parameters["beta"]
     theta = float(solution["theta"])
@@ -27,9 +30,19 @@ def compute_profiles(solution, parameters, K=500.0):
     alpha = float(solution["alpha"])
     xi = np.asarray(solution["xi"], dtype=float)
 
-    omega, residual = compute_omega(
-        solution, beta, parameters["lambda_sh"]
-    )
+    if "omega" in solution:
+        omega = np.asarray(solution["omega"], dtype=float)
+        residual = float(omega[0] - 1)
+    else:
+        # Backward compatibility for results from the untouched old solver.
+        import contextlib
+        import io
+        with contextlib.redirect_stdout(io.StringIO()):
+            from .solver import compute_omega
+        omega, residual = compute_omega(
+            solution, beta, parameters["lambda_sh"])
+    if omega.shape != xi.shape or not np.isfinite(omega).all():
+        raise ValueError("Некорректный профиль энергии.")
 
     mach = np.asarray(solution["u_over_cs"], dtype=float)
     if (
@@ -45,7 +58,7 @@ def compute_profiles(solution, parameters, K=500.0):
 
     # A0_cm2 здесь означает площадь в пробке A_m,
     # а не значение квадратичной аппроксимации при z=0.
-    area = parameters["A0_cm2"] * K * z_over_L**2
+    area = parameters["A0_cm2"] * geometry.A_ratio(z_over_L)
 
     # c_s/u_* = b/2; НЕ смешиваем u/c_s и u/u_*.
     velocity_ratio = (b / 2) * mach
@@ -96,4 +109,6 @@ def compute_profiles(solution, parameters, K=500.0):
         "a_cm": alpha * parameters["L_cm"],
         "branch": solution["branch"],
         "R_E": residual,
+        "R_M": float(solution["mu"][0] - 1),
+        "geometry": geometry.to_dict(),
     }

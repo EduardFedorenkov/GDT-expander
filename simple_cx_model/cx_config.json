@@ -1,7 +1,7 @@
 {
-  "J0_per_s": 1e20,
-  "M0_dyn": 3000.0,
-  "W0_erg_per_s": 1.4e10,
+  "J0_per_s": 4.5e21,
+  "M0_dyn": 1.85e5,
+  "W0_erg_per_s": 1.4e13,
 
   "k_cx_cm3_per_s": 1e-8,
   "lambda_sh": 5,

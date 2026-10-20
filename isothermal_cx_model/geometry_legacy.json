@@ -1,0 +1,5 @@
+{
+  "type": "quadratic_area_legacy",
+  "K": 500.0,
+  "g_min": 0.000001
+}
