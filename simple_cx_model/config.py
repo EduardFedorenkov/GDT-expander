@@ -4,28 +4,42 @@ import json
 from math import isfinite
 from pathlib import Path
 
+from .boundary_fluxes import throat_fluxes
 from .constants import EV_TO_ERG, M_D_G
 from .solver import has_theta_solution
 
 
 def load_cx_config(filename):
-    """Load a JSON config and calculate the model's derived parameters."""
+    """Load central-source inputs and derive throat flows and model scales.
+
+    The source approximation is n_m = n_c/2 and T_m = T_c, NOT density
+    scaling with magnetic field. J0, M0, W0 refer to the mirror throat.
+    Matching M_kin(a) at the hydrodynamic inlet is a separate task.
+    """
     config = json.loads(Path(filename).read_text(encoding="utf-8-sig"))
 
     if not isinstance(config, dict):
         raise ValueError("Корневой элемент JSON должен быть объектом.")
 
+    derived_inputs = {"J0_per_s", "M0_dyn", "W0_erg_per_s", "A0_cm2"}
+    supplied = sorted(derived_inputs.intersection(config))
+    if supplied:
+        raise ValueError(
+            "Удалите вычисляемые поля из JSON: " + ", ".join(supplied)
+            + ". Задайте A_m_cm2, n_c_cm3, T_c_eV и chi_E."
+        )
+
     config.setdefault("m_D_g", M_D_G)
 
     fields = (
-        "J0_per_s",
-        "M0_dyn",
-        "W0_erg_per_s",
+        "A_m_cm2",
+        "n_c_cm3",
+        "T_c_eV",
+        "chi_E",
         "k_cx_cm3_per_s",
         "lambda_sh",
         "L_cm",
         "n0_cm3",
-        "A0_cm2",
         "m_D_g",
     )
 
@@ -48,6 +62,21 @@ def load_cx_config(filename):
             )
 
         parameters[name] = value
+
+    # The full source Maxwellian is normalized to n_c; its outgoing half
+    # has physical density n_m = n_c/2. Do not apply B_m/B_c here.
+    parameters.update(
+        A0_cm2=parameters["A_m_cm2"],
+        n_m_cm3=parameters["n_c_cm3"] / 2.0,
+        T_m_eV=parameters["T_c_eV"],
+    )
+    parameters.update(throat_fluxes(
+        parameters["A_m_cm2"],
+        parameters["n_m_cm3"],
+        parameters["T_m_eV"],
+        parameters["chi_E"],
+        m_D_g=parameters["m_D_g"],
+    ))
 
     particle_flux = parameters["J0_per_s"]
     momentum_flux = parameters["M0_dyn"]

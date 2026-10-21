@@ -1,5 +1,6 @@
 """Public API for the simple one-dimensional charge-exchange model."""
 
+from .boundary_fluxes import throat_fluxes
 from .config import load_cx_config
 from .plotting import plot_cx_profiles, plot_solution_region
 from .profiles import cx_profiles
@@ -13,4 +14,5 @@ __all__ = [
     "load_cx_config",
     "plot_cx_profiles",
     "plot_solution_region",
+    "throat_fluxes",
 ]
