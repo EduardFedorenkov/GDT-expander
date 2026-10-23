@@ -1,8 +1,7 @@
 """Collisionless ion momentum plus the approximate electron pressure.
 
-Copy into isothermal_cx_model/kinetic_momentum.py to use in the project.
 Geometry is the existing MagneticGeometry, with coordinate g = z/L.
-No configuration or solver is changed by this module.
+The inlet.py adapter supplies the prescribed chi and T_e=T_c closure.
 """
 
 import numpy as np

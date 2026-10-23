@@ -14,7 +14,7 @@ def load_cx_config(filename):
 
     The source approximation is n_m = n_c/2 and T_m = T_c, NOT density
     scaling with magnetic field. J0, M0, W0 refer to the mirror throat.
-    Matching M_kin(a) at the hydrodynamic inlet is a separate task.
+    chi is the prescribed kinetic potential drop, distinct from chi_E.
     """
     config = json.loads(Path(filename).read_text(encoding="utf-8-sig"))
 
@@ -30,12 +30,14 @@ def load_cx_config(filename):
         )
 
     config.setdefault("m_D_g", M_D_G)
+    config.setdefault("chi", 5.0)
 
     fields = (
         "A_m_cm2",
         "n_c_cm3",
         "T_c_eV",
         "chi_E",
+        "chi",
         "k_cx_cm3_per_s",
         "lambda_sh",
         "L_cm",
@@ -56,9 +58,10 @@ def load_cx_config(filename):
                 f"Параметр {name} должен быть числом."
             ) from error
 
-        if not isfinite(value) or value <= 0:
+        if not isfinite(value) or value < 0 or (value == 0 and name != "chi"):
             raise ValueError(
-                f"Параметр {name} должен быть положительным и конечным."
+                f"Параметр {name}: требуется конечное число "
+                + (">= 0." if name == "chi" else "> 0.")
             )
 
         parameters[name] = value
@@ -125,6 +128,8 @@ def load_cx_config(filename):
             "Некорректные вычисленные масштабы: проверьте единицы."
         )
 
+    # Compatibility flag ONLY for the old constant-area, mu(a)=1 model.
+    # Never use it to reject temperatures in the general/kinetic solver.
     parameters["theta_exists"] = has_theta_solution(
         parameters["beta"], parameters["lambda_sh"]
     )

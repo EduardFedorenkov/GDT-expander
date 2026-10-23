@@ -3,6 +3,7 @@
 import numpy as np
 
 from .geometry import quadratic_area_legacy
+from .inlet import evaluate_inlet, make_inlet_momentum
 
 
 def compute_profiles(solution, parameters, K=None, geometry=None):
@@ -29,6 +30,13 @@ def compute_profiles(solution, parameters, K=None, geometry=None):
     b = float(solution["b"])
     alpha = float(solution["alpha"])
     xi = np.asarray(solution["xi"], dtype=float)
+    inlet_boundary = solution.get("inlet_boundary")
+    if solution.get("inlet_momentum") == "kinetic":
+        inlet_boundary = make_inlet_momentum(parameters, geometry)
+    inlet = evaluate_inlet(alpha, inlet_boundary)
+    if "mu_target" in solution and not np.isclose(
+            inlet["mu_target"], solution["mu_target"], rtol=1e-10, atol=1e-12):
+        raise ValueError("Inlet model/config differs from the stored solution.")
 
     if "omega" in solution:
         omega = np.asarray(solution["omega"], dtype=float)
@@ -109,6 +117,8 @@ def compute_profiles(solution, parameters, K=None, geometry=None):
         "a_cm": alpha * parameters["L_cm"],
         "branch": solution["branch"],
         "R_E": residual,
-        "R_M": float(solution["mu"][0] - 1),
+        "R_M": float(solution["mu"][0] - inlet["mu_target"]),
+        "mu_a": float(solution["mu"][0]),
         "geometry": geometry.to_dict(),
+        **inlet,
     }

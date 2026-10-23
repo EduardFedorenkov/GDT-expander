@@ -11,6 +11,7 @@ from .scan_neutral import find_density_solutions
 from .solver_general import solve_at_theta
 from .geometry import add_geometry_arguments, geometry_from_args
 from .profiles import compute_profiles
+from .inlet import make_inlet_momentum, add_inlet_arguments
 
 
 def plot_profiles(profiles, title=None):
@@ -114,6 +115,7 @@ def main():
         help="constant: k_cx из JSON; temperature: k_cx(T, u=0).",
     )
     add_geometry_arguments(parser)
+    add_inlet_arguments(parser)
     parser.add_argument("--points", type=int, default=1600)
     parser.add_argument("--b-points", type=int, default=100)
     parser.add_argument(
@@ -145,6 +147,7 @@ def main():
         b_points=args.b_points,
         cx_mode=args.cx_mode,
         geometry=geometry,
+        inlet_mode=args.inlet_momentum,
     )
 
     if not roots:
@@ -152,16 +155,18 @@ def main():
         return
 
     profiles = []
+    inlet = make_inlet_momentum(parameters, geometry, mode=args.inlet_momentum)
 
     for root in roots:
         state = solve_at_theta(
             root["theta"], parameters["beta"], root["D"],
             parameters["lambda_sh"], geometry, n_points=args.points,
             rtol=1e-10, atol=1e-12,
+            inlet_momentum=inlet,
         )
         if state["status"] != "energy_matched":
             raise RuntimeError("Не удалось восстановить решение.")
-        if abs(state["R_M"]) > 1e-6:
+        if abs(state["R_M"]) > root["R_M_tolerance"]:
             raise RuntimeError("Не выполнено входное условие импульса.")
 
         profile = compute_profiles(
@@ -179,6 +184,7 @@ def main():
             f"T={profile['T_eV']:.6g} eV, "
             f"a={profile['a_cm']:.6g} cm, "
             f"R_E={profile['R_E']:.2e}, R_M={profile['R_M']:.2e}, "
+            f"mu_a={profile['mu_a']:.6g}, G_a={profile['mu_target']:.6g}, "
             f"q_e(L)={profile['q_e_erg_cm2_s'][-1]:.6g} "
             "erg/(cm^2*s)"
         )

@@ -1,187 +1,187 @@
-﻿lambda_sh;n0_cm3;cx_mode;n_roots;min_R_M;max_R_M;min_abs_R_M;has_unresolved_points;statuses;boundary_refinements;boundary_evaluations;boundary_resolution_limited
-5.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-5.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-5.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
-5.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
-5.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
-5.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-5.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-5.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-5.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-5.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-5.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-5.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-5.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-5.0;19952623149688.83;temperature;1;-0.1442906990911622;0.8055274030416948;4.9960036108132044e-15;False;"{""energy_matched"": 42, ""sonic_return"": 142}";1;14;False
-5.0;25118864315095.82;temperature;1;-0.3374163682076522;1.4670439858769408;4.6629367034256575e-15;False;"{""energy_matched"": 64, ""sonic_return"": 121}";1;14;False
-5.0;31622776601683.793;temperature;1;-0.4926756865559325;1.8664842322318758;3.3306690738754696e-15;False;"{""energy_matched"": 78, ""sonic_return"": 108}";1;15;False
-5.0;39810717055349.695;temperature;1;-0.6144613775743826;2.140558251507936;7.771561172376096e-16;False;"{""energy_matched"": 93, ""sonic_return"": 94}";1;15;False
-5.0;50118723362727.15;temperature;1;-0.7081545817443641;2.3391461196788605;2.6645352591003757e-15;False;"{""energy_matched"": 106, ""sonic_return"": 83}";1;16;False
-5.0;63095734448019.43;temperature;1;-0.779114423333387;2.4873507385826397;3.774758283725532e-15;False;"{""energy_matched"": 113, ""sonic_return"": 75}";1;16;False
-5.0;79432823472428.22;temperature;1;-0.8323379007083825;2.59996964707343;1.3322676295501878e-15;False;"{""energy_matched"": 120, ""sonic_return"": 67}";1;16;False
-5.0;100000000000000.0;temperature;1;-0.8724737701398628;2.6865698004190617;1.7763568394002505e-15;False;"{""energy_matched"": 128, ""sonic_return"": 63}";1;17;False
-5.0;125892541179416.62;temperature;1;-0.9034093319513488;2.7537108487684;1.3988810110276972e-14;False;"{""energy_matched"": 127, ""sonic_return"": 60}";1;17;False
-5.0;158489319246111.1;temperature;1;-0.9270913252352149;2.8060712613213905;6.8833827526759706e-15;False;"{""energy_matched"": 131, ""sonic_return"": 57}";1;17;False
-5.0;199526231496888.28;temperature;1;-0.9442471295747548;2.8470805864090694;9.992007221626409e-16;False;"{""energy_matched"": 134, ""sonic_return"": 56}";1;18;False
-5.0;251188643150958.22;temperature;1;-0.9564898979883559;2.879419866336802;6.661338147750939e-15;False;"{""energy_matched"": 154, ""sonic_return"": 49}";1;18;False
-5.0;316227766016837.94;temperature;1;-0.9656467638977518;2.906410569060703;7.771561172376096e-15;False;"{""energy_matched"": 149, ""sonic_return"": 51}";1;18;False
-5.0;398107170553496.94;temperature;1;-0.9725395066226319;2.929315872383455;6.661338147750939e-15;False;"{""energy_matched"": 146, ""sonic_return"": 50}";1;17;False
-5.0;501187233627271.44;temperature;1;-0.97834783849678;2.9487063480668025;2.886579864025407e-15;False;"{""energy_matched"": 152, ""sonic_return"": 54}";1;19;False
-5.0;630957344480194.2;temperature;1;-0.9825169712474163;2.9650892696293454;9.325873406851315e-15;False;"{""energy_matched"": 153, ""sonic_return"": 48}";1;19;False
-5.0;794328234724282.1;temperature;1;-0.985897098769244;2.978909308959642;1.687538997430238e-14;False;"{""energy_matched"": 161, ""sonic_return"": 49}";1;19;False
-5.0;1000000000000000.0;temperature;1;-0.9887054373810964;2.9905524373625045;1.9317880628477724e-14;False;"{""energy_matched"": 162, ""sonic_return"": 44}";1;19;False
-6.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-6.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-6.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
-6.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
-6.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
-6.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-6.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-6.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-6.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-6.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-6.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-6.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-6.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-6.0;19952623149688.83;temperature;1;-0.15241949060124116;0.8378757532696004;3.6637359812630166e-15;False;"{""energy_matched"": 44, ""sonic_return"": 140}";1;14;False
-6.0;25118864315095.82;temperature;1;-0.3412176811546067;1.468304152884957;4.440892098500626e-15;False;"{""energy_matched"": 65, ""sonic_return"": 119}";1;14;False
-6.0;31622776601683.793;temperature;1;-0.4943904958827645;1.8539711228481797;4.440892098500626e-16;False;"{""energy_matched"": 83, ""sonic_return"": 102}";1;15;False
-6.0;39810717055349.695;temperature;1;-0.615208616805957;2.119887696948568;7.549516567451064e-15;False;"{""energy_matched"": 95, ""sonic_return"": 91}";1;15;False
-6.0;50118723362727.15;temperature;1;-0.7084706083302695;2.3130497214851315;5.995204332975845e-15;False;"{""energy_matched"": 103, ""sonic_return"": 84}";1;16;False
-6.0;63095734448019.43;temperature;1;-0.779244858114045;2.457421823837399;8.215650382226158e-15;False;"{""energy_matched"": 110, ""sonic_return"": 76}";1;16;False
-6.0;79432823472428.22;temperature;1;-0.8323892113417036;2.5672357510678223;8.881784197001252e-16;False;"{""energy_matched"": 118, ""sonic_return"": 69}";1;16;False
-6.0;100000000000000.0;temperature;1;-0.8725021544231305;2.6517356906961402;7.549516567451064e-15;False;"{""energy_matched"": 126, ""sonic_return"": 62}";1;17;False
-6.0;125892541179416.62;temperature;1;-0.9034004928753624;2.717279805500452;2.6645352591003757e-15;False;"{""energy_matched"": 136, ""sonic_return"": 57}";1;17;False
-6.0;158489319246111.1;temperature;1;-0.9270586236703104;2.7687147204289686;2.6645352591003757e-15;False;"{""energy_matched"": 145, ""sonic_return"": 58}";1;17;False
-6.0;199526231496888.28;temperature;1;-0.9442764950890783;2.811957326776017;3.3306690738754696e-15;False;"{""energy_matched"": 145, ""sonic_return"": 55}";1;18;False
-6.0;251188643150958.22;temperature;1;-0.9565329141079271;2.8488762722149366;1.7763568394002505e-15;False;"{""energy_matched"": 151, ""sonic_return"": 51}";1;18;False
-6.0;316227766016837.94;temperature;1;-0.9655851311529201;2.8802912518505144;1.709743457922741e-14;False;"{""energy_matched"": 148, ""sonic_return"": 51}";1;18;False
-6.0;398107170553496.94;temperature;1;-0.9725050195378234;2.906954952620908;8.43769498715119e-15;False;"{""energy_matched"": 148, ""sonic_return"": 49}";1;17;False
-6.0;501187233627271.44;temperature;1;-0.9781731507672191;2.929541803389855;9.992007221626409e-15;False;"{""energy_matched"": 150, ""sonic_return"": 53}";1;19;False
-6.0;630957344480194.2;temperature;1;-0.9825956837679043;2.94864635244178;2.6645352591003757e-15;False;"{""energy_matched"": 151, ""sonic_return"": 50}";1;19;False
-6.0;794328234724282.1;temperature;1;-0.9862948203548217;2.9647867036439135;1.354472090042691e-14;False;"{""energy_matched"": 160, ""sonic_return"": 49}";1;19;False
-6.0;1000000000000000.0;temperature;1;-0.9887248627942867;2.9784105125040004;9.103828801926284e-15;False;"{""energy_matched"": 161, ""sonic_return"": 43}";1;19;False
-7.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-7.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-7.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
-7.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
-7.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
-7.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-7.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-7.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-7.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-7.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-7.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-7.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-7.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-7.0;19952623149688.83;temperature;1;-0.16028565949617157;0.8676013246154439;1.7763568394002505e-15;False;"{""energy_matched"": 43, ""sonic_return"": 138}";1;14;False
-7.0;25118864315095.82;temperature;1;-0.3449468651737314;1.4685719906838397;1.7763568394002505e-15;False;"{""energy_matched"": 63, ""sonic_return"": 120}";1;14;False
-7.0;31622776601683.793;temperature;1;-0.49608248188628146;1.8407911604850558;1.5543122344752192e-15;False;"{""energy_matched"": 83, ""sonic_return"": 103}";1;15;False
-7.0;39810717055349.695;temperature;1;-0.6159595882334561;2.098661659952963;3.552713678800501e-15;False;"{""energy_matched"": 99, ""sonic_return"": 89}";1;15;False
-7.0;50118723362727.15;temperature;1;-0.708791535682629;2.2864455742147736;1.5543122344752192e-15;False;"{""energy_matched"": 102, ""sonic_return"": 85}";1;16;False
-7.0;63095734448019.43;temperature;1;-0.7793809667265558;2.4270082329460343;1.1102230246251565e-15;False;"{""energy_matched"": 112, ""sonic_return"": 77}";1;16;False
-7.0;79432823472428.22;temperature;1;-0.8324505802313946;2.5340291670846273;1.3322676295501878e-15;False;"{""energy_matched"": 116, ""sonic_return"": 70}";1;16;False
-7.0;100000000000000.0;temperature;1;-0.8725347899149205;2.6164354156957224;7.771561172376096e-16;False;"{""energy_matched"": 132, ""sonic_return"": 60}";1;17;False
-7.0;125892541179416.62;temperature;1;-0.9034376352010778;2.6817624366812147;9.325873406851315e-15;False;"{""energy_matched"": 143, ""sonic_return"": 59}";1;17;False
-7.0;158489319246111.1;temperature;1;-0.9271000698856839;2.7376544413527863;6.661338147750939e-15;False;"{""energy_matched"": 144, ""sonic_return"": 55}";1;17;False
-7.0;199526231496888.28;temperature;1;-0.9442340992626167;2.785529078778099;2.6645352591003757e-15;False;"{""energy_matched"": 144, ""sonic_return"": 58}";1;18;False
-7.0;251188643150958.22;temperature;1;-0.9565739966018527;2.8263725106771163;4.884981308350689e-15;False;"{""energy_matched"": 149, ""sonic_return"": 50}";1;18;False
-7.0;316227766016837.94;temperature;1;-0.9657135258285922;2.8611134213324414;5.329070518200751e-15;False;"{""energy_matched"": 148, ""sonic_return"": 53}";1;18;False
-7.0;398107170553496.94;temperature;1;-0.9727761108570043;2.890597413965468;1.9984014443252818e-15;False;"{""energy_matched"": 152, ""sonic_return"": 49}";1;17;False
-7.0;501187233627271.44;temperature;1;-0.9782233747823369;2.9155778501616383;6.439293542825908e-15;False;"{""energy_matched"": 153, ""sonic_return"": 52}";1;19;False
-7.0;630957344480194.2;temperature;1;-0.9826711797340392;2.9367158848327097;1.7763568394002505e-15;False;"{""energy_matched"": 154, ""sonic_return"": 48}";1;19;False
-7.0;794328234724282.1;temperature;1;-0.9862477022379363;2.954585555135428;3.1086244689504383e-15;False;"{""energy_matched"": 161, ""sonic_return"": 49}";1;19;False
-7.0;1000000000000000.0;temperature;1;-0.988744201616582;2.969681412064813;2.220446049250313e-15;False;"{""energy_matched"": 157, ""sonic_return"": 48}";1;19;False
-8.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-8.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-8.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
-8.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
-8.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
-8.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-8.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-8.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-8.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-8.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-8.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-8.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-8.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-8.0;19952623149688.83;temperature;1;-0.16790678331356212;0.8948476245589327;1.7763568394002505e-15;False;"{""energy_matched"": 47, ""sonic_return"": 137}";1;14;False
-8.0;25118864315095.82;temperature;1;-0.34860844061011564;1.467846587830444;5.329070518200751e-15;False;"{""energy_matched"": 62, ""sonic_return"": 121}";1;14;False
-8.0;31622776601683.793;temperature;1;-0.49775064167101135;1.8269314640341334;6.217248937900877e-15;False;"{""energy_matched"": 83, ""sonic_return"": 104}";1;15;False
-8.0;39810717055349.695;temperature;1;-0.6166920189721575;2.0768652671698793;4.440892098500626e-16;False;"{""energy_matched"": 94, ""sonic_return"": 91}";1;15;False
-8.0;50118723362727.15;temperature;1;-0.7091075917414864;2.259318399611561;5.995204332975845e-15;False;"{""energy_matched"": 103, ""sonic_return"": 82}";1;16;False
-8.0;63095734448019.43;temperature;1;-0.7795226988386429;2.396094615498533;1.4432899320127035e-15;False;"{""energy_matched"": 113, ""sonic_return"": 75}";1;16;False
-8.0;79432823472428.22;temperature;1;-0.8325218772891291;2.5003345462320223;2.6645352591003757e-15;False;"{""energy_matched"": 121, ""sonic_return"": 69}";1;16;False
-8.0;100000000000000.0;temperature;1;-0.8725714965909174;2.582158042989459;7.993605777301127e-15;False;"{""energy_matched"": 136, ""sonic_return"": 65}";1;17;False
-8.0;125892541179416.62;temperature;1;-0.9034329077801544;2.652278822991284;4.440892098500626e-16;False;"{""energy_matched"": 143, ""sonic_return"": 57}";1;17;False
-8.0;158489319246111.1;temperature;1;-0.9270691794645862;2.7126051827266533;5.773159728050814e-15;False;"{""energy_matched"": 146, ""sonic_return"": 54}";1;17;False
-8.0;199526231496888.28;temperature;1;-0.9442649662099714;2.764239655988068;4.884981308350689e-15;False;"{""energy_matched"": 145, ""sonic_return"": 56}";1;18;False
-8.0;251188643150958.22;temperature;1;-0.9564662607768158;2.808268501406062;1.7763568394002505e-15;False;"{""energy_matched"": 149, ""sonic_return"": 52}";1;18;False
-8.0;316227766016837.94;temperature;1;-0.9656569374767083;2.8457078810635394;7.327471962526033e-15;False;"{""energy_matched"": 151, ""sonic_return"": 49}";1;18;False
-8.0;398107170553496.94;temperature;1;-0.9727483947748325;2.877478786549158;8.881784197001252e-16;False;"{""energy_matched"": 153, ""sonic_return"": 48}";1;17;False
-8.0;501187233627271.44;temperature;1;-0.9782718378919593;2.9043986874920935;5.329070518200751e-15;False;"{""energy_matched"": 149, ""sonic_return"": 52}";1;19;False
-8.0;630957344480194.2;temperature;1;-0.9827422722372579;2.9271828047700805;8.215650382226158e-15;False;"{""energy_matched"": 152, ""sonic_return"": 49}";1;19;False
-8.0;794328234724282.1;temperature;1;-0.9861976891378239;2.9464506190644633;6.661338147750939e-15;False;"{""energy_matched"": 170, ""sonic_return"": 47}";1;19;False
-8.0;1000000000000000.0;temperature;1;-0.9887634487652184;2.9627348618973937;2.220446049250313e-15;False;"{""energy_matched"": 164, ""sonic_return"": 47}";1;19;False
-9.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-9.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-9.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
-9.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
-9.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
-9.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-9.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-9.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-9.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-9.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-9.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-9.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-9.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-9.0;19952623149688.83;temperature;1;-0.17528943196096047;0.9197383479730517;3.774758283725532e-15;False;"{""energy_matched"": 47, ""sonic_return"": 137}";1;14;False
-9.0;25118864315095.82;temperature;1;-0.3521939072357746;1.4661254000210144;6.217248937900877e-15;False;"{""energy_matched"": 67, ""sonic_return"": 117}";1;14;False
-9.0;31622776601683.793;temperature;1;-0.499407383866171;1.8123781955758105;7.105427357601002e-15;False;"{""energy_matched"": 78, ""sonic_return"": 105}";1;15;False
-9.0;39810717055349.695;temperature;1;-0.617423995023993;2.054482755024817;1.5543122344752192e-15;False;"{""energy_matched"": 97, ""sonic_return"": 89}";1;15;False
-9.0;50118723362727.15;temperature;1;-0.7094279977078128;2.231652039474043;1.0880185641326534e-14;False;"{""energy_matched"": 106, ""sonic_return"": 81}";1;16;False
-9.0;63095734448019.43;temperature;1;-0.7796525364276361;2.36466474407374;1.7763568394002505e-15;False;"{""energy_matched"": 115, ""sonic_return"": 72}";1;16;False
-9.0;79432823472428.22;temperature;1;-0.8325717847242461;2.466678956354757;1.5543122344752192e-15;False;"{""energy_matched"": 125, ""sonic_return"": 67}";1;16;False
-9.0;100000000000000.0;temperature;1;-0.8725849063227274;2.5527887807049177;4.218847493575595e-15;False;"{""energy_matched"": 130, ""sonic_return"": 66}";1;17;False
-9.0;125892541179416.62;temperature;1;-0.9034297517387214;2.627329601079964;5.995204332975845e-15;False;"{""energy_matched"": 142, ""sonic_return"": 57}";1;17;False
-9.0;158489319246111.1;temperature;1;-0.9271123036400676;2.6914150114767743;3.3306690738754696e-15;False;"{""energy_matched"": 135, ""sonic_return"": 61}";1;17;False
-9.0;199526231496888.28;temperature;1;-0.9442223953618093;2.7462388776896445;3.3306690738754696e-15;False;"{""energy_matched"": 142, ""sonic_return"": 57}";1;18;False
-9.0;251188643150958.22;temperature;1;-0.956510752491506;2.792970593192973;9.769962616701378e-15;False;"{""energy_matched"": 149, ""sonic_return"": 50}";1;18;False
-9.0;316227766016837.94;temperature;1;-0.9655960289351505;2.8326998654059357;8.43769498715119e-15;False;"{""energy_matched"": 153, ""sonic_return"": 49}";1;18;False
-9.0;398107170553496.94;temperature;1;-0.9727190123564775;2.8664112319320436;1.6653345369377348e-15;False;"{""energy_matched"": 159, ""sonic_return"": 50}";1;17;False
-9.0;501187233627271.44;temperature;1;-0.9783180124626167;2.8949762623459625;1.0436096431476471e-14;False;"{""energy_matched"": 155, ""sonic_return"": 52}";1;19;False
-9.0;630957344480194.2;temperature;1;-0.9824619599426885;2.9191559013584505;9.325873406851315e-15;False;"{""energy_matched"": 152, ""sonic_return"": 50}";1;19;False
-9.0;794328234724282.1;temperature;1;-0.9861455470897021;2.939608166380574;1.199040866595169e-14;False;"{""energy_matched"": 168, ""sonic_return"": 49}";1;19;False
-9.0;1000000000000000.0;temperature;1;-0.9887825987993016;2.9568982522116083;1.9984014443252818e-15;False;"{""energy_matched"": 156, ""sonic_return"": 47}";1;19;False
-10.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-10.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False
-10.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 102, ""sonic_return"": 46}";0;0;False
-10.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 86, ""sonic_return"": 62}";0;0;False
-10.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 49, ""sonic_return"": 99}";0;0;False
-10.0;3162277660168.3794;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-10.0;3981071705534.969;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-10.0;5011872336272.715;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-10.0;6309573444801.942;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-10.0;7943282347242.821;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-10.0;10000000000000.0;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-10.0;12589254117941.662;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-10.0;15848931924611.11;temperature;0;;;;False;"{""sonic_return"": 148}";0;0;False
-10.0;19952623149688.83;temperature;1;-0.18244759821510725;0.9423802382623363;7.771561172376096e-16;False;"{""energy_matched"": 47, ""sonic_return"": 134}";1;14;False
-10.0;25118864315095.82;temperature;1;-0.3557127323323044;1.46340422879309;6.8833827526759706e-15;False;"{""energy_matched"": 67, ""sonic_return"": 116}";1;14;False
-10.0;31622776601683.793;temperature;1;-0.5010425035203181;1.7971164909136546;8.881784197001252e-16;False;"{""energy_matched"": 81, ""sonic_return"": 102}";1;15;False
-10.0;39810717055349.695;temperature;1;-0.6181531365444282;2.0314973971679264;7.327471962526033e-15;False;"{""energy_matched"": 91, ""sonic_return"": 94}";1;15;False
-10.0;50118723362727.15;temperature;1;-0.7097429114585501;2.2034293838271233;3.774758283725532e-15;False;"{""energy_matched"": 103, ""sonic_return"": 85}";1;16;False
-10.0;63095734448019.43;temperature;1;-0.7797878438108254;2.332701442437275;4.218847493575595e-15;False;"{""energy_matched"": 110, ""sonic_return"": 75}";1;16;False
-10.0;79432823472428.22;temperature;1;-0.8326315919163274;2.4365628629570284;3.3306690738754696e-16;False;"{""energy_matched"": 129, ""sonic_return"": 68}";1;16;False
-10.0;100000000000000.0;temperature;1;-0.87260234667936;2.527174152177049;7.549516567451064e-15;False;"{""energy_matched"": 138, ""sonic_return"": 64}";1;17;False
-10.0;125892541179416.62;temperature;1;-0.9034727985992845;2.6055665287643572;1.1324274851176597e-14;False;"{""energy_matched"": 140, ""sonic_return"": 59}";1;17;False
-10.0;158489319246111.1;temperature;1;-0.9270834868854205;2.6729317737515252;3.774758283725532e-15;False;"{""energy_matched"": 139, ""sonic_return"": 59}";1;17;False
-10.0;199526231496888.28;temperature;1;-0.9442546022532234;2.7305405332097745;4.440892098500626e-15;False;"{""energy_matched"": 146, ""sonic_return"": 56}";1;18;False
-10.0;251188643150958.22;temperature;1;-0.9565536799032748;2.7796334796000597;1.9984014443252818e-15;False;"{""energy_matched"": 155, ""sonic_return"": 50}";1;18;False
-10.0;316227766016837.94;temperature;1;-0.9655323091076754;2.8213637624933607;3.3306690738754696e-15;False;"{""energy_matched"": 153, ""sonic_return"": 49}";1;18;False
-10.0;398107170553496.94;temperature;1;-0.9726884994492044;2.8567708897702757;3.552713678800501e-15;False;"{""energy_matched"": 152, ""sonic_return"": 49}";1;17;False
-10.0;501187233627271.44;temperature;1;-0.9783606201094543;2.8867733718639688;7.549516567451064e-15;False;"{""energy_matched"": 151, ""sonic_return"": 51}";1;19;False
-10.0;630957344480194.2;temperature;1;-0.9825425061469615;2.9121719543081865;6.661338147750939e-16;False;"{""energy_matched"": 155, ""sonic_return"": 48}";1;19;False
-10.0;794328234724282.1;temperature;1;-0.9860917175346067;2.933658296752541;6.945000130542667e-11;False;"{""energy_matched"": 160, ""sonic_return"": 48}";1;19;False
-10.0;1000000000000000.0;temperature;1;-0.9888016458777488;2.9518260031644985;4.6629367034256575e-15;False;"{""energy_matched"": 159, ""sonic_return"": 46}";1;19;False
+﻿lambda_sh;n0_cm3;cx_mode;n_roots;min_R_M;max_R_M;min_abs_R_M;has_unresolved_points;statuses;boundary_refinements;boundary_evaluations;boundary_resolution_limited;inlet_momentum;chi;kinetic_path_incomplete;kinetic_domain_reasons
+5.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+5.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+5.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 109, ""sonic_return"": 39}";0;0;False;kinetic;5.0;True;{}
+5.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 99, ""sonic_return"": 49}";0;0;False;kinetic;5.0;True;{}
+5.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 84, ""sonic_return"": 64}";0;0;False;kinetic;5.0;True;{}
+5.0;3162277660168.3794;temperature;0;;;;False;"{""inadmissible_wall"": 56, ""sonic_return"": 92}";0;0;False;kinetic;5.0;True;{}
+5.0;3981071705534.969;temperature;0;;;;False;"{""inadmissible_wall"": 8, ""sonic_return"": 140}";0;0;False;kinetic;5.0;True;{}
+5.0;5011872336272.715;temperature;0;-0.3598519729027483;-0.16633885135573823;0.16633885135573823;False;"{""energy_matched"": 23, ""sonic_return"": 139}";1;14;False;kinetic;5.0;True;{}
+5.0;6309573444801.942;temperature;0;-0.5480121124630875;-0.16633884656393216;0.16633884656393216;False;"{""energy_matched"": 31, ""sonic_return"": 131}";1;14;False;kinetic;5.0;True;{}
+5.0;7943282347242.821;temperature;0;-0.7151572131496722;-0.16633884275769684;0.16633884275769684;False;"{""energy_matched"": 44, ""sonic_return"": 119}";1;15;False;kinetic;5.0;True;{}
+5.0;10000000000000.0;temperature;0;-0.8657222810729223;-0.16524869647215779;0.16524869647215779;False;"{""energy_matched"": 78, ""sonic_return"": 103}";1;15;False;kinetic;5.0;True;{}
+5.0;12589254117941.662;temperature;0;-0.9995097058178423;-0.15763799046884563;0.15763799046884563;False;"{""energy_matched"": 78, ""sonic_return"": 96}";1;15;False;kinetic;5.0;True;{}
+5.0;15848931924611.11;temperature;0;-1.1143999268438654;-0.14083622474000745;0.14083622474000745;False;"{""energy_matched"": 91, ""sonic_return"": 85}";1;15;False;kinetic;5.0;True;{}
+5.0;19952623149688.83;temperature;0;-1.2077903357923965;-0.11559406880349066;0.11559406880349066;False;"{""energy_matched"": 94, ""sonic_return"": 81}";1;16;False;kinetic;5.0;True;{}
+5.0;25118864315095.82;temperature;0;-1.2764913349303684;-0.08435078992471468;0.08435078992471468;False;"{""energy_matched"": 98, ""sonic_return"": 76}";1;16;False;kinetic;5.0;True;{}
+5.0;31622776601683.793;temperature;0;-1.317918636468159;-0.04999175564303027;0.04999175564303027;False;"{""energy_matched"": 119, ""sonic_return"": 65}";1;16;False;kinetic;5.0;True;{}
+5.0;39810717055349.695;temperature;0;-1.3399941127405153;-0.015062383391207579;0.015062383391207579;False;"{""energy_matched"": 126, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 56}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+5.0;50118723362727.15;temperature;2;-1.3516369670892643;0.018574759555862963;5.1736392947532295e-14;False;"{""energy_matched"": 172, ""kinetic_inlet_outside_domain"": 10, ""sonic_return"": 53}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 10}"
+5.0;63095734448019.43;temperature;2;-1.357721161709685;0.049764146071516135;4.440892098500626e-15;False;"{""energy_matched"": 182, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 50}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+5.0;79432823472428.22;temperature;2;-1.3608675235255696;0.07792371166316103;1.7541523789077473e-14;False;"{""energy_matched"": 177, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 46}";1;15;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+5.0;100000000000000.0;temperature;2;-1.362474241378486;0.10287297034139753;7.105427357601002e-15;False;"{""energy_matched"": 181, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 45}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+5.0;125892541179416.62;temperature;2;-1.3632445380748117;0.12468262997320556;1.2656542480726785e-14;False;"{""energy_matched"": 184, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 43}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+5.0;158489319246111.1;temperature;2;-1.3635541877984636;0.14356360908861876;2.4868995751603507e-14;False;"{""energy_matched"": 185, ""kinetic_inlet_outside_domain"": 10, ""sonic_return"": 41}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 10}"
+5.0;199526231496888.28;temperature;2;-1.3636431615648579;0.15979318522544705;3.774758283725532e-15;False;"{""energy_matched"": 191, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 41}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+5.0;251188643150958.22;temperature;2;-1.3636388269985298;0.17366953412195385;1.84297022087776e-14;False;"{""energy_matched"": 188, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 41}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+5.0;316227766016837.94;temperature;2;-1.3635956716687814;0.18548568368671714;9.769962616701378e-15;False;"{""energy_matched"": 197, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 37}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+5.0;398107170553496.94;temperature;2;-1.3635373904788262;0.19551577178544055;9.992007221626409e-15;False;"{""energy_matched"": 199, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 37}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+5.0;501187233627271.44;temperature;2;-1.3634758515914676;0.20400866521115835;1.1102230246251565e-15;False;"{""energy_matched"": 199, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 36}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+5.0;630957344480194.2;temperature;2;-1.3634173053333298;0.21118582265848285;1.3766765505351941e-14;False;"{""energy_matched"": 196, ""kinetic_inlet_outside_domain"": 5, ""sonic_return"": 36}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 5}"
+5.0;794328234724282.1;temperature;2;-1.3633646919758973;0.21724155511017873;1.865174681370263e-14;False;"{""energy_matched"": 195, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 37}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+5.0;1000000000000000.0;temperature;2;-1.3633190411235023;0.22234460402457756;1.9095836023552692e-14;False;"{""energy_matched"": 197, ""kinetic_inlet_outside_domain"": 9, ""sonic_return"": 34}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 9}"
+6.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+6.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+6.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 108, ""sonic_return"": 40}";0;0;False;kinetic;5.0;True;{}
+6.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 99, ""sonic_return"": 49}";0;0;False;kinetic;5.0;True;{}
+6.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 82, ""sonic_return"": 66}";0;0;False;kinetic;5.0;True;{}
+6.0;3162277660168.3794;temperature;0;;;;False;"{""inadmissible_wall"": 52, ""sonic_return"": 96}";0;0;False;kinetic;5.0;True;{}
+6.0;3981071705534.969;temperature;0;-0.29438078402450607;-0.29069811638061505;0.29069811638061505;False;"{""energy_matched"": 9, ""sonic_return"": 153}";1;14;False;kinetic;5.0;True;{}
+6.0;5011872336272.715;temperature;0;-0.45927799756322973;-0.29069810998225876;0.29069810998225876;False;"{""energy_matched"": 19, ""sonic_return"": 143}";1;14;False;kinetic;5.0;True;{}
+6.0;6309573444801.942;temperature;0;-0.6108042465808947;-0.290698104899735;0.290698104899735;False;"{""energy_matched"": 34, ""sonic_return"": 128}";1;14;False;kinetic;5.0;True;{}
+6.0;7943282347242.821;temperature;0;-0.753630000259317;-0.28997149765483843;0.28997149765483843;False;"{""energy_matched"": 55, ""sonic_return"": 120}";1;14;False;kinetic;5.0;True;{}
+6.0;10000000000000.0;temperature;0;-0.8881439209370332;-0.28227656467039997;0.28227656467039997;False;"{""energy_matched"": 67, ""sonic_return"": 109}";1;15;False;kinetic;5.0;True;{}
+6.0;12589254117941.662;temperature;0;-1.011807625870611;-0.2635215822578698;0.2635215822578698;False;"{""energy_matched"": 74, ""sonic_return"": 100}";1;15;False;kinetic;5.0;True;{}
+6.0;15848931924611.11;temperature;0;-1.1207340048495256;-0.23396218688856862;0.23396218688856862;False;"{""energy_matched"": 85, ""sonic_return"": 89}";1;15;False;kinetic;5.0;True;{}
+6.0;19952623149688.83;temperature;0;-1.2108502253866522;-0.19603678541980174;0.19603678541980174;False;"{""energy_matched"": 93, ""sonic_return"": 81}";1;16;False;kinetic;5.0;True;{}
+6.0;25118864315095.82;temperature;0;-1.2778700115385369;-0.15307826120001988;0.15307826120001988;False;"{""energy_matched"": 109, ""sonic_return"": 76}";1;16;False;kinetic;5.0;True;{}
+6.0;31622776601683.793;temperature;0;-1.3185245937088321;-0.10836019473933955;0.10836019473933955;False;"{""energy_matched"": 118, ""sonic_return"": 69}";1;16;False;kinetic;5.0;True;{}
+6.0;39810717055349.695;temperature;0;-1.3402816338957155;-0.06450887819074214;0.06450887819074214;False;"{""energy_matched"": 126, ""kinetic_inlet_outside_domain"": 3, ""sonic_return"": 57}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 3}"
+6.0;50118723362727.15;temperature;0;-1.351783454675092;-0.023299669306773074;0.023299669306773074;False;"{""energy_matched"": 127, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 54}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+6.0;63095734448019.43;temperature;2;-1.3577999932077756;0.01427266640042224;1.7541523789077473e-14;False;"{""energy_matched"": 181, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 52}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+6.0;79432823472428.22;temperature;2;-1.3609115397373956;0.0478029432586764;1.9539925233402755e-14;False;"{""energy_matched"": 174, ""kinetic_inlet_outside_domain"": 9, ""sonic_return"": 47}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 9}"
+6.0;100000000000000.0;temperature;2;-1.3624991165213702;0.07727451588828327;2.1316282072803006e-14;False;"{""energy_matched"": 182, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 45}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+6.0;125892541179416.62;temperature;2;-1.3632585670017225;0.1028982533813736;8.881784197001252e-15;False;"{""energy_matched"": 183, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 43}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+6.0;158489319246111.1;temperature;2;-1.3635622727022882;0.12500105939797979;3.1308289294429414e-14;False;"{""energy_matched"": 184, ""kinetic_inlet_outside_domain"": 10, ""sonic_return"": 43}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 10}"
+6.0;199526231496888.28;temperature;2;-1.363648019940102;0.14395570270017854;1.354472090042691e-14;False;"{""energy_matched"": 188, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 42}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+6.0;251188643150958.22;temperature;2;-1.3636418406804267;0.16013963841101586;2.5091040356528538e-14;False;"{""energy_matched"": 201, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 38}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+6.0;316227766016837.94;temperature;2;-1.3635975689300222;0.17391229341100845;1.6209256159527285e-14;False;"{""energy_matched"": 193, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 38}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+6.0;398107170553496.94;temperature;2;-1.3635385894032281;0.1856035638680058;0.0;False;"{""energy_matched"": 187, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 39}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+6.0;501187233627271.44;temperature;2;-1.3634766093362662;0.19550903270485964;5.995204332975845e-15;False;"{""energy_matched"": 201, ""kinetic_inlet_outside_domain"": 9, ""sonic_return"": 37}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 9}"
+6.0;630957344480194.2;temperature;2;-1.3634177841179589;0.2038891795152733;1.709743457922741e-14;False;"{""energy_matched"": 193, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 37}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+6.0;794328234724282.1;temperature;2;-1.363364994424344;0.21097087084317367;7.105427357601002e-15;False;"{""energy_matched"": 198, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 35}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+6.0;1000000000000000.0;temperature;2;-1.3633192321395395;0.2169500366696615;4.440892098500626e-16;False;"{""energy_matched"": 204, ""kinetic_inlet_outside_domain"": 9, ""sonic_return"": 35}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 9}"
+7.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+7.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+7.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 108, ""sonic_return"": 40}";0;0;False;kinetic;5.0;True;{}
+7.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 98, ""sonic_return"": 50}";0;0;False;kinetic;5.0;True;{}
+7.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 80, ""sonic_return"": 68}";0;0;False;kinetic;5.0;True;{}
+7.0;3162277660168.3794;temperature;0;;;;False;"{""inadmissible_wall"": 47, ""sonic_return"": 101}";0;0;False;kinetic;5.0;True;{}
+7.0;3981071705534.969;temperature;0;-0.4058005170177963;-0.38735007606713934;0.38735007606713934;False;"{""energy_matched"": 9, ""sonic_return"": 153}";1;14;False;kinetic;5.0;True;{}
+7.0;5011872336272.715;temperature;0;-0.5359869336931893;-0.3873500693393026;0.3873500693393026;False;"{""energy_matched"": 21, ""sonic_return"": 141}";1;14;False;kinetic;5.0;True;{}
+7.0;6309573444801.942;temperature;0;-0.6624144085486118;-0.3873500639952283;0.3873500639952283;False;"{""energy_matched"": 32, ""sonic_return"": 130}";1;14;False;kinetic;5.0;True;{}
+7.0;7943282347242.821;temperature;0;-0.7868905066719935;-0.3831424465628712;0.3831424465628712;False;"{""energy_matched"": 49, ""sonic_return"": 123}";1;14;False;kinetic;5.0;True;{}
+7.0;10000000000000.0;temperature;0;-0.9083434976589315;-0.3678748442630242;0.3678748442630242;False;"{""energy_matched"": 61, ""sonic_return"": 110}";1;15;False;kinetic;5.0;True;{}
+7.0;12589254117941.662;temperature;0;-1.023256060731799;-0.340054433270065;0.340054433270065;False;"{""energy_matched"": 73, ""sonic_return"": 100}";1;15;False;kinetic;5.0;True;{}
+7.0;15848931924611.11;temperature;0;-1.1267766533301784;-0.3011843455561569;0.3011843455561569;False;"{""energy_matched"": 84, ""sonic_return"": 91}";1;15;False;kinetic;5.0;True;{}
+7.0;19952623149688.83;temperature;0;-1.2138202941206842;-0.25434448809899135;0.25434448809899135;False;"{""energy_matched"": 91, ""sonic_return"": 85}";1;16;False;kinetic;5.0;True;{}
+7.0;25118864315095.82;temperature;0;-1.2792239442305087;-0.20320893358301695;0.20320893358301695;False;"{""energy_matched"": 108, ""sonic_return"": 78}";1;16;False;kinetic;5.0;True;{}
+7.0;31622776601683.793;temperature;0;-1.319124339416079;-0.15121053159060338;0.15121053159060338;False;"{""energy_matched"": 115, ""sonic_return"": 74}";1;16;False;kinetic;5.0;True;{}
+7.0;39810717055349.695;temperature;0;-1.3405675337210807;-0.10100973341652697;0.10100973341652697;False;"{""energy_matched"": 121, ""kinetic_inlet_outside_domain"": 5, ""sonic_return"": 60}";1;16;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 5}"
+7.0;50118723362727.15;temperature;0;-1.3519294902000252;-0.0543352924641074;0.0543352924641074;False;"{""energy_matched"": 128, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 55}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+7.0;63095734448019.43;temperature;0;-1.357878691055416;-0.012094164170718846;0.012094164170718846;False;"{""energy_matched"": 131, ""kinetic_inlet_outside_domain"": 5, ""sonic_return"": 52}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 5}"
+7.0;79432823472428.22;temperature;2;-1.3609555138414637;0.025408410169033724;2.4868995751603507e-14;False;"{""energy_matched"": 178, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 47}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+7.0;100000000000000.0;temperature;2;-1.362523977726214;0.05825182974378018;1.5765166949677223e-14;False;"{""energy_matched"": 183, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 47}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+7.0;125892541179416.62;temperature;2;-1.3632725914589918;0.08673323449667447;7.549516567451064e-15;False;"{""energy_matched"": 182, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 44}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+7.0;158489319246111.1;temperature;2;-1.3635703562424961;0.11125543490687018;1.3322676295501878e-15;False;"{""energy_matched"": 186, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 44}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+7.0;199526231496888.28;temperature;2;-1.363652877873352;0.1322576156775599;2.930988785010413e-14;False;"{""energy_matched"": 193, ""kinetic_inlet_outside_domain"": 10, ""sonic_return"": 41}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 10}"
+7.0;251188643150958.22;temperature;2;-1.363644854203618;0.15017486291911442;1.4432899320127035e-14;False;"{""energy_matched"": 191, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 42}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+7.0;316227766016837.94;temperature;2;-1.3635994661297473;0.1654159603817802;3.1530333899354446e-14;False;"{""energy_matched"": 200, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 40}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+7.0;398107170553496.94;temperature;2;-1.3635397883029754;0.17835255653257076;1.021405182655144e-14;False;"{""energy_matched"": 195, ""kinetic_inlet_outside_domain"": 9, ""sonic_return"": 39}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 9}"
+7.0;501187233627271.44;temperature;2;-1.3634773670712466;0.18931528797175923;2.90878432451791e-14;False;"{""energy_matched"": 193, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 37}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+7.0;630957344480194.2;temperature;2;-1.36341826289862;0.1985939803205825;3.064215547965432e-14;False;"{""energy_matched"": 198, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 36}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+7.0;794328234724282.1;temperature;2;-1.3633652968709948;0.2064400692770587;1.5543122344752192e-15;False;"{""energy_matched"": 195, ""kinetic_inlet_outside_domain"": 5, ""sonic_return"": 39}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 5}"
+7.0;1000000000000000.0;temperature;2;-1.3633194231548322;0.21307008564673713;1.3100631690576847e-14;False;"{""energy_matched"": 200, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 35}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+8.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+8.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+8.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 108, ""sonic_return"": 40}";0;0;False;kinetic;5.0;True;{}
+8.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 97, ""sonic_return"": 51}";0;0;False;kinetic;5.0;True;{}
+8.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 79, ""sonic_return"": 69}";0;0;False;kinetic;5.0;True;{}
+8.0;3162277660168.3794;temperature;0;;;;False;"{""inadmissible_wall"": 43, ""sonic_return"": 105}";0;0;False;kinetic;5.0;True;{}
+8.0;3981071705534.969;temperature;0;-0.49076619452082615;-0.46525897750896683;0.46525897750896683;False;"{""energy_matched"": 11, ""sonic_return"": 151}";1;14;False;kinetic;5.0;True;{}
+8.0;5011872336272.715;temperature;0;-0.5977852837287841;-0.4652589704799923;0.4652589704799923;False;"{""energy_matched"": 18, ""sonic_return"": 144}";1;14;False;kinetic;5.0;True;{}
+8.0;6309573444801.942;temperature;0;-0.7059409504583963;-0.46453194661000974;0.46453194661000974;False;"{""energy_matched"": 37, ""sonic_return"": 135}";1;14;False;kinetic;5.0;True;{}
+8.0;7943282347242.821;temperature;0;-0.8160735421854789;-0.4557702658808971;0.4557702658808971;False;"{""energy_matched"": 49, ""sonic_return"": 123}";1;14;False;kinetic;5.0;True;{}
+8.0;10000000000000.0;temperature;0;-0.9266856357358983;-0.4341284941060517;0.4341284941060517;False;"{""energy_matched"": 59, ""sonic_return"": 115}";1;15;False;kinetic;5.0;True;{}
+8.0;12589254117941.662;temperature;0;-1.0339552026066394;-0.399412896122161;0.399412896122161;False;"{""energy_matched"": 71, ""sonic_return"": 102}";1;15;False;kinetic;5.0;True;{}
+8.0;15848931924611.11;temperature;0;-1.1325514701879975;-0.35365485375301353;0.35365485375301353;False;"{""energy_matched"": 79, ""sonic_return"": 93}";1;15;False;kinetic;5.0;True;{}
+8.0;19952623149688.83;temperature;0;-1.2167043568800007;-0.3002162444930083;0.3002162444930083;False;"{""energy_matched"": 98, ""sonic_return"": 85}";1;15;False;kinetic;5.0;True;{}
+8.0;25118864315095.82;temperature;0;-1.2805535649021296;-0.24295148791319754;0.24295148791319754;False;"{""energy_matched"": 105, ""sonic_return"": 77}";1;16;False;kinetic;5.0;True;{}
+8.0;31622776601683.793;temperature;0;-1.319717989710091;-0.18540486366690367;0.18540486366690367;False;"{""energy_matched"": 113, ""sonic_return"": 69}";1;13;False;kinetic;5.0;True;{}
+8.0;39810717055349.695;temperature;0;-1.3408518293558858;-0.13028400885425118;0.13028400885425118;False;"{""energy_matched"": 121, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 59}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+8.0;50118723362727.15;temperature;0;-1.3520750763100025;-0.07931185246452599;0.07931185246452599;False;"{""energy_matched"": 125, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 55}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+8.0;63095734448019.43;temperature;0;-1.3579572556993496;-0.03335591050715703;0.03335591050715703;False;"{""energy_matched"": 127, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 53}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+8.0;79432823472428.22;temperature;2;-1.3609994459135257;0.007333798568510241;4.440892098500626e-15;False;"{""energy_matched"": 178, ""kinetic_inlet_outside_domain"": 4, ""sonic_return"": 50}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 4}"
+8.0;100000000000000.0;temperature;2;-1.3625488249787585;0.042896700296168655;6.661338147750939e-16;False;"{""energy_matched"": 193, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 47}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+8.0;125892541179416.62;temperature;2;-1.3632866114494502;0.0736895267846076;5.773159728050814e-15;False;"{""energy_matched"": 183, ""kinetic_inlet_outside_domain"": 5, ""sonic_return"": 43}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 5}"
+8.0;158489319246111.1;temperature;2;-1.3635784384200258;0.10017162136593227;2.4424906541753444e-14;False;"{""energy_matched"": 189, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 45}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+8.0;199526231496888.28;temperature;2;-1.3636577353645265;0.12283384480346116;8.881784197001252e-16;False;"{""energy_matched"": 181, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 41}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+8.0;251188643150958.22;temperature;2;-1.3636478675682235;0.14215696261754318;3.5083047578154947e-14;False;"{""energy_matched"": 189, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 40}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+8.0;316227766016837.94;temperature;2;-1.3636013632685402;0.15858914138487923;9.769962616701378e-15;False;"{""energy_matched"": 199, ""kinetic_inlet_outside_domain"": 9, ""sonic_return"": 42}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 9}"
+8.0;398107170553496.94;temperature;2;-1.3635409871787318;0.17253548706209698;1.887379141862766e-14;False;"{""energy_matched"": 192, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 38}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+8.0;501187233627271.44;temperature;2;-1.3634781247964827;0.18435485872504676;4.440892098500626e-15;False;"{""energy_matched"": 194, ""kinetic_inlet_outside_domain"": 10, ""sonic_return"": 38}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 10}"
+8.0;630957344480194.2;temperature;2;-1.363418741675489;0.19436082433935087;2.220446049250313e-15;False;"{""energy_matched"": 197, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 37}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+8.0;794328234724282.1;temperature;2;-1.3633655993159526;0.20282478527350611;1.865174681370263e-14;False;"{""energy_matched"": 188, ""kinetic_inlet_outside_domain"": 10, ""sonic_return"": 35}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 10}"
+8.0;1000000000000000.0;temperature;2;-1.3633196141694504;0.209980075849294;3.26405569239796e-14;False;"{""energy_matched"": 198, ""kinetic_inlet_outside_domain"": 9, ""sonic_return"": 38}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 9}"
+9.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+9.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+9.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 108, ""sonic_return"": 40}";0;0;False;kinetic;5.0;True;{}
+9.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 97, ""sonic_return"": 51}";0;0;False;kinetic;5.0;True;{}
+9.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 77, ""sonic_return"": 71}";0;0;False;kinetic;5.0;True;{}
+9.0;3162277660168.3794;temperature;0;;;;False;"{""inadmissible_wall"": 40, ""sonic_return"": 108}";0;0;False;kinetic;5.0;True;{}
+9.0;3981071705534.969;temperature;0;-0.5586239168552045;-0.5297920620528731;0.5297920620528731;False;"{""energy_matched"": 12, ""sonic_return"": 150}";1;14;False;kinetic;5.0;True;{}
+9.0;5011872336272.715;temperature;0;-0.649107417234759;-0.5297920547452917;0.5297920547452917;False;"{""energy_matched"": 21, ""sonic_return"": 141}";1;14;False;kinetic;5.0;True;{}
+9.0;6309573444801.942;temperature;0;-0.7433742922563225;-0.5274692544377237;0.5274692544377237;False;"{""energy_matched"": 40, ""sonic_return"": 131}";1;14;False;kinetic;5.0;True;{}
+9.0;7943282347242.821;temperature;0;-0.8419877585171304;-0.5144289248279981;0.5144289248279981;False;"{""energy_matched"": 52, ""sonic_return"": 123}";1;14;False;kinetic;5.0;True;{}
+9.0;10000000000000.0;temperature;0;-0.9434534618820404;-0.4877111440039872;0.4877111440039872;False;"{""energy_matched"": 55, ""sonic_return"": 117}";1;15;False;kinetic;5.0;True;{}
+9.0;12589254117941.662;temperature;0;-1.0439891755511002;-0.4477090631255709;0.4477090631255709;False;"{""energy_matched"": 66, ""sonic_return"": 106}";1;15;False;kinetic;5.0;True;{}
+9.0;15848931924611.11;temperature;0;-1.1380810836848045;-0.396684779905643;0.396684779905643;False;"{""energy_matched"": 85, ""sonic_return"": 95}";1;15;False;kinetic;5.0;True;{}
+9.0;19952623149688.83;temperature;0;-1.219508432452024;-0.338139247303729;0.338139247303729;False;"{""energy_matched"": 89, ""sonic_return"": 84}";1;15;False;kinetic;5.0;True;{}
+9.0;25118864315095.82;temperature;0;-1.2818598749830776;-0.27604516131398604;0.27604516131398604;False;"{""energy_matched"": 99, ""sonic_return"": 76}";1;15;False;kinetic;5.0;True;{}
+9.0;31622776601683.793;temperature;0;-1.3203056575526275;-0.21404482702294625;0.21404482702294625;False;"{""energy_matched"": 111, ""sonic_return"": 72}";1;16;False;kinetic;5.0;True;{}
+9.0;39810717055349.695;temperature;0;-1.3411345377046773;-0.15490824262863878;0.15490824262863878;False;"{""energy_matched"": 120, ""kinetic_inlet_outside_domain"": 4, ""sonic_return"": 62}";1;16;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 4}"
+9.0;50118723362727.15;temperature;0;-1.3522202156790095;-0.10038103911469642;0.10038103911469642;False;"{""energy_matched"": 125, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 55}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+9.0;63095734448019.43;temperature;0;-1.3580356876023472;-0.051322219816253956;0.051322219816253956;False;"{""energy_matched"": 124, ""kinetic_inlet_outside_domain"": 9, ""sonic_return"": 54}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 9}"
+9.0;79432823472428.22;temperature;0;-1.3610433360392804;-0.00795344377219731;0.00795344377219731;False;"{""energy_matched"": 132, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 50}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+9.0;100000000000000.0;temperature;2;-1.362573658340853;0.02990418931843064;1.3322676295501878e-15;False;"{""energy_matched"": 187, ""kinetic_inlet_outside_domain"": 5, ""sonic_return"": 47}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 5}"
+9.0;125892541179416.62;temperature;2;-1.36330062697599;0.06265194150781439;2.4424906541753444e-15;False;"{""energy_matched"": 182, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 44}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+9.0;158489319246111.1;temperature;2;-1.3635865192351306;0.09079416854414357;1.199040866595169e-14;False;"{""energy_matched"": 183, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 45}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+9.0;199526231496888.28;temperature;2;-1.3636625924141579;0.11486398026628852;7.105427357601002e-15;False;"{""energy_matched"": 189, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 42}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+9.0;251188643150958.22;temperature;2;-1.3636508807738277;0.13537989902491;6.661338147750939e-15;False;"{""energy_matched"": 196, ""kinetic_inlet_outside_domain"": 5, ""sonic_return"": 43}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 5}"
+9.0;316227766016837.94;temperature;2;-1.363603260345829;0.15282287259473581;3.175237850427948e-14;False;"{""energy_matched"": 199, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 40}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+9.0;398107170553496.94;temperature;2;-1.3635421860301244;0.16762603261961462;9.103828801926284e-15;False;"{""energy_matched"": 194, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 40}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+9.0;501187233627271.44;temperature;2;-1.3634788825119906;0.18017201200532584;6.661338147750939e-15;False;"{""energy_matched"": 192, ""kinetic_inlet_outside_domain"": 10, ""sonic_return"": 37}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 10}"
+9.0;630957344480194.2;temperature;2;-1.3634192204483977;0.19079447271601713;1.84297022087776e-14;False;"{""energy_matched"": 195, ""kinetic_inlet_outside_domain"": 4, ""sonic_return"": 36}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 4}"
+9.0;794328234724282.1;temperature;2;-1.3633659017593465;0.19978177754872317;4.440892098500626e-16;False;"{""energy_matched"": 204, ""kinetic_inlet_outside_domain"": 4, ""sonic_return"": 35}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 4}"
+9.0;1000000000000000.0;temperature;2;-1.3633198051834283;0.2073815781341377;3.064215547965432e-14;False;"{""energy_matched"": 197, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 36}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+10.0;1000000000000.0;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+10.0;1258925411794.1663;temperature;0;;;;False;"{""inadmissible_wall"": 148}";0;0;False;kinetic;5.0;True;{}
+10.0;1584893192461.1108;temperature;0;;;;False;"{""inadmissible_wall"": 107, ""sonic_return"": 41}";0;0;False;kinetic;5.0;True;{}
+10.0;1995262314968.8828;temperature;0;;;;False;"{""inadmissible_wall"": 95, ""sonic_return"": 53}";0;0;False;kinetic;5.0;True;{}
+10.0;2511886431509.582;temperature;0;;;;False;"{""inadmissible_wall"": 75, ""sonic_return"": 73}";0;0;False;kinetic;5.0;True;{}
+10.0;3162277660168.3794;temperature;0;;;;False;"{""inadmissible_wall"": 36, ""sonic_return"": 112}";0;0;False;kinetic;5.0;True;{}
+10.0;3981071705534.969;temperature;0;-0.6145969784863391;-0.5843851329621901;0.5843851329621901;False;"{""energy_matched"": 14, ""sonic_return"": 148}";1;14;False;kinetic;5.0;True;{}
+10.0;5011872336272.715;temperature;0;-0.6927064920201459;-0.5843851253945818;0.5843851253945818;False;"{""energy_matched"": 21, ""sonic_return"": 141}";1;14;False;kinetic;5.0;True;{}
+10.0;6309573444801.942;temperature;0;-0.7760675952560042;-0.5798945937780158;0.5798945937780158;False;"{""energy_matched"": 36, ""sonic_return"": 135}";1;14;False;kinetic;5.0;True;{}
+10.0;7943282347242.821;temperature;0;-0.8652258368552289;-0.5632079265448178;0.5632079265448178;False;"{""energy_matched"": 45, ""sonic_return"": 126}";1;14;False;kinetic;5.0;True;{}
+10.0;10000000000000.0;temperature;0;-0.95887270702189;-0.5324642489215068;0.5324642489215068;False;"{""energy_matched"": 60, ""sonic_return"": 115}";1;14;False;kinetic;5.0;True;{}
+10.0;12589254117941.662;temperature;0;-1.0534270592008177;-0.48832997155368596;0.48832997155368596;False;"{""energy_matched"": 65, ""sonic_return"": 107}";1;15;False;kinetic;5.0;True;{}
+10.0;15848931924611.11;temperature;0;-1.1433812947944477;-0.4331618010444238;0.4331618010444238;False;"{""energy_matched"": 77, ""sonic_return"": 95}";1;15;False;kinetic;5.0;True;{}
+10.0;19952623149688.83;temperature;0;-1.2222369331888558;-0.3705312141943613;0.3705312141943613;False;"{""energy_matched"": 89, ""sonic_return"": 87}";1;15;False;kinetic;5.0;True;{}
+10.0;25118864315095.82;temperature;0;-1.283143490987634;-0.3044975146065616;0.3044975146065616;False;"{""energy_matched"": 96, ""sonic_return"": 81}";1;16;False;kinetic;5.0;True;{}
+10.0;31622776601683.793;temperature;0;-1.3208874528286514;-0.23879501814774495;0.23879501814774495;False;"{""energy_matched"": 110, ""sonic_return"": 73}";1;16;False;kinetic;5.0;True;{}
+10.0;39810717055349.695;temperature;0;-1.3414156752977422;-0.17626715769753432;0.17626715769753432;False;"{""energy_matched"": 120, ""kinetic_inlet_outside_domain"": 4, ""sonic_return"": 63}";1;16;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 4}"
+10.0;50118723362727.15;temperature;0;-1.3523649108925662;-0.11870159228064114;0.11870159228064114;False;"{""energy_matched"": 125, ""kinetic_inlet_outside_domain"": 4, ""sonic_return"": 56}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 4}"
+10.0;63095734448019.43;temperature;0;-1.358113987137321;-0.06696901910996544;0.06696901910996544;False;"{""energy_matched"": 137, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 51}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+10.0;79432823472428.22;temperature;0;-1.3610871842979493;-0.021279633836952083;0.021279633836952083;False;"{""energy_matched"": 133, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 50}";1;17;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+10.0;100000000000000.0;temperature;2;-1.3625984778070102;0.01857218814219097;2.6423307986078726e-14;False;"{""energy_matched"": 177, ""kinetic_inlet_outside_domain"": 9, ""sonic_return"": 48}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 9}"
+10.0;125892541179416.62;temperature;2;-1.3633146380416579;0.05302251736677466;1.9095836023552692e-14;False;"{""energy_matched"": 187, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 45}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+10.0;158489319246111.1;temperature;2;-1.3635945986882434;0.082612784830431;2.220446049250313e-15;False;"{""energy_matched"": 203, ""kinetic_inlet_outside_domain"": 3, ""sonic_return"": 45}";1;18;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 3}"
+10.0;199526231496888.28;temperature;2;-1.363667449021691;0.10791162827466505;1.021405182655144e-14;False;"{""energy_matched"": 188, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 44}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+10.0;251188643150958.22;temperature;2;-1.36365389382094;0.12946968123646685;7.105427357601002e-15;False;"{""energy_matched"": 189, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 40}";1;16;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+10.0;316227766016837.94;temperature;2;-1.3636051573618033;0.1477960096694919;3.9968028886505635e-15;False;"{""energy_matched"": 198, ""kinetic_inlet_outside_domain"": 6, ""sonic_return"": 40}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 6}"
+10.0;398107170553496.94;temperature;2;-1.3635433848570029;0.16334794885717008;4.884981308350689e-15;False;"{""energy_matched"": 185, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 40}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+10.0;501187233627271.44;temperature;2;-1.3634796402175824;0.17652877348472762;1.532107773982716e-14;False;"{""energy_matched"": 195, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 40}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"
+10.0;630957344480194.2;temperature;2;-1.3634196992175773;0.18768966437626355;9.325873406851315e-15;False;"{""energy_matched"": 187, ""kinetic_inlet_outside_domain"": 10, ""sonic_return"": 38}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 10}"
+10.0;794328234724282.1;temperature;2;-1.363366204201336;0.1971338190412233;6.661338147750939e-16;False;"{""energy_matched"": 199, ""kinetic_inlet_outside_domain"": 8, ""sonic_return"": 35}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 8}"
+10.0;1000000000000000.0;temperature;2;-1.363319996196795;0.20512144082927808;7.993605777301127e-15;False;"{""energy_matched"": 191, ""kinetic_inlet_outside_domain"": 7, ""sonic_return"": 36}";1;19;False;kinetic;5.0;True;"{""Transmitted-ion model requires A(a)/A_m >=1."": 7}"

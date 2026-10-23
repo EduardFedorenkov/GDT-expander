@@ -1,7 +1,7 @@
 """Energy-first shooting for the isothermal CX model and general B(g).
 
-The old boundary conditions are retained: mu(alpha)=omega(alpha)=1.
-A trial temperature enforces the energy condition, NOT the inlet momentum.
+omega(alpha)=1 sets the inlet position; mu(alpha)=G(alpha) selects temperature.
+Pass inlet_momentum for the kinetic closure; None retains the old G=1 API.
 """
 
 from math import isfinite, sqrt
@@ -9,6 +9,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from .geometry import quadratic_area_legacy
+from .inlet import evaluate_inlet, KineticInletDomainError
 
 
 def classify_profile(mu):
@@ -26,7 +27,7 @@ def classify_profile(mu):
 
 
 def solve_at_theta(theta, beta, D, lambda_sh, geometry=None, n_points=1600,
-                   *, rtol=1e-9, atol=1e-11, max_step=0.02):
+                   *, inlet_momentum=None, rtol=1e-9, atol=1e-11, max_step=0.02):
     """Return a trial dictionary with explicit status and, on success, arrays.
 
     status='energy_matched' means omega(alpha)=1; R_M can still be nonzero.
@@ -55,7 +56,7 @@ def solve_at_theta(theta, beta, D, lambda_sh, geometry=None, n_points=1600,
         result["status"] = status
         return result
 
-    if b >= 1:
+    if inlet_momentum is None and b >= 1:
         return stop("inlet_sonic_limit")
     if D_value == 0:
         return stop("zero_cx_degenerate")
@@ -124,14 +125,32 @@ def solve_at_theta(theta, beta, D, lambda_sh, geometry=None, n_points=1600,
         raise RuntimeError("Sonic wall condition was lost.")
     if abs(omega[0] - 1) > 50 * (atol + rtol):
         raise RuntimeError("Energy event was not located accurately.")
+    if not np.isclose(omega[-1], lambda_sh*theta, rtol=rtol*10, atol=atol*10):
+        raise RuntimeError("Wall energy condition was lost.")
+    if np.any(omega <= 0) or np.any(np.diff(omega) > 50*(atol+rtol)):
+        raise RuntimeError("Accepted energy profile is nonpositive or increasing.")
+
+    try:
+        inlet = evaluate_inlet(alpha, inlet_momentum)
+    except KineticInletDomainError as error:
+        result.update(alpha=alpha, kinetic_domain_reason=str(error))
+        return stop("kinetic_inlet_outside_domain")
+    target = inlet["mu_target"]
+    residual = float(mu[0] - target)
+    # abs + rel tolerance with equal coefficients: eps*(1+max(|mu|,|G|)).
+    momentum_scale = 1.0 + max(abs(float(mu[0])), abs(target))
 
     radical = np.sqrt(np.maximum((mu - b) * (mu + b), 0.0))
     result.update(
         status="energy_matched", alpha=alpha, xi=xi, g=g, mu=mu, omega=omega,
         u_over_cs=b / (mu + radical),
         branch=classify_profile(mu),
-        R_M=float(mu[0] - 1), R_E=float(omega[0] - 1),
-        inlet_residual=float(mu[0] - 1),
+        R_M=residual, R_E=float(omega[0] - 1), mu_a=float(mu[0]),
+        R_M_scaled=residual/momentum_scale, momentum_scale=momentum_scale,
+        inlet_residual=residual,
+        inlet_target_sonic_margin=float(target - b),
+        inlet_boundary=inlet_momentum,
         ode_steps=len(integration.t), max_step=step_limit,
+        **inlet,
     )
     return result

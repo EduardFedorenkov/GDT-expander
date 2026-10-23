@@ -11,7 +11,8 @@ from .solver_general import solve_at_theta
 def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
                                n_points=1600, b_points=100,
                                *, residual_tol=1e-7,
-                               boundary_rtol=1e-6, boundary_max_steps=40):
+                               boundary_rtol=1e-6, boundary_max_steps=40,
+                               inlet_momentum=None):
     """Return (verified states, diagnostics).
 
     Searches a finite mixed b-grid, refines validity boundaries, extrema
@@ -30,7 +31,10 @@ def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
     if b_points < 20:
         raise ValueError("b_points must be >=20.")
     geometry = quadratic_area_legacy() if geometry is None else geometry
-    b_hi = min(1.0, np.sqrt(8 * beta / lambda_sh)) * (1 - 1e-8)
+    b_limit = np.sqrt(8 * beta / lambda_sh)
+    if inlet_momentum is None:
+        b_limit = min(1.0, b_limit)
+    b_hi = b_limit * (1 - 1e-8)
     b_lo = b_hi * 1e-7
     cache = {}
 
@@ -39,11 +43,15 @@ def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
         if b not in cache:
             cache[b] = solve_at_theta(
                 b*b/(8*beta), beta, D, lambda_sh, geometry, n_points,
+                inlet_momentum=inlet_momentum,
             )
         return cache[b]
 
     def residual(b):
         return evaluate(b)["R_M"]
+
+    def tolerance(state):
+        return residual_tol * state.get("momentum_scale", 1.0)
 
     boundary_intervals = []
 
@@ -153,7 +161,7 @@ def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
             candidates.append((float(b), "exact_sample"))
     tangent_windows = []
     for b, left, right in extrema_windows:
-        if abs(residual(b)) > residual_tol:
+        if abs(residual(b)) > tolerance(evaluate(b)):
             continue
         if any(left <= root <= right for root, _ in candidates):
             continue
@@ -180,15 +188,21 @@ def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
             trial["theta"], beta, trial["D"], lambda_sh,
             geometry, 2*n_points, rtol=1e-10, atol=1e-12,
             max_step=trial.get("max_step", 0.02)/2,
+            inlet_momentum=inlet_momentum,
         )
         if checked["status"] != "energy_matched":
             raise RuntimeError("A candidate disappeared under ODE refinement.")
-        if abs(checked["R_M"]) > 5*residual_tol:
+        if abs(checked["R_M"]) > 5*tolerance(checked):
             raise RuntimeError("Momentum verification failed; refine the search.")
+        # G<b is valid for an off-root residual (needed for bracketing),
+        # but cannot be accepted as a strictly subsonic matched inlet.
+        if checked.get("inlet_target_sonic_margin", 1.0) <= 0:
+            raise RuntimeError("Matched inlet target is not strictly subsonic.")
         checked.update(
             root_kind=root_kind,
             R_M_check=checked["R_M"], R_E_check=checked["R_E"],
             delta_alpha=checked["alpha"]-trial["alpha"],
+            R_M_tolerance=5*tolerance(checked),
         )
         solutions.append(checked)
     solutions.sort(key=lambda state: state["theta"])
@@ -204,6 +218,12 @@ def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
         "discontinuous_brackets": discontinuous_brackets,
         "n_evaluations": len(cache),
         "b_min": b_lo, "b_max": b_hi,
+        "inlet_momentum": "constant" if inlet_momentum is None else "variable",
+        "kinetic_domain_reasons": dict(Counter(
+            s["kinetic_domain_reason"] for s in cache.values()
+            if "kinetic_domain_reason" in s)),
+        "kinetic_path_incomplete": bool(inlet_momentum is not None
+                                        and geometry.g_min > 0),
         "boundary_intervals": boundary_intervals,
         "boundary_rtol": boundary_rtol,
         "boundary_refinements": sum(item["steps"] > 0 for item in boundary_intervals),

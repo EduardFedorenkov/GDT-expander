@@ -10,6 +10,7 @@ import numpy as np
 
 from simple_cx_model.config import load_cx_config
 from .scan_neutral import scan_neutrals
+from .inlet import add_inlet_arguments
 from .geometry import (add_geometry_arguments, geometry_from_args,
                        quadratic_area_legacy)
 
@@ -19,6 +20,9 @@ ROOT_FIELDS = (
     "T_eV", "theta", "a_cm", "alpha", "D", "b",
     "R_E", "R_E_check", "delta_alpha",
     "R_M", "R_M_check", "root_kind", "geometry",
+    "inlet_momentum", "chi", "T_kin_eV", "K_a", "kinetic_path_check",
+    "M_kin_dyn", "mu_a", "mu_target", "inlet_target_sonic_margin",
+    "R_M_scaled", "R_M_tolerance",
 )
 
 GRID_FIELDS = (
@@ -26,6 +30,7 @@ GRID_FIELDS = (
     "min_R_M", "max_R_M", "min_abs_R_M",
     "has_unresolved_points", "statuses",
     "boundary_refinements", "boundary_evaluations", "boundary_resolution_limited",
+    "inlet_momentum", "chi", "kinetic_path_incomplete", "kinetic_domain_reasons",
 )
 
 
@@ -53,6 +58,7 @@ def scan_lambda_neutral(
     n_points=1600,
     b_points=100,
     geometry=None,
+    *, inlet_mode="kinetic",
 ):
     """Для каждой lambda запускать существующий скан по n0.
 
@@ -90,6 +96,7 @@ def scan_lambda_neutral(
             b_points=b_points,
             cx_mode=cx_mode,
             geometry=geometry,
+            inlet_mode=inlet_mode,
         )
 
         roots.extend(
@@ -113,6 +120,10 @@ def scan_lambda_neutral(
                 "boundary_refinements": row["boundary_refinements"],
                 "boundary_evaluations": row["boundary_evaluations"],
                 "boundary_resolution_limited": row["boundary_resolution_limited"],
+                "inlet_momentum": row["inlet_momentum"], "chi": row["chi"],
+                "kinetic_path_incomplete": row["kinetic_path_incomplete"],
+                "kinetic_domain_reasons": json.dumps(
+                    row["kinetic_domain_reasons"], sort_keys=True),
             })
 
     return roots, grid
@@ -221,6 +232,7 @@ def main():
     parser.add_argument("--no-plot", action="store_true")
 
     add_geometry_arguments(parser)
+    add_inlet_arguments(parser)
     args = parser.parse_args()
     try:
         geometry = geometry_from_args(args)
@@ -274,11 +286,15 @@ def main():
         n_points=args.points,
         b_points=args.b_points,
         geometry=geometry,
+        inlet_mode=args.inlet_momentum,
     )
 
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / "geometry.json").write_text(
         json.dumps(geometry.to_dict(), indent=2), encoding="utf-8")
+    (args.output / "parameters.json").write_text(json.dumps(dict(
+        parameters, inlet_momentum=args.inlet_momentum, cx_mode=args.cx_mode,
+    ), indent=2), encoding="utf-8")
 
     save_csv(
         args.output / f"roots_{args.cx_mode}.csv",

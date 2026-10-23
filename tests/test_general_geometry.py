@@ -210,7 +210,8 @@ class SolverTests(unittest.TestCase):
         parameters = reference_parameters()
         for mode in ["constant", "temperature"]:
             roots, diagnostic = find_density_solutions(
-                2.8e13, parameters, n_points=100, b_points=35, cx_mode=mode)
+                2.8e13, parameters, n_points=100, b_points=35, cx_mode=mode,
+                inlet_mode="constant")
             self.assertEqual(len(roots), 2)
             self.assertTrue(all(abs(r["R_M_check"]) < 1e-6 for r in roots))
         self.assertNotAlmostEqual(roots[0]["D"], roots[1]["D"])
