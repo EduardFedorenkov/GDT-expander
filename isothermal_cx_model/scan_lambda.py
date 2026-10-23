@@ -34,6 +34,26 @@ GRID_FIELDS = (
 )
 
 
+def print_source_summary(parameters):
+    """Show source inputs and integrated throat flows, NOT flux densities.
+
+    Use the values already derived by load_cx_config, without recomputing
+    or changing the boundary conditions. n_c is not the scanned neutral n0.
+    """
+    print(
+        "\nSource and mirror-throat reference flows (CGS; temperature in eV):\n"
+        f"  n_c = {parameters['n_c_cm3']:.6e} cm^-3, "
+        f"T_c = {parameters['T_c_eV']:.6g} eV\n"
+        f"  n_m = {parameters['n_m_cm3']:.6e} cm^-3, "
+        f"A_m = {parameters['A_m_cm2']:.6g} cm^2, "
+        f"chi_E = {parameters['chi_E']:.6g}\n"
+        f"  J_0 = {parameters['J0_per_s']:.6e} particles/s\n"
+        f"  M_0 = {parameters['M0_dyn']:.6e} dyn (g*cm/s^2)\n"
+        f"  W_0 = {parameters['W0_erg_per_s']:.6e} erg/s",
+        flush=True,
+    )
+
+
 def positive_grid(values, name):
     values = np.asarray(values, dtype=float)
 
@@ -277,6 +297,7 @@ def main():
     )
 
     parameters = load_cx_config(args.config)
+    print_source_summary(parameters)
 
     roots, grid = scan_lambda_neutral(
         lambdas,
