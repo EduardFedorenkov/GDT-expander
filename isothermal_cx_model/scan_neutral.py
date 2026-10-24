@@ -1,4 +1,4 @@
-"""Neutral-density scans for general magnetic geometry (isothermal CX only)."""
+"""Neutral-density scans for isothermal CX with optional atomic excitation."""
 
 from pathlib import Path
 import argparse
@@ -7,6 +7,7 @@ import numpy as np
 
 from simple_cx_model.config import load_cx_config
 from .cx import make_D
+from .excitation import make_E_exc, add_excitation_arguments
 from .geometry import (add_geometry_arguments, geometry_from_args,
                        quadratic_area_legacy)
 from .scan_general import find_temperature_solutions
@@ -14,24 +15,28 @@ from .inlet import make_inlet_momentum, add_inlet_arguments
 
 
 def find_density_solutions(n0, parameters, n_points=1600, b_points=100,
-                           cx_mode="constant", geometry=None, *, inlet_mode="kinetic"):
+                           cx_mode="constant", geometry=None, *, inlet_mode="kinetic",
+                           excitation_scale=0.0):
     if not np.isfinite(n0) or n0 <= 0:
         raise ValueError("n0 must be positive and finite.")
     geometry = quadratic_area_legacy() if geometry is None else geometry
     D = make_D(parameters, mode=cx_mode, n0_cm3=n0)
+    E = make_E_exc(parameters, n0_cm3=n0, scale=excitation_scale)
     inlet = make_inlet_momentum(parameters, geometry, mode=inlet_mode)
     states, diagnostic = find_temperature_solutions(
         parameters["beta"], D, parameters["lambda_sh"], geometry,
         n_points=n_points, b_points=b_points,
         inlet_momentum=inlet,
+        E_exc=E,
     )
     diagnostic.update(inlet_momentum=inlet_mode,
+                      excitation_scale=float(excitation_scale),
                       chi=parameters["chi"] if inlet_mode == "kinetic" else "")
     roots = []
     for state in states:
         roots.append({
             key: state[key] for key in (
-                "theta", "b", "D", "alpha", "branch", "root_kind",
+                "theta", "b", "D", "E_exc", "alpha", "branch", "root_kind",
                 "R_M", "R_E", "R_M_check", "R_E_check", "delta_alpha",
                 "mu_a", "mu_target", "R_M_scaled", "R_M_tolerance",
                 "inlet_target_sonic_margin", "inlet_momentum",
@@ -39,6 +44,7 @@ def find_density_solutions(n0, parameters, n_points=1600, b_points=100,
         })
         roots[-1].update(
             n0_cm3=float(n0),
+            excitation_scale=float(excitation_scale),
             T_eV=state["theta"]*parameters["T_star_eV"],
             a_cm=state["alpha"]*parameters["L_cm"],
             geometry=json.dumps(geometry.to_dict(), sort_keys=True),
@@ -49,7 +55,8 @@ def find_density_solutions(n0, parameters, n_points=1600, b_points=100,
 
 
 def scan_neutrals(densities, parameters, n_points=1600, b_points=100,
-                  cx_mode="constant", geometry=None, *, inlet_mode="kinetic"):
+                  cx_mode="constant", geometry=None, *, inlet_mode="kinetic",
+                  excitation_scale=0.0):
     geometry = quadratic_area_legacy() if geometry is None else geometry
     densities = np.asarray(densities, dtype=float)
     if (densities.ndim != 1 or not densities.size
@@ -60,6 +67,7 @@ def scan_neutrals(densities, parameters, n_points=1600, b_points=100,
         found, diagnostic = find_density_solutions(
             n0, parameters, n_points, b_points, cx_mode, geometry,
             inlet_mode=inlet_mode,
+            excitation_scale=excitation_scale,
         )
         roots.extend(found)
         diagnostics.append({"n0_cm3": float(n0), **diagnostic})
@@ -113,6 +121,7 @@ def main():
                         default="constant")
     add_geometry_arguments(parser)
     add_inlet_arguments(parser)
+    add_excitation_arguments(parser)
     args = parser.parse_args()
     try:
         geometry = geometry_from_args(args)
@@ -125,11 +134,13 @@ def main():
             densities, parameters, args.points, args.b_points,
             args.cx_mode, geometry,
             inlet_mode=args.inlet_momentum,
+            excitation_scale=args.excitation_scale,
         )
     except (ValueError, OSError, NotImplementedError) as exc:
         parser.error(str(exc))
     print("Geometry:", geometry.to_dict())
     print("Inlet momentum:", args.inlet_momentum, "chi:", parameters["chi"])
+    print("Excitation scale:", args.excitation_scale)
     if not args.no_plot:
         import matplotlib.pyplot as plt
         plot_results(roots, diagnostic)

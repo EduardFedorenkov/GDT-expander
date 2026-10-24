@@ -12,7 +12,7 @@ def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
                                n_points=1600, b_points=100,
                                *, residual_tol=1e-7,
                                boundary_rtol=1e-6, boundary_max_steps=40,
-                               inlet_momentum=None):
+                               inlet_momentum=None, E_exc=0.0):
     """Return (verified states, diagnostics).
 
     Searches a finite mixed b-grid, refines validity boundaries, extrema
@@ -20,6 +20,7 @@ def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
     necessarily close enough to the boundary to bracket a nearby root.
     This is a numerical search, not a proof that all roots were found.
     Undefined residual intervals are never bracketed across.
+    E_exc is a scalar or E_exc(theta); the same value is kept in root verification.
     """
     beta, lambda_sh = float(beta), float(lambda_sh)
     if not np.isfinite([beta, lambda_sh, residual_tol, boundary_rtol]).all() or min(
@@ -44,6 +45,7 @@ def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
             cache[b] = solve_at_theta(
                 b*b/(8*beta), beta, D, lambda_sh, geometry, n_points,
                 inlet_momentum=inlet_momentum,
+                E_exc=E_exc,
             )
         return cache[b]
 
@@ -189,6 +191,7 @@ def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
             geometry, 2*n_points, rtol=1e-10, atol=1e-12,
             max_step=trial.get("max_step", 0.02)/2,
             inlet_momentum=inlet_momentum,
+            E_exc=trial.get("E_exc", 0.0),
         )
         if checked["status"] != "energy_matched":
             raise RuntimeError("A candidate disappeared under ODE refinement.")
@@ -235,6 +238,8 @@ def find_temperature_solutions(beta, D, lambda_sh, geometry=None,
         raise NotImplementedError(
             "D=0: energy does not determine alpha; use a separate zero-CX problem."
         )
+    if statuses.get("zero_cx_with_excitation_unresolved"):
+        raise NotImplementedError("D=0 with excitation is not implemented.")
     diagnostic["has_unresolved_points"] = bool(
         statuses.get("critical_wall_unresolved") or discontinuous_brackets
         or diagnostic["boundary_resolution_limited"]

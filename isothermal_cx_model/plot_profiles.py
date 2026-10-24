@@ -12,6 +12,7 @@ from .solver_general import solve_at_theta
 from .geometry import add_geometry_arguments, geometry_from_args
 from .profiles import compute_profiles
 from .inlet import make_inlet_momentum, add_inlet_arguments
+from .excitation import add_excitation_arguments
 
 
 def plot_profiles(profiles, title=None):
@@ -116,6 +117,7 @@ def main():
     )
     add_geometry_arguments(parser)
     add_inlet_arguments(parser)
+    add_excitation_arguments(parser)
     parser.add_argument("--points", type=int, default=1600)
     parser.add_argument("--b-points", type=int, default=100)
     parser.add_argument(
@@ -148,6 +150,7 @@ def main():
         cx_mode=args.cx_mode,
         geometry=geometry,
         inlet_mode=args.inlet_momentum,
+        excitation_scale=args.excitation_scale,
     )
 
     if not roots:
@@ -163,6 +166,7 @@ def main():
             parameters["lambda_sh"], geometry, n_points=args.points,
             rtol=1e-10, atol=1e-12,
             inlet_momentum=inlet,
+            E_exc=root["E_exc"],
         )
         if state["status"] != "energy_matched":
             raise RuntimeError("Не удалось восстановить решение.")
@@ -192,14 +196,15 @@ def main():
     print(
         f"u_*={parameters['U_star_cm_per_s']:.6g} cm/s, "
         f"n_*={parameters['n_star_cm3']:.6g} cm^-3, "
-        f"geometry={geometry.name}"
+            f"geometry={geometry.name}, excitation eta={args.excitation_scale:g}"
     )
 
     figure, _ = plot_profiles(
         profiles,
         title=(
             f"n0={density:.3e} cm^-3, "
-            f"{geometry.name}, CX={args.cx_mode}"
+            f"{geometry.name}, CX={args.cx_mode}, "
+            f"excitation eta={args.excitation_scale:g}"
         ),
     )
 

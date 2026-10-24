@@ -27,28 +27,34 @@ def classify_profile(mu):
 
 
 def solve_at_theta(theta, beta, D, lambda_sh, geometry=None, n_points=1600,
-                   *, inlet_momentum=None, rtol=1e-9, atol=1e-11, max_step=0.02):
+                   *, inlet_momentum=None, E_exc=0.0,
+                   rtol=1e-9, atol=1e-11, max_step=0.02):
     """Return a trial dictionary with explicit status and, on success, arrays.
 
     status='energy_matched' means omega(alpha)=1; R_M can still be nonzero.
     Other physical statuses do NOT mean that a global solution is impossible.
     Numerical integration failures raise RuntimeError.
-    D=0 and critical sonic-wall initial data are explicitly unresolved.
+    E_exc is a nonnegative number or E_exc(theta). It changes only the
+    energy RHS. D=0 and critical sonic-wall data remain unresolved.
     """
     geometry = quadratic_area_legacy() if geometry is None else geometry
     theta, beta, lambda_sh = map(float, (theta, beta, lambda_sh))
     D_value = float(D(theta) if callable(D) else D)
+    E_value = float(E_exc(theta) if callable(E_exc) else E_exc)
     if not all(isfinite(v) and v > 0
                for v in (theta, beta, lambda_sh, rtol, atol, max_step)):
         raise ValueError("theta, beta, lambda_sh and numerical tolerances must be >0.")
     if not isfinite(D_value) or D_value < 0:
         raise ValueError("D must be finite and nonnegative.")
+    if not isfinite(E_value) or E_value < 0:
+        raise ValueError("E_exc must be finite and nonnegative.")
     if not isinstance(n_points, (int, np.integer)) or n_points < 2:
         raise ValueError("n_points must be an integer >=2.")
 
     b = sqrt(8 * beta * theta)
     result = {
-        "theta": theta, "b": b, "D": D_value, "geometry": geometry,
+        "theta": theta, "b": b, "D": D_value, "E_exc": E_value,
+        "geometry": geometry,
         "status": None, "alpha": np.nan, "R_M": np.nan, "R_E": np.nan,
     }
 
@@ -59,7 +65,8 @@ def solve_at_theta(theta, beta, D, lambda_sh, geometry=None, n_points=1600,
     if inlet_momentum is None and b >= 1:
         return stop("inlet_sonic_limit")
     if D_value == 0:
-        return stop("zero_cx_degenerate")
+        return stop("zero_cx_degenerate" if E_value == 0
+                    else "zero_cx_with_excitation_unresolved")
     if lambda_sh * theta >= 1:
         return stop("energy_temperature_limit")
 
@@ -79,9 +86,14 @@ def solve_at_theta(theta, beta, D, lambda_sh, geometry=None, n_points=1600,
         # Clipping is ONLY for provisional integrator stages near sonic events.
         radical = sqrt(max((mu - b) * (mu + b), 0.0))
         H = mu + radical
+        energy_rhs = -D_value * (5 * mu + radical) / (8 * beta)
+        if E_value != 0:
+            # g=z/L, NOT xi=(g-alpha)/(1-alpha): no (1-alpha) here.
+            # u/u_* = 4*beta*theta/H, so loss = -E_exc/(u/u_*).
+            energy_rhs -= E_value * H / (4 * beta * theta)
         return [
             -0.5 * geometry.dlnB_dg(g) * H - D_value,
-            -D_value * (5 * mu + radical) / (8 * beta),
+            energy_rhs,
         ]
 
     def inlet_energy(g, state):

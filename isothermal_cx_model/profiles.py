@@ -42,6 +42,8 @@ def compute_profiles(solution, parameters, K=None, geometry=None):
         omega = np.asarray(solution["omega"], dtype=float)
         residual = float(omega[0] - 1)
     else:
+        if solution.get("E_exc", 0.0) != 0:
+            raise ValueError("Excitation profiles require omega from solver_general.")
         # Backward compatibility for results from the untouched old solver.
         import contextlib
         import io
@@ -114,6 +116,7 @@ def compute_profiles(solution, parameters, K=None, geometry=None):
         "u_cm_s": velocity,
         "n_cm3": density,
         "T_eV": theta * parameters["T_star_eV"],
+        "E_exc": float(solution.get("E_exc", 0.0)),
         "a_cm": alpha * parameters["L_cm"],
         "branch": solution["branch"],
         "R_E": residual,

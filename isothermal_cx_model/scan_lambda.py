@@ -11,6 +11,7 @@ import numpy as np
 from simple_cx_model.config import load_cx_config
 from .scan_neutral import scan_neutrals
 from .inlet import add_inlet_arguments
+from .excitation import add_excitation_arguments, validate_excitation_scale
 from .geometry import (add_geometry_arguments, geometry_from_args,
                        quadratic_area_legacy)
 
@@ -23,6 +24,7 @@ ROOT_FIELDS = (
     "inlet_momentum", "chi", "T_kin_eV", "K_a", "kinetic_path_check",
     "M_kin_dyn", "mu_a", "mu_target", "inlet_target_sonic_margin",
     "R_M_scaled", "R_M_tolerance",
+    "excitation_scale", "E_exc",
 )
 
 GRID_FIELDS = (
@@ -31,6 +33,7 @@ GRID_FIELDS = (
     "has_unresolved_points", "statuses",
     "boundary_refinements", "boundary_evaluations", "boundary_resolution_limited",
     "inlet_momentum", "chi", "kinetic_path_incomplete", "kinetic_domain_reasons",
+    "excitation_scale",
 )
 
 
@@ -78,7 +81,7 @@ def scan_lambda_neutral(
     n_points=1600,
     b_points=100,
     geometry=None,
-    *, inlet_mode="kinetic",
+    *, inlet_mode="kinetic", excitation_scale=0.0,
 ):
     """Для каждой lambda запускать существующий скан по n0.
 
@@ -91,6 +94,7 @@ def scan_lambda_neutral(
     geometry = quadratic_area_legacy() if geometry is None else geometry
     lambdas = positive_grid(lambdas, "lambda_sh")
     densities = positive_grid(densities, "n0")
+    excitation_scale = validate_excitation_scale(excitation_scale)
 
     if cx_mode not in ("constant", "temperature"):
         raise ValueError("Неизвестный cx_mode.")
@@ -105,7 +109,7 @@ def scan_lambda_neutral(
 
         print(
             f"\n[{index}/{len(lambdas)}] "
-            f"lambda_sh={lam:g}, CX={cx_mode}",
+            f"lambda_sh={lam:g}, CX={cx_mode}, excitation eta={excitation_scale:g}",
             flush=True,
         )
 
@@ -117,6 +121,7 @@ def scan_lambda_neutral(
             cx_mode=cx_mode,
             geometry=geometry,
             inlet_mode=inlet_mode,
+            excitation_scale=excitation_scale,
         )
 
         roots.extend(
@@ -131,6 +136,7 @@ def scan_lambda_neutral(
                 "lambda_sh": float(lam),
                 "n0_cm3": row["n0_cm3"],
                 "cx_mode": cx_mode,
+                "excitation_scale": excitation_scale,
                 "n_roots": counts[row["n0_cm3"]],
                 "min_R_M": row["min_R_M"],
                 "max_R_M": row["max_R_M"],
@@ -253,6 +259,7 @@ def main():
 
     add_geometry_arguments(parser)
     add_inlet_arguments(parser)
+    add_excitation_arguments(parser)
     args = parser.parse_args()
     try:
         geometry = geometry_from_args(args)
@@ -308,6 +315,7 @@ def main():
         b_points=args.b_points,
         geometry=geometry,
         inlet_mode=args.inlet_momentum,
+        excitation_scale=args.excitation_scale,
     )
 
     args.output.mkdir(parents=True, exist_ok=True)
@@ -315,15 +323,17 @@ def main():
         json.dumps(geometry.to_dict(), indent=2), encoding="utf-8")
     (args.output / "parameters.json").write_text(json.dumps(dict(
         parameters, inlet_momentum=args.inlet_momentum, cx_mode=args.cx_mode,
+        excitation_scale=args.excitation_scale,
     ), indent=2), encoding="utf-8")
 
+    suffix = "_excitation" if args.excitation_scale > 0 else ""
     save_csv(
-        args.output / f"roots_{args.cx_mode}.csv",
+        args.output / f"roots_{args.cx_mode}{suffix}.csv",
         roots,
         ROOT_FIELDS,
     )
     save_csv(
-        args.output / f"grid_{args.cx_mode}.csv",
+        args.output / f"grid_{args.cx_mode}{suffix}.csv",
         grid,
         GRID_FIELDS,
     )
