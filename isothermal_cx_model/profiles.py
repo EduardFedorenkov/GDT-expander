@@ -13,6 +13,10 @@ def compute_profiles(solution, parameters, K=None, geometry=None):
     R_E показывает, выполнено ли входное условие энергии.
     Размерные величины возвращаются в СГС, температура — в eV.
     """
+    if solution.get('model') == 'rr_trial':
+        raise ValueError(
+            'compute_profiles assumes J=J0. For RR trials use their j, '
+            'n_over_n_star, u_over_u_star and omega arrays directly.')
     stored_geometry = solution.get("geometry")
     if K is not None and (geometry is not None or stored_geometry is not None):
         raise ValueError("K нельзя сочетать с явно заданной геометрией.")

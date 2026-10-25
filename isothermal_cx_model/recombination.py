@@ -19,6 +19,10 @@ T_MIN_EV = 3.0 / EV_TO_K
 T_MAX_EV = 1e9 / EV_TO_K
 
 
+class RRTemperatureDomainError(ValueError):
+    """A positive trial temperature is outside the published RR-fit domain."""
+
+
 def rr_coefficients(T_eV):
     """Return (alpha_RR [cm^3/s], C_RR [erg cm^3/s]).
 
@@ -32,7 +36,7 @@ def rr_coefficients(T_eV):
     if (np.any(~np.isfinite(temperature))
             or np.any(temperature < T_MIN_EV)
             or np.any(temperature > T_MAX_EV)):
-        raise ValueError(
+        raise RRTemperatureDomainError(
             "Case-A RR fits require 3 <= T_K <= 1e9 "
             f"({T_MIN_EV:.6g} <= T_eV <= {T_MAX_EV:.6g})."
         )
@@ -71,3 +75,36 @@ def L_gamma_rr(T_eV):
     """
     alpha, cooling = rr_coefficients(T_eV)
     return IONIZATION_ENERGY_EV * EV_TO_ERG * alpha + cooling
+
+
+def make_rr_coefficients(parameters, scale=0.0):
+    """Return (0,0) or a callable theta -> (R_RR, Q_RR).
+
+    R=L*n_star*alpha_RR/u_star; Q=L*n_star*C_RR/(u_star*T_star_erg).
+    One common eta multiplies both, with 0 <= eta <= 1. No neutral density
+    appears here. The source scales are copied; later dictionary edits do
+    not silently change the coefficient function. The off switch does not
+    evaluate the RR fits, preserving the old model's temperature domain.
+    """
+    scale = float(scale)
+    if not np.isfinite(scale) or not 0 <= scale <= 1:
+        raise ValueError("RR scale must be finite and between 0 and 1.")
+    if scale == 0:
+        return (0.0, 0.0)
+    keys = ('L_cm', 'n_star_cm3', 'U_star_cm_per_s',
+            'T_star_erg', 'T_star_eV')
+    length, density, speed, energy, temperature = (
+        float(parameters[key]) for key in keys)
+    if (not np.isfinite([length, density, speed, energy, temperature]).all()
+            or min(length, density, speed, energy, temperature) <= 0):
+        raise ValueError("RR scales must be finite and positive; use CGS.")
+    prefactor = scale * length * density / speed
+
+    def coefficients(theta):
+        theta = float(theta)
+        if not np.isfinite(theta) or theta <= 0:
+            raise ValueError("theta must be finite and positive.")
+        alpha, cooling = rr_coefficients(theta * temperature)
+        return prefactor * alpha, prefactor * cooling / energy
+
+    return coefficients
