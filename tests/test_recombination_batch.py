@@ -14,6 +14,7 @@ import numpy as np
 
 from simple_cx_model.config import load_cx_config
 from isothermal_cx_model.geometry import quadratic_area_legacy
+from isothermal_cx_model.ionization import make_ionization_coefficients, IONIZATION_ENERGY_EV
 from isothermal_cx_model.recombination_batch import scan_lambda_neutral
 from isothermal_cx_model.scan_lambda_recombination import _range
 
@@ -39,16 +40,26 @@ def fake_scan(command, cwd, log_path, empty=False):
     p = load_cx_config(flag(command, '--config'))
     p.update(lambda_sh=float(flag(command, '--lambda-sh')), n0_cm3=float(flag(command, '--density')))
     D = p['L_cm']*p['n0_cm3']*p['k_cx_cm3_per_s']/p['U_star_cm_per_s']
+    scale = float(flag(command, '--ionization-scale'))
+    ionization = make_ionization_coefficients(p, scale=scale)
     solutions = []
     if not empty:
         for i, temperature in enumerate((.1, 3.), start=1):
+            theta, jt = temperature/p['T_star_eV'], .8+i*.01
+            Di, Ei = ionization(theta) if callable(ionization) else ionization
+            born = .4 if scale else 0.
+            lost = born+1-jt
             solutions.append(dict(solution_id=f'root_{i:03d}', theta=temperature/p['T_star_eV'],
-                T_eV=temperature, alpha=.8, a_cm=.8*p['L_cm'], j_target=.8+i*.01,
+                T_eV=temperature, alpha=.8, a_cm=.8*p['L_cm'], j_target=jt,
                 R_J=0., R_M=0., R_E=0., outside_scan_j_range=False,
-                coefficients=dict(D=D, E_exc=.1, R_rr=.03, Q_rr=.01),
-                verification=dict(balance_tol=5e-6),
-                balances=dict(particle_abs=1e-10, momentum_abs=2e-9, energy_abs=3e-9)))
-    report = dict(stage='refinement_complete', parameters=p,
+                mu_target=1., net_particle_loss_fraction=1-jt,
+                ionization_count_per_inlet=born, recombination_count_per_inlet=lost,
+                coefficients=dict(D=D, E_exc=.1, R_rr=.03, Q_rr=.01, D_ion=Di, E_ion=Ei),
+                verification=dict(balance_tol=5e-6, residual_tol=1e-9),
+                balances=dict(particle_abs=1e-10, momentum_abs=2e-9, energy_abs=3e-9,
+                    particle_ionization_integral=born, particle_recombination_integral=lost,
+                    energy_ionization_integral=IONIZATION_ENERGY_EV/p['T_star_eV']*born)))
+    report = dict(format_version=2, ionization_scale=scale, stage='refinement_complete', parameters=p,
         geometry=json.loads(Path(flag(command, '--geometry')).read_text()),
         cx_mode='temperature', rr_scale=1., excitation_scale=1., inlet_momentum='kinetic',
         solutions=solutions, starts=[dict(theta=.1, j_target=.8)]*len(solutions),

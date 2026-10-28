@@ -26,6 +26,10 @@ def load_roots_csv(path):
             try:
                 for name in numeric:
                     row[name] = float(row[name])
+                if 'ionization_scale' in row:
+                    row['ionization_scale'] = float(row['ionization_scale'])
+                    if not np.isfinite(row['ionization_scale']) or not 0 <= row['ionization_scale'] <= 1:
+                        raise ValueError('Invalid ionization scale.')
             except (ValueError, TypeError) as exc:
                 raise ValueError(
                     f"Некорректное число в строке {line}"
@@ -64,22 +68,24 @@ def plot_roots(rows, lambdas=None):
         raise ValueError("Нет решений для построения графиков")
 
     groups = sorted({
-        (r.get("cx_mode", ""), r["lambda_sh"]) for r in rows
+        (r.get("cx_mode", ""), r["lambda_sh"], float(r.get("ionization_scale", 0.))) for r in rows
     })
     branches = sorted({r.get("branch", "") for r in rows})
-    mixed_modes = len({mode for mode, _ in groups}) > 1
+    mixed_modes = len({mode for mode, _, _ in groups}) > 1
+    show_ionization = any('ionization_scale' in r for r in rows)
 
     markers = {"monotone": "o", "with_maximum": "^", "tangent": "s"}
     colors = plt.get_cmap("tab10", len(groups))
 
     fig, axes = plt.subplots(2, 1, figsize=(9, 7), sharex=True)
 
-    for i, (mode, lam) in enumerate(groups):
+    for i, (mode, lam, ionization_scale) in enumerate(groups):
         for branch in branches:
             selected = [
                 r for r in rows
                 if r.get("cx_mode", "") == mode
                 and r["lambda_sh"] == lam
+                and float(r.get('ionization_scale', 0.)) == ionization_scale
                 and r.get("branch", "") == branch
             ]
             if not selected:
@@ -88,6 +94,8 @@ def plot_roots(rows, lambdas=None):
             label = rf"$\lambda_{{\rm sh}}={lam:.4g}$"
             if mixed_modes:
                 label += f", {mode}"
+            if show_ionization:
+                label += f", ionization={ionization_scale:g}"
             if len(branches) > 1:
                 label += f", {branch}"
 

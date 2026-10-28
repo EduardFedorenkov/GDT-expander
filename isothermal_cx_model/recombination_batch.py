@@ -1,4 +1,4 @@
-"""Batch orchestration of the existing checked 2D recombination scanner.
+"""Batch orchestration of the checked 2D atomic scanner.
 
 Each physical pair gets an independent full survey. No continuation-only
 search, physical branch identification, or global completeness claim.
@@ -14,17 +14,21 @@ import sys
 import numpy as np
 
 from simple_cx_model.config import load_cx_config
+from .ionization import make_ionization_coefficients, IONIZATION_ENERGY_EV
 from .scan_lambda import positive_grid, save_csv
+from .excitation import validate_excitation_scale
 
 
 ROOT_FIELDS = ('case_id', 'solution_id', 'local_solution_id', 'lambda_sh', 'n0_cm3',
-    'cx_mode', 'rr_scale', 'excitation_scale', 'inlet_momentum', 'geometry',
-    'root_kind', 'T_eV', 'theta', 'a_cm', 'alpha', 'j_target', 'recombined_fraction',
-    'D', 'E_exc', 'R_rr', 'Q_rr', 'R_J', 'R_M', 'R_E',
+    'format_version', 'cx_mode', 'rr_scale', 'excitation_scale', 'ionization_scale',
+    'inlet_momentum', 'geometry', 'root_kind', 'T_eV', 'theta', 'a_cm', 'alpha',
+    'j_target', 'net_particle_loss_fraction', 'recombination_count_per_inlet',
+    'ionization_count_per_inlet', 'energy_ionization_fraction',
+    'D', 'E_exc', 'R_rr', 'Q_rr', 'D_ion', 'E_ion', 'R_J', 'R_M', 'R_E',
     'particle_balance_abs', 'momentum_balance_abs', 'energy_balance_abs',
     'outside_scan_j_range', 'case_report')
 GRID_FIELDS = ('case_id', 'lambda_sh', 'n0_cm3', 'cx_mode', 'rr_scale',
-    'excitation_scale', 'n_roots', 'search_status', 'n_trials', 'n_valid',
+    'format_version', 'excitation_scale', 'ionization_scale', 'n_roots', 'search_status', 'n_trials', 'n_valid',
     'candidate_cell_count', 'n_starts', 'n_converged_starts', 'best_sample_norm',
     'unresolved_numerical_count', 'failed_start_count', 'scan_statuses',
     'attempt_statuses', 'case_report')
@@ -76,46 +80,78 @@ def _run_scan(command, cwd, log_path):
                 raise
 
 
-def _read_case(path, lam, density):
+def _read_case(path, lam, density, ionization_scale=0.):
     """A child exit code alone never becomes a root/no-root result."""
     report = _json(path)
-    if report.get('ionization_scale', 0.) != 0:
-        raise ValueError('Ionization batch scans are not implemented yet; use scan_recombination directly.')
-    if (report.get('stage') != 'refinement_complete'
+    if report.get('ionization_scale') != float(ionization_scale):
+        raise ValueError(f'Mismatched ionization scale in {path}')
+    if (report.get('format_version') != 2 or report.get('stage') != 'refinement_complete'
             or report['parameters']['lambda_sh'] != float(lam)
             or report['parameters']['n0_cm3'] != float(density)
             or not isinstance(report.get('solutions'), list)
             or not isinstance(report.get('diagnostic'), dict)):
         raise ValueError(f'Incomplete or mismatched case report: {path}')
     identifiers = set()
+    ionization = make_ionization_coefficients(report['parameters'], scale=ionization_scale)
     for root in report['solutions']:
         fields = ('theta', 'T_eV', 'alpha', 'a_cm', 'j_target', 'R_J', 'R_M', 'R_E')
         if (not np.isfinite([root[key] for key in fields]).all()
                 or min(root['theta'], root['T_eV'], root['a_cm']) <= 0
-                or not 0 < root['alpha'] < 1 or not 0 < root['j_target'] <= 1
+                or not 0 < root['alpha'] < 1 or root['j_target'] <= 0
                 or root['solution_id'] in identifiers):
             raise ValueError(f'Invalid root summary: {path}')
         identifiers.add(root['solution_id'])
         errors = [root['balances'][key] for key in ('particle_abs', 'momentum_abs', 'energy_abs')]
-        if (not np.isfinite(errors).all() or min(errors) < 0
-                or max(errors) > root['verification']['balance_tol']):
+        balance_tol = root['verification']['balance_tol']
+        residual_tol = root['verification']['residual_tol']
+        if (not np.isfinite(errors+[balance_tol, residual_tol, root['mu_target']]).all()
+                or min(balance_tol, residual_tol, root['mu_target']) <= 0 or min(errors) < 0
+                or max(errors) > balance_tol):
             raise ValueError(f'Unverified integral balance in {path}')
+        if (abs(root['R_J']) > residual_tol or abs(root['R_E']) > residual_tol
+                or abs(root['R_M']) > residual_tol*(1+abs(root['mu_target']))):
+            raise ValueError(f'Unverified inlet residual in {path}')
+        coefficients = root['coefficients']
+        values = [coefficients[key] for key in ('D', 'E_exc', 'R_rr', 'Q_rr', 'D_ion', 'E_ion')]
+        expected = ionization(root['theta']) if callable(ionization) else ionization
+        if (not np.isfinite(values).all() or min(values) < 0
+                or not np.allclose(values[-2:], expected, rtol=1e-10, atol=0)):
+            raise ValueError(f'Inconsistent ionization coefficients in {path}')
+        if (not np.isclose(root['T_eV'], root['theta']*report['parameters']['T_star_eV'], rtol=1e-10, atol=0)
+                or not np.isclose(root['a_cm'], root['alpha']*report['parameters']['L_cm'], rtol=1e-10, atol=0)):
+            raise ValueError(f'Inconsistent source normalization in {path}')
+        born = root['balances']['particle_ionization_integral']
+        lost = root['balances']['particle_recombination_integral']
+        ion_energy = root['balances']['energy_ionization_integral']
+        if (not np.isfinite([born, lost, ion_energy]).all() or min(born, lost, ion_energy) < 0
+                or abs(root['j_target']-1-(born-lost)) > balance_tol+abs(root['R_J'])
+                or not np.isclose(ion_energy, IONIZATION_ENERGY_EV/report['parameters']['T_star_eV']*born,
+                                  rtol=1e-10, atol=0)
+                or not np.allclose([root['ionization_count_per_inlet'], root['recombination_count_per_inlet'],
+                                    root['net_particle_loss_fraction']],
+                                   [born, lost, 1-root['j_target']], rtol=1e-12, atol=1e-12)
+                or (ionization_scale == 0 and born != 0)):
+            raise ValueError(f'Inconsistent particle/ionization energy counts in {path}')
     return report
 
 
 def _rows(case_id, report_path, report):
     common = dict(case_id=case_id, lambda_sh=report['parameters']['lambda_sh'],
+        format_version=2, ionization_scale=report['ionization_scale'],
         n0_cm3=report['parameters']['n0_cm3'], cx_mode=report['cx_mode'],
         rr_scale=report['rr_scale'], excitation_scale=report['excitation_scale'],
         case_report=report_path)
     roots = []
     for root in report['solutions']:
         roots.append(dict(common, solution_id=case_id+'_'+root['solution_id'],
-            local_solution_id=root['solution_id'], root_kind='verified_stationary_rr',
+            local_solution_id=root['solution_id'], root_kind='verified_stationary_atomic',
             inlet_momentum=report['inlet_momentum'], geometry=report['geometry']['type'],
             **{key: root[key] for key in ('T_eV', 'theta', 'a_cm', 'alpha', 'j_target',
                 'R_J', 'R_M', 'R_E', 'outside_scan_j_range')},
-            recombined_fraction=1-root['j_target'], **root['coefficients'],
+            **{key: root[key] for key in ('net_particle_loss_fraction',
+                'recombination_count_per_inlet', 'ionization_count_per_inlet')},
+            energy_ionization_fraction=root['balances']['energy_ionization_integral'],
+            **root['coefficients'],
             particle_balance_abs=root['balances']['particle_abs'],
             momentum_balance_abs=root['balances']['momentum_abs'],
             energy_balance_abs=root['balances']['energy_abs']))
@@ -151,14 +187,16 @@ def _check_frozen(output, parameters, geometry_spec):
 
 
 def scan_lambda_neutral(lambdas, densities, config_path, output, *, geometry,
-                       scan_arguments=(), resume=False):
+                       scan_arguments=(), ionization_scale=0., resume=False):
     """Return (roots, grid); save a completed-pair checkpoint and CSV after each.
 
     Runs the existing scan_recombination CLI in an isolated Python process.
     Its IVP, start selection, root verification and plots are not reimplemented.
     Interrupted/failed attempts are preserved; resume uses a NEW attempt dir.
+    ionization_scale is batch-controlled, explicit in children and manifest.
     """
     lambdas, densities = positive_grid(lambdas, 'lambda'), positive_grid(densities, 'n0')
+    ionization_scale = validate_excitation_scale(ionization_scale)
     config_path, output = Path(config_path).resolve(), Path(output).resolve()
     project = Path(__file__).resolve().parents[1]
     parameters = load_cx_config(config_path)
@@ -166,9 +204,11 @@ def scan_lambda_neutral(lambdas, densities, config_path, output, *, geometry,
     arguments = list(map(str, scan_arguments))
     reserved = {'--config', '--output', '--density', '--lambda-sh', '--geometry',
                 '--K', '--map-only', '--no-show', '--ionization-scale'}
-    if any(item.split('=')[0] in reserved for item in arguments):
+    if any(item.startswith('--') and any(flag.startswith(item.split('=')[0]) for flag in reserved)
+           for item in arguments):
         raise ValueError('scan_arguments overrides a batch-controlled argument.')
-    signature = dict(format_version=1, lambdas=lambdas.tolist(), densities=densities.tolist(),
+    signature = dict(format_version=2, ionization_scale=ionization_scale,
+        lambdas=lambdas.tolist(), densities=densities.tolist(),
         parameters=parameters, geometry=geometry.to_dict(), scan_arguments=arguments,
         code_sha256=code_fingerprint(project))
     if resume:
@@ -203,7 +243,7 @@ def scan_lambda_neutral(lambdas, densities, config_path, output, *, geometry,
                 path = (output/relative).resolve()
                 if not path.is_relative_to(output):
                     raise ValueError('Case report path escapes the output directory.')
-                report = _read_case(path, lam, density)
+                report = _read_case(path, lam, density, ionization_scale)
                 print('Reusing completed pair.', flush=True)
             else:
                 case_dir = output/'cases'/case_id
@@ -218,13 +258,14 @@ def scan_lambda_neutral(lambdas, densities, config_path, output, *, geometry,
                 command = [sys.executable, '-B', '-m', 'isothermal_cx_model.scan_recombination',
                     '--config', str(output/'source_config.json'), '--geometry', str(output/'geometry.json'),
                     '--density', str(float(density)), '--lambda-sh', str(float(lam)),
-                    '--output', str(result_dir), '--no-show', *arguments]
+                    '--output', str(result_dir), '--no-show',
+                    '--ionization-scale', str(ionization_scale), *arguments]
                 _write_json(attempt_dir/'command.json', command)
                 try:
                     exit_code = _run_scan(command, project, attempt_dir/'scan.log')
                     if exit_code not in (0, 1):
                         raise RuntimeError(f'Child exit code {exit_code}. See {attempt_dir / "scan.log"}')
-                    report = _read_case(result_dir/'summary.json', lam, density)
+                    report = _read_case(result_dir/'summary.json', lam, density, ionization_scale)
                     if (exit_code == 0) != bool(report['solutions']):
                         raise RuntimeError('Child exit code conflicts with its solution report.')
                     if code_fingerprint(project) != signature['code_sha256']:

@@ -170,6 +170,7 @@ def main():
             recombination_count_per_inlet=state['balances']['particle_recombination_integral'],
             ionization_count_per_inlet=state['balances']['particle_ionization_integral'],
             R_J=state['R_J'], R_M=state['R_M'], R_E=state['R_E'],
+            mu_target=state['mu_target'],
             coefficients={k: state[k] for k in ('D', 'E_exc', 'R_rr', 'Q_rr', 'D_ion', 'E_ion')},
             verification=state['verification'], balances=state['balances']))
         np.savez_compressed(args.output/f"{state['solution_id']}_profiles.npz",

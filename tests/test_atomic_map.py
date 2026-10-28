@@ -192,14 +192,14 @@ class AtomicMapCLITests(unittest.TestCase):
 
 
 class BatchBoundaryTests(unittest.TestCase):
-    def test_unadapted_batch_does_not_silently_accept_ionizing_results(self):
+    def test_batch_scale_is_explicit_and_mismatched_report_is_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             with contextlib.redirect_stdout(io.StringIO()), self.assertRaises(ValueError):
                 scan_lambda_neutral([7], [1e15], CONFIG, Path(folder)/'out',
                     geometry=quadratic_area_legacy(), scan_arguments=['--ionization-scale=1'])
             report_path = Path(folder)/'ionizing.json'
             report_path.write_text(json.dumps(dict(ionization_scale=1)), encoding='utf-8')
-            with self.assertRaisesRegex(ValueError, 'not implemented yet'):
+            with self.assertRaisesRegex(ValueError, 'Mismatched ionization scale'):
                 _read_case(report_path, 7, 1e15)
 
 

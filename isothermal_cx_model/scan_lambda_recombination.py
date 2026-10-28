@@ -1,4 +1,4 @@
-"""Scan lambda_sh and n0 with a fresh automatic RR (T,j_t) survey per pair."""
+"""Scan lambda_sh and n0 with a fresh automatic atomic (T,j_t) survey per pair."""
 
 from pathlib import Path
 import argparse
@@ -39,7 +39,8 @@ def main():
     parser.add_argument('--temperature-max', type=float, default=100.)
     parser.add_argument('--temperature-count', type=int, default=45)
     parser.add_argument('--j-min', type=float, default=1e-6)
-    parser.add_argument('--j-max', type=float, default=1.)
+    parser.add_argument('--j-max', type=float,
+                        help='Map bound only. Default: 1 without ionization, 10 with it.')
     parser.add_argument('--j-count', type=int, default=48)
     parser.add_argument('--j-grid', choices=['mixed', 'linear', 'log'], default='mixed')
     parser.add_argument('--j-axis', choices=['loss', 'linear', 'log'], default='loss')
@@ -51,6 +52,8 @@ def main():
     parser.add_argument('--cx-mode', choices=['constant', 'temperature'], default='temperature')
     parser.add_argument('--rr-scale', type=validate_excitation_scale, default=1.)
     parser.add_argument('--excitation-scale', type=validate_excitation_scale, default=1.)
+    parser.add_argument('--ionization-scale', type=validate_excitation_scale, default=0.,
+                        help='0: previous physics (default); 1: full atomic ionization.')
     parser.add_argument('--output', type=Path, default=Path('rr_lambda_scan_results'))
     parser.add_argument('--resume', action='store_true')
     parser.add_argument('--no-show', action='store_true')
@@ -68,6 +71,8 @@ def main():
                 or not np.isfinite([args.residual_tol, args.balance_tol]).all()
                 or min(args.residual_tol, args.balance_tol) <= 0):
             raise ValueError('Check the inner grids, iteration count and positive tolerances.')
+        if args.j_max is None:
+            args.j_max = 10. if args.ionization_scale > 0 else 1.
         js = make_j_grid(args.j_min, args.j_max, args.j_count, args.j_grid)
         geometry = geometry_from_args(args)
         p = load_cx_config(args.config)
@@ -83,7 +88,8 @@ def main():
         print(f'Physical pairs: {pairs}; inner grid: {len(js)} x {args.temperature_count}; '
               f'about {pairs*len(js)*args.temperature_count} IVP trials plus root refinement.', flush=True)
         roots, grid = scan_lambda_neutral(lambdas, densities, args.config, args.output,
-            geometry=geometry, scan_arguments=inner, resume=args.resume)
+            geometry=geometry, scan_arguments=inner, ionization_scale=args.ionization_scale,
+            resume=args.resume)
     except (ValueError, OSError, RuntimeError) as error:
         parser.error(str(error))
     except KeyboardInterrupt:
@@ -95,7 +101,8 @@ def main():
             matplotlib.use('Agg')
         import matplotlib.pyplot as plt
         fig, axis = plot_grid(grid)
-        axis.set_title('Verified roots found (finite search, not an existence boundary)')
+        axis.set_title(f'Verified roots found; ionization={args.ionization_scale:g}\n'
+                       '(finite search, not an existence boundary)')
         fig.savefig(args.output/'root_count.png', dpi=170, bbox_inches='tight')
         if roots:
             from .plot_lambda_results import plot_roots
