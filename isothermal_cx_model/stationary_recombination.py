@@ -7,30 +7,9 @@ Invalid IVPs never become artificial residuals or optimizer penalties.
 
 from collections import Counter
 import numpy as np
-from scipy.integrate import simpson
 
 from .geometry import quadratic_area_legacy
-from .solver_recombination import solve_trial
-
-
-def balance_checks(state, beta):
-    """Independent profile quadratures; errors normalized to J0, M0, W0."""
-    g, j, mu, omega, H, A = [np.asarray(state[k]) for k in
-                             ('g', 'j', 'mu', 'omega', 'H', 'A_over_A_star')]
-    theta, D, E, R, Q = [state[k] for k in ('theta', 'D', 'E_exc', 'R_rr', 'Q_rr')]
-    delta = np.sqrt(np.maximum((mu-state['b']*j)*(mu+state['b']*j), 0.))
-    phi = H*H/(16*beta*beta*theta*theta*A)
-    geom = -.5*state['geometry'].dlnB_dg(g)*H
-    momentum_rhs = geom-D*j-R*j*H/(4*beta*theta*A)
-    power_loss = (D*(5*mu+delta)/(8*beta)+E*H/(4*beta*theta)
-                  + R*j*j/(2*beta*A)+(1.5*R*theta+Q)*phi)
-    particle = float(simpson(R*phi, x=g))
-    return dict(
-        particle_abs=abs(float(j[0]-j[-1])-particle),
-        momentum_abs=abs(float(mu[-1]-mu[0])-float(simpson(momentum_rhs, x=g))),
-        energy_abs=abs(float(omega[0]-omega[-1])-float(simpson(power_loss, x=g))),
-        particle_loss_integral=particle,
-    )
+from .solver_atomic import solve_trial, balance_checks
 
 
 def solve_stationary(theta_guess, j_guess, beta, D, lambda_sh, geometry=None,

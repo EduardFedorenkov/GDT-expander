@@ -8,7 +8,7 @@ from collections import Counter
 import numpy as np
 
 from .geometry import quadratic_area_legacy
-from .solver_recombination import solve_trial
+from .solver_atomic import solve_trial
 
 
 def _axis(values, name, maximum=None):

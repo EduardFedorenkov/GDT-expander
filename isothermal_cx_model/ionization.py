@@ -129,6 +129,48 @@ def L_ion(T_e_eV):
     return IONIZATION_ENERGY_ERG * k_ion(T_e_eV)
 
 
+def make_ionization_coefficients(parameters, scale=0.0, n0_cm3=None):
+    """Return (0,0) or theta -> (D_ion,E_ion) for one prescribed n0.
+
+    D_ion=eta*L*n0*k_ion(T)/u_star, E_ion=(I/T_star_erg)*D_ion.
+    The same eta multiplies particle creation and its energy cost. Source
+    scales and neutral density are copied. Default off preserves old calls;
+    it needs no source parameters and never evaluates the atomic integral.
+    This first stage uses a constant prescribed n0 per trial, as existing CX.
+    """
+    scale = float(scale)
+    if not math.isfinite(scale) or not 0 <= scale <= 1:
+        raise ValueError('Ionization scale must be finite and between 0 and 1.')
+    if scale == 0:
+        return (0., 0.)
+    length, speed, energy, temperature = (float(parameters[key]) for key in
+        ('L_cm', 'U_star_cm_per_s', 'T_star_erg', 'T_star_eV'))
+    n0 = float(parameters['n0_cm3'] if n0_cm3 is None else n0_cm3)
+    if (not np.isfinite([length, speed, energy, temperature, n0]).all()
+            or min(length, speed, energy, temperature) <= 0 or n0 < 0):
+        raise ValueError('Need n0>=0 and positive finite L,u_star,T_star (CGS/eV).')
+    if not np.isclose(energy, temperature*EV_TO_ERG, rtol=1e-10, atol=0):
+        raise ValueError('T_star_erg and T_star_eV are inconsistent.')
+    prefactor = scale * length * n0 / speed
+    epsilon = IONIZATION_ENERGY_ERG / energy
+    if not math.isfinite(prefactor) or not math.isfinite(epsilon):
+        raise ValueError('Ionization prefactors are not representable.')
+    if n0 == 0:
+        return (0., 0.)
+
+    def coefficients(theta):
+        theta = float(theta)
+        if not math.isfinite(theta) or theta < 0:
+            raise ValueError('theta must be finite and nonnegative.')
+        D_ion = prefactor * k_ion(theta*temperature)
+        E_ion = epsilon * D_ion
+        if not np.isfinite([D_ion, E_ion]).all():
+            raise ValueError('Nonfinite ionization coefficients; check source scales.')
+        return float(D_ion), float(E_ion)
+
+    return coefficients
+
+
 def main():
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)

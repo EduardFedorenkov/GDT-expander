@@ -1,7 +1,7 @@
 # Решатель согласованных стационарных состояний с рекомбинацией
 
 Первая версия локального/мультистартового поиска по theta и j_t. Она использует
-проверенный solver_recombination.solve_trial, но НЕ требует патча с картой
+проверенный solver_atomic.solve_trial с выключенной ионизацией, но НЕ требует патча с картой
 невязок. Старые scan_neutral, scan_lambda и plot_profiles не изменяются и
 автоматически не переходят на новый решатель. Запускать RR-задачу следует новой
 командой run_recombination.
@@ -81,7 +81,7 @@ solutions, diagnostic = find_stationary_solutions(
 безразмерная theta, а в CLI --guess температура в эВ.
 
 outcome['solution'] появляется только при проверенной сходимости. Этот объект
-сохраняет model=rr_trial и status=energy_matched исходного IVP, но дополнительно
+сохраняет model=atomic_trial (раньше rr_trial) и status=energy_matched исходного IVP, но дополнительно
 содержит stationary_verified=True, verification и balances. Для согласованности
 следует проверять верхнеуровневый outcome['status'], не только IVP-статус.
 

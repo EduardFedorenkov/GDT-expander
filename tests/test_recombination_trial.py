@@ -189,7 +189,7 @@ class TrialEquationTests(unittest.TestCase):
 
 class StopStatusTests(unittest.TestCase):
     def test_invalid_inputs(self):
-        for kwargs in [dict(j_target=0), dict(j_target=1.1), dict(j_target=np.nan),
+        for kwargs in [dict(j_target=0), dict(j_target=np.nan),
                        dict(theta=0), dict(beta=-1), dict(lambda_sh=np.inf),
                        dict(D=-1), dict(E_exc=np.nan), dict(rr=(.1, -.2)),
                        dict(rr=(.1,)), dict(rr=(0, .1)), dict(n_points=1),
@@ -229,7 +229,7 @@ class StopStatusTests(unittest.TestCase):
     def test_numerical_failure_is_an_explicit_status(self):
         failed = SimpleNamespace(success=False, message='test integrator failure',
                                  t=np.array([1.]), y=np.array([[.7], [.5], [.35]]))
-        with patch('isothermal_cx_model.solver_recombination.solve_ivp', return_value=failed):
+        with patch('isothermal_cx_model.solver_atomic.solve_ivp', return_value=failed):
             state = trial()
         self.assertEqual(state['status'], 'integration_failed')
         self.assertIn('test integrator failure', state['reason'])

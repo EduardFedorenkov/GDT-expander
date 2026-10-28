@@ -13,7 +13,7 @@ from .excitation import make_E_exc
 from .geometry import quadratic_area_legacy
 from .inlet import make_inlet_momentum
 from .recombination import make_rr_coefficients
-from .solver_recombination import solve_trial
+from .solver_atomic import solve_trial
 
 
 T_TRIAL_EV = 10.0
