@@ -3,7 +3,7 @@
 Integrate j, mu, omega in g=z/L from the sonic plate to omega=1. The event
 defines alpha=a/L. Both inlet residuals remain unchecked trial outputs.
 Prescribed constant neutrals per trial; no ionization equilibrium imposed.
-This stage does NOT enable ionization in the stationary finder or scans.
+The stationary finder and 2D map accept the same ionization argument.
 No three-body recombination, molecules or new temperature evolution.
 """
 

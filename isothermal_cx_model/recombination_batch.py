@@ -79,6 +79,8 @@ def _run_scan(command, cwd, log_path):
 def _read_case(path, lam, density):
     """A child exit code alone never becomes a root/no-root result."""
     report = _json(path)
+    if report.get('ionization_scale', 0.) != 0:
+        raise ValueError('Ionization batch scans are not implemented yet; use scan_recombination directly.')
     if (report.get('stage') != 'refinement_complete'
             or report['parameters']['lambda_sh'] != float(lam)
             or report['parameters']['n0_cm3'] != float(density)
@@ -163,7 +165,7 @@ def scan_lambda_neutral(lambdas, densities, config_path, output, *, geometry,
     source_text = config_path.read_text(encoding='utf-8-sig')
     arguments = list(map(str, scan_arguments))
     reserved = {'--config', '--output', '--density', '--lambda-sh', '--geometry',
-                '--K', '--map-only', '--no-show'}
+                '--K', '--map-only', '--no-show', '--ionization-scale'}
     if any(item.split('=')[0] in reserved for item in arguments):
         raise ValueError('scan_arguments overrides a batch-controlled argument.')
     signature = dict(format_version=1, lambdas=lambdas.tolist(), densities=densities.tolist(),

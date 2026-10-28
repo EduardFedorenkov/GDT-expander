@@ -108,7 +108,7 @@ class NumericalRootTests(unittest.TestCase):
         self.assertEqual(result['status'], 'initial_outside_search_bounds')
 
     def test_input_validation(self):
-        for kwargs in [dict(j_min=0), dict(j_min=1), dict(residual_tol=0),
+        for kwargs in [dict(j_min=0), dict(j_min=1, j_max=1), dict(residual_tol=0),
                        dict(balance_tol=np.nan), dict(max_iterations=0),
                        dict(n_points=20), dict(theta_bounds=(.2, .1))]:
             with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
@@ -223,6 +223,8 @@ class ProfileAndCLITests(unittest.TestCase):
             self.assertEqual(process.returncode, 0, process.stderr)
             report = json.loads((output/'solutions.json').read_text(encoding='utf-8'))
             self.assertEqual(len(report['solutions']), 1)
+            self.assertEqual(report['ionization_scale'], 0.)
+            self.assertEqual(report['solutions'][0]['coefficients']['D_ion'], 0.)
             self.assertAlmostEqual(report['solutions'][0]['T_eV'], .11919492896752329, delta=2e-8)
             self.assertEqual(report['guesses_T_eV_j_target'], [[.13, .8]])
             with np.load(output/'root_001_profiles.npz', allow_pickle=False) as arrays:

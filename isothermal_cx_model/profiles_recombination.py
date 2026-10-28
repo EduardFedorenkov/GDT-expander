@@ -63,7 +63,7 @@ def plot_stationary_profiles(profiles, title=None):
         axis.set_ylabel(label)
         axis.grid(alpha=.25)
     axes[0].legend(fontsize=8)
-    axes[0].set_ylim(0, 1.05)
+    axes[0].set_ylim(0, 1.05*max(1., max(float(np.max(p['j'])) for p in profiles)))
     axes[2].axhline(0, color='black', linestyle='--', linewidth=.7)
     axes[-1].set_xlabel('z [cm]')
     if title:

@@ -11,30 +11,47 @@ from .geometry import quadratic_area_legacy
 from .solver_atomic import solve_trial
 
 
-def _axis(values, name, maximum=None):
+def _axis(values, name):
     values = np.asarray(values, dtype=float)
     if (values.ndim != 1 or values.size < 2 or not np.isfinite(values).all()
-            or np.any(values <= 0) or np.any(np.diff(values) <= 0)
-            or (maximum is not None and np.any(values > maximum))):
+            or np.any(values <= 0) or np.any(np.diff(values) <= 0)):
         raise ValueError(f'{name}: need >=2 ordered, distinct, positive finite values.')
     return values.copy()
 
 
 def make_j_grid(j_min=1e-6, j_max=1., count=48, mode='mixed'):
-    """Mixed: broad logarithmic j_t plus logarithmic losses down to 1e-12.
+    """Mixed: broad log(j_t) plus log distances from j_t=1 on BOTH sides.
 
     Includes j_t=1 if requested. The actual count can differ after merging.
-    For ranges below .9 the mixed grid reduces to a logarithmic grid.
+    Below/equal to one the former grid is retained exactly. Above one,
+    resolve excess as well as loss down to about 1e-12 where in range.
+    For ranges far from one, mixed reduces to a logarithmic grid.
     """
     if (not isinstance(count, (int, np.integer)) or count < 4
-            or not np.isfinite([j_min, j_max]).all() or not 0 < j_min < j_max <= 1
+            or not np.isfinite([j_min, j_max]).all() or not 0 < j_min < j_max
             or mode not in ('mixed', 'linear', 'log')):
-        raise ValueError('Need 0<j_min<j_max<=1, integer count>=4 and a known grid mode.')
+        raise ValueError('Need 0<j_min<j_max, integer count>=4 and a known grid mode.')
     if mode == 'linear':
         return np.linspace(j_min, j_max, count)
-    if mode == 'log' or j_max <= .9:
+    if mode == 'log' or j_max <= .9 or j_min >= 1.5:
         return np.geomspace(j_min, j_max, count)
     broad = np.geomspace(j_min, j_max, (count+1)//2)
+    if j_max > 1:
+        pieces = [broad]
+        side_count = max(2, count//4)
+        if j_min < 1:
+            gap_max = min(.5, 1-j_min)
+            gap_min = min(1e-12, .1*gap_max)
+            pieces.append(1-np.geomspace(gap_min, gap_max, side_count))
+        if j_max > max(1., j_min):
+            gap_max = min(.5, j_max-1)
+            gap_min = max(j_min-1, min(1e-12, .1*gap_max))
+            if gap_min <= gap_max:
+                pieces.append(1+np.geomspace(gap_min, gap_max, side_count))
+        if j_min <= 1 <= j_max:
+            pieces.append(np.array([1.]))
+        merged = np.unique(np.concatenate(pieces))
+        return merged[(merged >= j_min) & (merged <= j_max)]
     min_gap = max(1-j_max, min(1e-12, .1*(1-j_min)))
     max_gap = min(.5, 1-j_min)
     near_one = 1-np.geomspace(min_gap, max_gap, count//2)
@@ -43,7 +60,7 @@ def make_j_grid(j_min=1e-6, j_max=1., count=48, mode='mixed'):
 
 
 def scan_residuals(theta_values, j_targets, beta, D, lambda_sh, geometry=None,
-                   *, E_exc=0., rr=(0., 0.), inlet_momentum=None,
+                   *, E_exc=0., rr=(0., 0.), ionization=(0., 0.), inlet_momentum=None,
                    n_points=100, rtol=1e-9, atol=1e-11, max_step=.02, progress=None):
     """Scalar arrays have shape (n_j, n_theta), not (n_theta, n_j).
 
@@ -52,18 +69,19 @@ def scan_residuals(theta_values, j_targets, beta, D, lambda_sh, geometry=None,
     or coefficient code propagate; explicit invalid-IVP statuses are stored.
     """
     theta_values = _axis(theta_values, 'theta')
-    j_targets = _axis(j_targets, 'j_target', maximum=1.)
+    j_targets = _axis(j_targets, 'j_target')
     geometry = quadratic_area_legacy() if geometry is None else geometry
     shape = (len(j_targets), len(theta_values))
     fields = ('R_J', 'R_M', 'R_J_scaled', 'R_M_scaled', 'alpha', 'R_E',
-              'wall_slope', 'j_a', 'mu_a', 'mu_target')
+              'wall_slope', 'j_a', 'mu_a', 'mu_target',
+              'D', 'E_exc', 'R_rr', 'Q_rr', 'D_ion', 'E_ion')
     data = {key: np.full(shape, np.nan) for key in fields}
     status = np.full(shape, '', dtype='U64')
     reasons = Counter()
     for ti, theta in enumerate(theta_values):
         for ji, jt in enumerate(j_targets):
             trial = solve_trial(theta, jt, beta, D, lambda_sh, geometry,
-                E_exc=E_exc, rr=rr, inlet_momentum=inlet_momentum,
+                E_exc=E_exc, rr=rr, ionization=ionization, inlet_momentum=inlet_momentum,
                 n_points=n_points, rtol=rtol, atol=atol, max_step=max_step)
             status[ji, ti] = trial['status']
             for key in fields:
@@ -154,7 +172,8 @@ def plot_residuals(scan, T_star_eV=1., *, solutions=(), starts=(), attempts=(),
                    title=None, j_axis='loss', show_paths=True):
     """Signed residuals and their joint norm; roots/seeds are separate symbols.
 
-    'loss' shows 1-j_t on a symlog axis (includes the exact endpoint j_t=1).
+    'loss' shows signed 1-j_t on symlog: negative means net gain at a root,
+    not a negative recombination count. Includes j_t=1 where in range.
     Both contours share one validity mask; corner_mask=False forbids bridging
     a cell with an invalid corner. Paths show accepted corrector iterates,
     not streamlines, plasma trajectories or a basin-of-attraction map.
@@ -202,6 +221,8 @@ def plot_residuals(scan, T_star_eV=1., *, solutions=(), starts=(), attempts=(),
         axis.set_xscale('log')
         if j_axis == 'loss':
             axis.set_yscale('symlog', linthresh=1e-12, linscale=.5)
+            if y[0] <= 0 <= y[-1]:
+                axis.axhline(0, color='#6b7280', linewidth=.7, zorder=2)
         else:
             axis.set_yscale(j_axis)
         axis.set_xlim(x[0], x[-1])
@@ -229,7 +250,7 @@ def plot_residuals(scan, T_star_eV=1., *, solutions=(), starts=(), attempts=(),
             (root_x, ypos(root['j_target'])),
             xytext=(-7 if near_right else 6, 7), textcoords='offset points',
             ha='right' if near_right else 'left', fontsize=8, zorder=7, clip_on=True)
-    axes[0].set_ylabel(r'$1-j_t$ (particle loss at a root)' if j_axis == 'loss'
+    axes[0].set_ylabel(r'$1-j_t$ (net loss; negative = net gain at a root)' if j_axis == 'loss'
                        else r'$j_t=J(L)/J_0$')
     legend = [Line2D([], [], color='black', label=r'$R_J=0$'),
               Line2D([], [], color='#d97706', linestyle='--', label=r'$R_M=0$'),

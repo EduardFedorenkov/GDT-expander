@@ -40,12 +40,12 @@ class MapTests(unittest.TestCase):
             self.assertEqual(zoom[-1], 1.)
 
     def test_bad_axes_grid_and_start_controls(self):
-        for args in [(0, 1, 10), (.1, 1.1, 10), (.1, 1, 2), (.1, .1, 10),
+        for args in [(0, 1, 10), (.1, np.inf, 10), (.1, 1, 2), (.1, .1, 10),
                      (.1, 1, 10, 'unknown')]:
             with self.subTest(args=args), self.assertRaises(ValueError):
                 make_j_grid(*args)
         for theta, js in [([.1], [.2, .3]), ([.1, .1], [.2, .3]),
-                          ([.1, .2], [0, 1]), ([.1, .2], [.5, 2])]:
+                          ([.1, .2], [0, 1]), ([.1, .2], [.5, np.nan])]:
             with self.assertRaises(ValueError):
                 scan_residuals(theta, js, .5, 4, 5)
         for control in [dict(max_starts=0), dict(separation=0)]:

@@ -1,4 +1,4 @@
-"""Find verified stationary RR solutions from explicit initial guesses.
+"""Find verified stationary atomic solutions from explicit initial guesses.
 
 Each --guess supplies T_eV and j_target. This is a local/multistart search,
 not a proof that all solutions have been found. Does not need the map patch.
@@ -15,6 +15,7 @@ from .cx import make_D
 from .excitation import make_E_exc, validate_excitation_scale
 from .geometry import add_geometry_arguments, geometry_from_args
 from .inlet import add_inlet_arguments, make_inlet_momentum
+from .ionization import make_ionization_coefficients
 from .recombination import make_rr_coefficients, T_MIN_EV, T_MAX_EV
 from .stationary_recombination import find_stationary_solutions
 from .profiles_recombination import compute_stationary_profiles, plot_stationary_profiles
@@ -31,9 +32,13 @@ def main():
     parser.add_argument('--cx-mode', choices=['constant', 'temperature'], default='temperature')
     parser.add_argument('--rr-scale', type=validate_excitation_scale, default=1.)
     parser.add_argument('--excitation-scale', type=validate_excitation_scale, default=1.)
+    parser.add_argument('--ionization-scale', type=validate_excitation_scale, default=0.,
+                        help='0: previous physics (default); 1: full atomic ionization.')
     parser.add_argument('--temperature-min', type=float)
     parser.add_argument('--temperature-max', type=float)
     parser.add_argument('--j-min', type=float, default=1e-12)
+    parser.add_argument('--j-max', type=float,
+                        help='Optional numerical search bound, not a physical limit; j_t>1 allowed.')
     parser.add_argument('--iterations', type=int, default=40)
     parser.add_argument('--points', type=int, default=4000)
     parser.add_argument('--residual-tol', type=float, default=1e-9)
@@ -72,8 +77,9 @@ def main():
             make_D(p, args.cx_mode), p['lambda_sh'], geometry,
             E_exc=make_E_exc(p, scale=args.excitation_scale),
             rr=make_rr_coefficients(p, scale=args.rr_scale),
+            ionization=make_ionization_coefficients(p, scale=args.ionization_scale),
             inlet_momentum=make_inlet_momentum(p, geometry, mode=args.inlet_momentum),
-            theta_bounds=theta_bounds, j_min=args.j_min,
+            theta_bounds=theta_bounds, j_min=args.j_min, j_max=args.j_max,
             max_iterations=args.iterations, n_points=args.points,
             residual_tol=args.residual_tol, balance_tol=args.balance_tol)
     except (ValueError, OSError) as error:
@@ -84,33 +90,39 @@ def main():
         summaries.append(dict(
             solution_id=state['solution_id'], T_eV=profile['T_eV'],
             theta=state['theta'], j_target=state['j_target'], alpha=state['alpha'],
-            a_cm=profile['a_cm'], recombined_fraction=1-state['j_target'],
+            a_cm=profile['a_cm'], net_particle_loss_fraction=1-state['j_target'],
+            recombination_count_per_inlet=state['balances']['particle_recombination_integral'],
+            ionization_count_per_inlet=state['balances']['particle_ionization_integral'],
             R_J=state['R_J'], R_M=state['R_M'], R_E=state['R_E'],
             Jtarget_per_s=float(profile['J_per_s'][-1]),
             Wtarget_erg_per_s=float(profile['W_erg_per_s'][-1]),
             mu_a=state['mu_a'], mu_target=state['mu_target'],
-            coefficients={key: state[key] for key in ('D', 'E_exc', 'R_rr', 'Q_rr')},
+            coefficients={key: state[key] for key in ('D', 'E_exc', 'R_rr', 'Q_rr',
+                                                     'D_ion', 'E_ion')},
             verification=state['verification'], balances=state['balances'],
             delta_theta=state['delta_theta'], delta_j_target=state['delta_j_target']))
     args.output.mkdir(parents=True, exist_ok=True)
     report = dict(source_config=str(args.config.resolve()), parameters=p, geometry=geometry.to_dict(),
         cx_mode=args.cx_mode, excitation_scale=args.excitation_scale, rr_scale=args.rr_scale,
+        ionization_scale=args.ionization_scale, schema_version=2,
         inlet_momentum=args.inlet_momentum, guesses_T_eV_j_target=args.guess,
         temperature_bounds_eV=None if bounds is None else bounds.tolist(),
-        j_min=args.j_min, solutions=summaries, diagnostic=diagnostic,
+        j_min=args.j_min, j_max=args.j_max, solutions=summaries, diagnostic=diagnostic,
         solver_controls=dict(max_iterations=args.iterations, n_points=args.points,
                              residual_tol=args.residual_tol, balance_tol=args.balance_tol),
-        physical_scope='Isothermal Case A, prescribed neutrals; no ionization or three-body recombination.')
+        physical_scope='Isothermal atomic CX, excitation, Case-A RR and optional direct ionization; '
+                       'prescribed constant neutrals; no three-body recombination or molecules.')
     (args.output/'solutions.json').write_text(json.dumps(report, indent=2, allow_nan=False),
                                             encoding='utf-8')
     for state, profile in zip(states, profiles):
         arrays = {key: value for key, value in profile.items() if isinstance(value, np.ndarray)}
-        arrays.update(theta=state['theta'], alpha=state['alpha'], j_target=state['j_target'])
+        arrays.update(theta=state['theta'], alpha=state['alpha'], j_target=state['j_target'],
+                      ionization_scale=args.ionization_scale, D_ion=state['D_ion'], E_ion=state['E_ion'])
         np.savez_compressed(args.output/f"{state['solution_id']}_profiles.npz", **arrays)
     for item in summaries:
         print(f"{item['solution_id']}: T={item['T_eV']:.9g} eV, "
               f"a={item['a_cm']:.9g} cm, jt={item['j_target']:.12g}, "
-              f"lost={item['recombined_fraction']:.5g}, "
+              f"net_loss={item['net_particle_loss_fraction']:.5g}, "
               f"R_J={item['R_J']:.2e}, R_M={item['R_M']:.2e}", flush=True)
     if profiles and not args.no_plot:
         if args.no_show:
@@ -118,7 +130,8 @@ def main():
             matplotlib.use('Agg')
         figure, _ = plot_stationary_profiles(profiles,
             title=f"n0={p['n0_cm3']:.3g} cm^-3, lambda={p['lambda_sh']:g}, "
-                  f"RR={args.rr_scale:g}, excitation={args.excitation_scale:g}")
+                  f"RR={args.rr_scale:g}, excitation={args.excitation_scale:g}, "
+                  f"ionization={args.ionization_scale:g}")
         figure.savefig(args.output/'profiles.png', dpi=150)
         import matplotlib.pyplot as plt
         if args.no_show:

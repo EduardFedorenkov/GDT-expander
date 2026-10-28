@@ -1,4 +1,4 @@
-"""Local and multistart stationary RR shooting. No claim of global completeness.
+"""Local/multistart stationary atomic shooting; no global completeness claim.
 
 The checked IVP is unchanged. Unknowns are log(theta), log(j_t), not logit(j_t):
 the second derivative stays resolvable near j_t=1, including the zero-RR limit.
@@ -13,8 +13,8 @@ from .solver_atomic import solve_trial, balance_checks
 
 
 def solve_stationary(theta_guess, j_guess, beta, D, lambda_sh, geometry=None,
-                     *, E_exc=0., rr=(0., 0.), inlet_momentum=None,
-                     theta_bounds=None, j_min=1e-12, residual_tol=1e-9,
+                     *, E_exc=0., rr=(0., 0.), ionization=(0., 0.), inlet_momentum=None,
+                     theta_bounds=None, j_min=1e-12, j_max=None, residual_tol=1e-9,
                      balance_tol=5e-6, max_iterations=40, n_points=4000,
                      rtol=1e-9, atol=1e-11, max_step=.02):
     """Safeguarded Newton in a valid IVP domain, followed by tighter correction.
@@ -22,15 +22,21 @@ def solve_stationary(theta_guess, j_guess, beta, D, lambda_sh, geometry=None,
     A result has status='converged' and a 'solution' ONLY after re-correction,
     a new high-resolution IVP, both inlet checks, sonic admissibility and
     integral balances. Failures report diagnostics, never 'no physical root'.
-    theta_bounds and j_min are numerical search windows, not physical cutoffs.
+    ionization is (D_ion,E_ion) or theta -> that pair, as in solve_trial.
+    Default off preserves old physics. Positive j_t>1 is allowed, even for
+    off-root trials. theta_bounds, j_min and optional j_max are numerical
+    search windows, not physical cutoffs. The IVP checks lambda*theta*j_t<1.
     Input/programming errors still raise exceptions.
     """
     geometry = quadratic_area_legacy() if geometry is None else geometry
     values = np.asarray([theta_guess, j_guess, beta, lambda_sh, residual_tol,
                          balance_tol, rtol, atol, max_step], dtype=float)
     if (not np.isfinite(values).all() or np.any(values <= 0)
-            or not 0 < j_min < 1 or j_guess > 1):
-        raise ValueError('Positive finite inputs required, 0<j_min<1 and 0<j_guess<=1.')
+            or not np.isfinite(j_min) or j_min <= 0):
+        raise ValueError('Positive finite inputs and j_min required.')
+    upper_j = np.finfo(float).max if j_max is None else float(j_max)
+    if not np.isfinite(upper_j) or upper_j <= j_min:
+        raise ValueError('j_max must be finite and greater than j_min, or None.')
     if (not isinstance(max_iterations, (int, np.integer)) or max_iterations < 1
             or not isinstance(n_points, (int, np.integer)) or n_points < 100):
         raise ValueError('Need integer max_iterations>=1 and n_points>=100.')
@@ -42,9 +48,12 @@ def solve_stationary(theta_guess, j_guess, beta, D, lambda_sh, geometry=None,
                 or not 0 < lower_theta < upper_theta):
             raise ValueError('theta_bounds must be ordered positive finite values.')
     lower = np.log([lower_theta, j_min])
-    upper = np.log([upper_theta, 1.])
+    upper = np.log([upper_theta, upper_j])
     x = np.log([theta_guess, j_guess])
     diagnostics = dict(initial_guess=[float(theta_guess), float(j_guess)],
+                       search_bounds=dict(theta=[lower_theta, upper_theta],
+                                          j_min=float(j_min),
+                                          j_max=None if j_max is None else upper_j),
                        evaluations=0, invalid_trials={}, history=[])
     invalid = Counter()
 
@@ -71,7 +80,8 @@ def solve_stationary(theta_guess, j_guess, beta, D, lambda_sh, geometry=None,
             if key not in cache:
                 theta, jt = np.exp(point)
                 state = solve_trial(theta, jt, beta, D, lambda_sh, geometry,
-                    E_exc=E_exc, rr=rr, inlet_momentum=inlet_momentum,
+                    E_exc=E_exc, rr=rr, ionization=ionization,
+                    inlet_momentum=inlet_momentum,
                     n_points=100, **settings)
                 diagnostics['evaluations'] += 1
                 if state['status'] != 'energy_matched':
@@ -165,7 +175,7 @@ def solve_stationary(theta_guess, j_guess, beta, D, lambda_sh, geometry=None,
         return finish('verification_'+status)
     theta, jt = np.exp(x)
     checked = solve_trial(theta, jt, beta, D, lambda_sh, geometry,
-        E_exc=E_exc, rr=rr, inlet_momentum=inlet_momentum,
+        E_exc=E_exc, rr=rr, ionization=ionization, inlet_momentum=inlet_momentum,
         n_points=n_points, **tight)
     diagnostics['evaluations'] += 1
     if checked['status'] != 'energy_matched':
@@ -200,8 +210,8 @@ def find_stationary_solutions(guesses, beta, D, lambda_sh, geometry=None,
     guesses = np.asarray(guesses, dtype=float)
     if (guesses.ndim != 2 or guesses.shape[1] != 2 or guesses.shape[0] == 0
             or not np.isfinite(guesses).all() or np.any(guesses <= 0)
-            or np.any(guesses[:, 1] > 1) or not np.isfinite(dedup_tol) or dedup_tol <= 0):
-        raise ValueError('Need nonempty positive pairs (theta,j_t), j_t<=1 and dedup_tol>0.')
+            or not np.isfinite(dedup_tol) or dedup_tol <= 0):
+        raise ValueError('Need nonempty positive pairs (theta,j_t) and dedup_tol>0.')
     solutions, attempts = [], []
     duplicates = 0
     for guess in guesses:
