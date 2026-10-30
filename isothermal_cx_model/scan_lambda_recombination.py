@@ -10,7 +10,7 @@ from .inlet import add_inlet_arguments
 from .excitation import validate_excitation_scale
 from .recombination_map import make_j_grid
 from .recombination_batch import scan_lambda_neutral
-from .scan_lambda import print_source_summary, positive_grid, plot_grid
+from .scan_utils import print_source_summary, positive_grid, plot_grid
 
 
 def _range(values, low, high, count, name, logarithmic=False):

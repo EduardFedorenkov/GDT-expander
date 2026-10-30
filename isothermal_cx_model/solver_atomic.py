@@ -15,7 +15,7 @@ from scipy.integrate import simpson
 from .geometry import quadratic_area_legacy
 from .inlet import evaluate_inlet, KineticInletDomainError
 from .recombination import RRTemperatureDomainError
-from .solver_general import classify_profile
+from .diagnostics import classify_profile
 
 
 def _nonnegative(value, theta, name):

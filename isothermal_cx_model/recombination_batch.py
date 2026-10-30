@@ -15,7 +15,7 @@ import numpy as np
 
 from simple_cx_model.config import load_cx_config
 from .ionization import make_ionization_coefficients, IONIZATION_ENERGY_EV
-from .scan_lambda import positive_grid, save_csv
+from .scan_utils import positive_grid, save_csv
 from .excitation import validate_excitation_scale
 
 
