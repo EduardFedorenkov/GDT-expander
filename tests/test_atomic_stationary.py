@@ -17,11 +17,11 @@ from isothermal_cx_model.excitation import make_E_exc
 from isothermal_cx_model.ionization import make_ionization_coefficients
 from isothermal_cx_model.recombination import make_rr_coefficients
 from isothermal_cx_model.inlet import make_inlet_momentum
-from isothermal_cx_model.solver_atomic import solve_trial
-from isothermal_cx_model.stationary_recombination import (
+from isothermal_cx_model.transport import solve_trial
+from isothermal_cx_model.stationary import (
     solve_stationary, find_stationary_solutions,
 )
-from isothermal_cx_model.profiles_recombination import (
+from isothermal_cx_model.profiles import (
     compute_stationary_profiles, plot_stationary_profiles,
 )
 
@@ -88,7 +88,7 @@ class AtomicStationaryTests(unittest.TestCase):
 
     def test_coefficients_forwarded_to_every_trial_including_fresh_verification(self):
         ionization = lambda theta: (1., .2)
-        with patch('isothermal_cx_model.stationary_recombination.solve_trial',
+        with patch('isothermal_cx_model.stationary.solve_trial',
                    wraps=solve_trial) as calls:
             outcome = pure_ionization(.135, 1.35, ionization=ionization)
         self.assertEqual(outcome['status'], 'converged')
@@ -133,7 +133,7 @@ class AtomicStationaryTests(unittest.TestCase):
             if kwargs['rtol'] < 1e-10:
                 return dict(status='integration_failed')
             return solve_trial(*args, **kwargs)
-        with patch('isothermal_cx_model.stationary_recombination.solve_trial', fail_refinement):
+        with patch('isothermal_cx_model.stationary.solve_trial', fail_refinement):
             r = pure_ionization(.135, 1.35)
         self.assertEqual(r['status'], 'verification_invalid_initial_trial')
         self.assertNotIn('solution', r)
@@ -189,7 +189,7 @@ class PhysicalAtomicAndCLITests(unittest.TestCase):
     def test_cli_ionization_metadata_profiles_and_safe_output(self):
         with tempfile.TemporaryDirectory() as folder:
             output = Path(folder)/'atomic'
-            command = [sys.executable, '-B', '-m', 'isothermal_cx_model.run_recombination',
+            command = [sys.executable, '-B', '-m', 'isothermal_cx_model.run_stationary',
                 '--config', str(CONFIG), '--density', '1e15', '--lambda-sh', '7',
                 '--ionization-scale', '1', '--guess', '20', '8',
                 '--points', '4000', '--j-max', '10', '--no-show', '--output', str(output)]
@@ -214,14 +214,14 @@ class PhysicalAtomicAndCLITests(unittest.TestCase):
             self.assertEqual(again.returncode, 2)
             self.assertIn('preserve old results', again.stderr)
 
-    def test_cli_off_by_default_and_explicit_bad_scale(self):
+    def test_cli_help_and_explicit_bad_scale(self):
         help_result = subprocess.run([sys.executable, '-B', '-m',
-            'isothermal_cx_model.run_recombination', '--help'], capture_output=True, text=True)
+            'isothermal_cx_model.run_stationary', '--help'], capture_output=True, text=True)
         self.assertEqual(help_result.returncode, 0)
         self.assertIn('--ionization-scale', help_result.stdout)
         self.assertIn('--j-max', help_result.stdout)
         result = subprocess.run([sys.executable, '-B', '-m',
-            'isothermal_cx_model.run_recombination', '--guess', '1', '1.2',
+            'isothermal_cx_model.run_stationary', '--guess', '1', '1.2',
             '--ionization-scale', '2'], capture_output=True, text=True)
         self.assertEqual(result.returncode, 2)
 

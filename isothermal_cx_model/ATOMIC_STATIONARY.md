@@ -3,14 +3,14 @@
 Этап добавляет ионизацию в локальный/мультистартовый поиск theta,j_t и его
 команду запуска. Пробные уравнения первого этапа не меняются. Массовые сканы,
 автоматическая карта стартов и удаление исторических решателей в этот коммит
-НЕ входят. Имена stationary_recombination и run_recombination пока сохранены,
-но используют единственную реализацию IVP в solver_atomic.
+НЕ входят. Имена stationary и run_stationary пока сохранены,
+но используют единственную реализацию IVP в transport.
 
 ## API и численная область
 
 ```python
 from isothermal_cx_model.ionization import make_ionization_coefficients
-from isothermal_cx_model.stationary_recombination import solve_stationary
+from isothermal_cx_model.stationary import solve_stationary
 
 outcome = solve_stationary(theta_guess, j_guess, p['beta'], D, p['lambda_sh'], geometry,
     E_exc=E_exc, rr=rr, ionization=make_ionization_coefficients(p, scale=1),
@@ -47,7 +47,7 @@ R_J=j(alpha)-1 и R_M=mu(alpha)-G(alpha). Успех требует повтор
 Из корня проекта, с физической ионизацией в полном объёме:
 
 ```powershell
-python -B -m isothermal_cx_model.run_recombination --density 1e15 --lambda-sh 7 --ionization-scale 1 --guess 20 8 --points 8000 --no-show --output atomic_hot_root
+python -B -m isothermal_cx_model.run_stationary --density 1e15 --lambda-sh 7 --ionization-scale 1 --guess 20 8 --points 8000 --no-show --output atomic_hot_root
 ```
 
 Начальное приближение 20 эВ, j_t=8 не является найденным решением; данный
@@ -115,15 +115,15 @@ omega+0.2*j=1.2. Из j_a=1 и звукового выхода j_t=1/b след�
 
 ```powershell
 python -B -m unittest discover -s tests -p test_atomic_stationary.py -v
-python -B -m unittest discover -s tests -p test_stationary_recombination.py -v
+python -B -m unittest discover -s tests -p test_stationary.py -v
 ```
 
 ## Следующий этап
 
-Этап 3 уже подключает ionization к scan_recombination/recombination_map,
+Этап 3 уже подключает ionization к scan_stationary/residual_map,
 автоматической сетке/стартам при j_t>1, подписям знакопеременного 1-j_t
 и метаданным. См. RR_2D_SCAN.md. Этап 4 подключает ионизацию также к
-scan_lambda_recombination, пакетным CSV, проверкам отчётов и resume;
+scan_lambda, пакетным CSV, проверкам отчётов и resume;
 см. RR_LAMBDA_SCAN.md. Физические уравнения и локальный решатель не меняются.
 Существующие результаты не удаляются. Изменение исходников меняет хеш пакетного
 расчёта, поэтому старый --resume будет отвергнут. Не применяйте патч во время

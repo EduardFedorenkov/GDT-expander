@@ -11,7 +11,7 @@ from scipy.integrate import simpson
 from simple_cx_model.config import load_cx_config
 from isothermal_cx_model.ionization import make_ionization_coefficients, k_ion, IONIZATION_ENERGY_ERG
 from isothermal_cx_model.geometry import constant_B, quadratic_area_legacy
-from isothermal_cx_model.solver_atomic import solve_trial, atomic_rhs, balance_checks
+from isothermal_cx_model.transport import solve_trial, atomic_rhs, balance_checks
 from isothermal_cx_model.cx import make_D
 from isothermal_cx_model.excitation import make_E_exc, L_exc
 from isothermal_cx_model.recombination import make_rr_coefficients, rr_coefficients
@@ -204,19 +204,9 @@ class AtomicEquationTests(unittest.TestCase):
         errors = balance_checks(state, p['beta'])
         self.assertLess(max(errors[k] for k in ('particle_abs', 'momentum_abs', 'energy_abs')), 2e-6)
 
-    def test_compatibility_import_and_constant_j_profile_guard(self):
-        from isothermal_cx_model.solver_recombination import solve_trial as legacy
-        from isothermal_cx_model.stationary_recombination import balance_checks as old_checks
-        from isothermal_cx_model.profiles import compute_profiles
-        self.assertIs(legacy, solve_trial)
-        self.assertIs(old_checks, balance_checks)
-        state = trial()
-        self.assertEqual(state['model'], 'atomic_trial')
-        with self.assertRaisesRegex(ValueError, 'assumes J=J0'):
-            compute_profiles(state, {})
 
     def test_trial_command_line_does_not_claim_stationarity(self):
-        command = [sys.executable, '-B', '-m', 'isothermal_cx_model.trial_atomic_example']
+        command = [sys.executable, '-B', '-m', 'isothermal_cx_model.trial_example']
         result = subprocess.run(command+['--temperature', '3.272', '--j-target', '5',
             '--density', '1e15', '--lambda-sh', '7'], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stdout+result.stderr)

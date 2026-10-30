@@ -1,16 +1,17 @@
 # Скан по lambda_sh и n0 для атомной модели
 
-Новый запуск: `python -m isothermal_cx_model.scan_lambda_recombination`.
-Существующий `scan_lambda.py` и физические решатели не изменяются.
-Требуется уже установленный автоматический `scan_recombination.py`.
-Прямая ионизация включается --ionization-scale 1. По умолчанию 0: старые
-команды сохраняют прежнюю физику, но новый формат пакетных CSV имеет версию 2.
-Историческое слово recombination в именах файлов пока сохранено до рефакторинга.
+Новый запуск: `python -m isothermal_cx_model.scan_lambda`.
+`scan_lambda.py` — актуальная точка входа; общий пакетный код находится в parameter_scan.py.
+Требуется уже установленный автоматический `scan_stationary.py`.
+В CLI прямая ионизация включена по умолчанию (--ionization-scale 1).
+Для предела без ионизации используйте --ionization-scale 0.
+Исторический суффикс recombination в выходных CSV сохранён для совместимости;
+он не ограничивает набор процессов. Формат пакетных CSV имеет версию 2.
 
 ## Принцип
 
 Для КАЖДОЙ пары `(lambda_sh,n0)` запускается существующий сканер
-`scan_recombination` в отдельном процессе того же Python:
+`scan_stationary` в отдельном процессе того же Python:
 
 1. Полная заданная сетка `(T,j_t)` и карта двух невязок.
 2. Автоматический выбор стартов, без обязательного `--guess`.
@@ -30,10 +31,10 @@
 Из корня проекта. Сначала разумно проверить одну физическую пару:
 
 ```powershell
-python -B -m isothermal_cx_model.scan_lambda_recombination --lambdas 7 --densities 1e15 --no-show --output rr_lambda_test
+python -B -m isothermal_cx_model.scan_lambda --ionization-scale 0 --lambdas 7 --densities 1e15 --no-show --output rr_lambda_test
 ```
 
-Для включения ионизации в этой команде добавьте --ionization-scale 1 и выберите
+Для перехода к полной ионизации замените в этой команде --ionization-scale 0 на 1 и выберите
 НОВУЮ папку --output. Коэффициенты ионизации и её энергетической цены
 пересчитываются при n0 каждой физической пары и температуре каждого корня.
 
@@ -41,7 +42,7 @@ python -B -m isothermal_cx_model.scan_lambda_recombination --lambdas 7 --densiti
 без ручных стартов (196 узлов карты плюс уточнения):
 
 ```powershell
-python -B -m isothermal_cx_model.scan_lambda_recombination --lambdas 7 7.1 --densities 9e14 1e15 --ionization-scale 1 --temperature-min 80 --temperature-max 110 --temperature-count 7 --j-min 1.35 --j-max 1.9 --j-count 7 --j-grid linear --j-axis linear --max-starts 2 --points 4000 --no-show --output atomic_lambda_hot_test
+python -B -m isothermal_cx_model.scan_lambda --lambdas 7 7.1 --densities 9e14 1e15 --ionization-scale 1 --temperature-min 80 --temperature-max 110 --temperature-count 7 --j-min 1.35 --j-max 1.9 --j-count 7 --j-grid linear --j-axis linear --max-starts 2 --points 4000 --no-show --output atomic_lambda_hot_test
 ```
 
 При текущем источнике найдены:
@@ -61,7 +62,7 @@ python -B -m isothermal_cx_model.scan_lambda_recombination --lambdas 7 7.1 --den
 Несколько lambda и логарифмическая сетка нейтралов:
 
 ```powershell
-python -B -m isothermal_cx_model.scan_lambda_recombination --lambdas 5 7 9 --n0-min 1e12 --n0-max 1e15 --n0-count 7 --no-show --output rr_lambda_results
+python -B -m isothermal_cx_model.scan_lambda --ionization-scale 0 --lambdas 5 7 9 --n0-min 1e12 --n0-max 1e15 --n0-count 7 --no-show --output rr_lambda_results
 ```
 
 Можно задавать явные `--densities 1e14 3e14 1e15`, как и явные `--lambdas`.
@@ -106,7 +107,8 @@ roots, grid = scan_lambda_neutral(lambdas, densities, config_path, output,
     resume=False)
 ```
 
-ionization_scale — отдельная настройка пакетного запуска, по умолчанию 0.
+ionization_scale — отдельная настройка: в низкоуровневом API по умолчанию 0,
+в CLI scan_lambda — 1.
 Не передавайте --ionization-scale через scan_arguments: повторное назначение
 или сокращённый псевдоним этого флага отвергается. Обвязка сама передаёт точное
 значение дочерним процессам и проверяет его при чтении их отчётов.
@@ -114,7 +116,7 @@ ionization_scale — отдельная настройка пакетного з
 ## Короткий контроль только холодного корня
 
 ```powershell
-python -B -m isothermal_cx_model.scan_lambda_recombination --lambdas 7 --densities 1e15 --temperature-min .1 --temperature-max .15 --temperature-count 3 --j-min .7 --j-max .85 --j-count 4 --j-grid linear --max-starts 1 --no-show --output rr_lambda_cold_test
+python -B -m isothermal_cx_model.scan_lambda --ionization-scale 0 --lambdas 7 --densities 1e15 --temperature-min .1 --temperature-max .15 --temperature-count 3 --j-min .7 --j-max .85 --j-count 4 --j-grid linear --max-starts 1 --no-show --output rr_lambda_cold_test
 ```
 
 Для текущего источника даёт T=0.119194929 эВ, a=164.993436 см и
@@ -164,7 +166,7 @@ residuals.npz, summary.json с историями стартов и root_..._pro
 показывает множитель ионизации в легенде и не смешивает его разные значения:
 
 ```powershell
-python -B -m isothermal_cx_model.plot_lambda_results rr_lambda_results/roots_temperature_recombination.csv --save rr_lambda_results/replotted.png --no-show
+python -B -m isothermal_cx_model.plot_lambda_results rr_lambda_results/roots_temperature_recombination.csv --ionization-scale 0 --save rr_lambda_results/replotted.png --no-show
 ```
 
 ## Продолжение и защита исходных данных
@@ -181,7 +183,7 @@ python -B -m isothermal_cx_model.plot_lambda_results rr_lambda_results/roots_tem
 Например, к первой команде с одной парой добавляется:
 
 ```powershell
-python -B -m isothermal_cx_model.scan_lambda_recombination --lambdas 7 --densities 1e15 --no-show --output rr_lambda_test --resume
+python -B -m isothermal_cx_model.scan_lambda --ionization-scale 0 --lambdas 7 --densities 1e15 --no-show --output rr_lambda_test --resume
 ```
 
 Незавершённая или ошибочная пара запускается заново в attempt_002 и т.д.;
@@ -219,5 +221,5 @@ python -B -m isothermal_cx_model.scan_lambda_recombination --lambdas 7 --densiti
 Код 1 дочернего 2D-сканера без найденных корней является нормальным результатом
 для одной пары, если его отчёт полностью завершён.
 
-Тесты: `python -B -m unittest discover -s tests -p test_recombination_batch.py -v`.
+Тесты: `python -B -m unittest discover -s tests -p test_parameter_scan.py -v`.
 Ионизация: `python -B -m unittest discover -s tests -p test_atomic_batch.py -v`.

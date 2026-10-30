@@ -1,17 +1,13 @@
 # Решатель согласованных стационарных состояний
 
-Локальный/мультистартовый поиск по theta и j_t использует
-проверенный solver_atomic.solve_trial, но НЕ требует патча с картой
-невязок. Старые scan_neutral, scan_lambda и plot_profiles не изменяются и
-автоматически не переходят на новый решатель. Запускать RR-задачу следует новой
-командой run_recombination.
+Локальный/мультистартовый поиск по theta и j_t реализован в stationary.py,
+пробное интегрирование — в transport.py. Запуск: run_stationary.
+Автоматический поиск: scan_stationary; пакетный скан: scan_lambda.
 
-Ионизация теперь опционально включается --ionization-scale 1 (по умолчанию 0).
-Допустим j_t>1; искусственный верхний предел снят. Детали нового API, формата
-JSON и контрольных решений: ATOMIC_STATIONARY.md. Примеры ниже без этого флага
-сохраняют прежнюю физику. Автоматическая карта теперь тоже поддерживает
---ionization-scale 1 (см. RR_2D_SCAN.md), как и пакетный lambda-скан
-(см. RR_LAMBDA_SCAN.md).
+В CLI ионизация включена по умолчанию (--ionization-scale 1).
+Примеры и контрольные числа ниже относятся к пределу без ионизации;
+для него явно используется --ionization-scale 0. Актуальные команды
+для полного атомарного набора приведены в README.md и ATOMIC_STATIONARY.md.
 
 ## Запуск из корня проекта
 
@@ -20,13 +16,13 @@ JSON и контрольных решений: ATOMIC_STATIONARY.md. Приме�
 Исходный JSON никогда не редактируется. Контрольный холодный случай:
 
 ```powershell
-python -B -m isothermal_cx_model.run_recombination --density 1e15 --lambda-sh 7 --guess 0.13 0.8 --no-show --output rr_cold_root
+python -B -m isothermal_cx_model.run_stationary --ionization-scale 0 --density 1e15 --lambda-sh 7 --guess 0.13 0.8 --no-show --output rr_cold_root
 ```
 
 Три разных начальных приближения для того же набора физических параметров:
 
 ```powershell
-python -B -m isothermal_cx_model.run_recombination --density 1e15 --lambda-sh 7 --guess 0.13 0.8 --guess 15 0.99999997 --guess 80 0.9999999999 --no-show --output rr_three_starts
+python -B -m isothermal_cx_model.run_stationary --ionization-scale 0 --density 1e15 --lambda-sh 7 --guess 0.13 0.8 --guess 15 0.99999997 --guess 80 0.9999999999 --no-show --output rr_three_starts
 ```
 
 Не переносите найденные ранее T,a,j_t на другие n0 или lambda без нового
@@ -83,8 +79,8 @@ solutions, diagnostic = find_stationary_solutions(
     E_exc=E, rr=rr, inlet_momentum=inlet)
 ```
 
-Функции поиска — в stationary_recombination.py; новые профили и рисунки —
-в profiles_recombination.py. В Python API температура начального приближения
+Функции поиска — в stationary.py; новые профили и рисунки —
+в profiles.py. В Python API температура начального приближения
 безразмерная theta, а в CLI --guess температура в эВ.
 
 outcome['solution'] появляется только при проверенной сходимости. Этот объект

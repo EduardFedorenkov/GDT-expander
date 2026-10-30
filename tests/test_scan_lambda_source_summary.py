@@ -8,7 +8,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from isothermal_cx_model.scan_lambda import main, print_source_summary
+from isothermal_cx_model.scan_lambda import main
+from isothermal_cx_model.scan_utils import print_source_summary
 
 
 def source_parameters():

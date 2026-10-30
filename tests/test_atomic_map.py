@@ -13,12 +13,12 @@ from unittest.mock import patch
 import numpy as np
 
 from isothermal_cx_model.geometry import constant_B, quadratic_area_legacy
-from isothermal_cx_model.recombination_map import (
+from isothermal_cx_model.residual_map import (
     make_j_grid, scan_residuals, candidate_cells, choose_starts, plot_residuals,
 )
-from isothermal_cx_model.solver_atomic import solve_trial
-from isothermal_cx_model.stationary_recombination import find_stationary_solutions
-from isothermal_cx_model.recombination_batch import scan_lambda_neutral, _read_case
+from isothermal_cx_model.transport import solve_trial
+from isothermal_cx_model.stationary import find_stationary_solutions
+from isothermal_cx_model.parameter_scan import scan_lambda_neutral, _read_case
 
 
 CONFIG = Path(__file__).resolve().parents[1]/'simple_cx_model/cx_config.json'
@@ -52,7 +52,7 @@ class AtomicMapTests(unittest.TestCase):
     def test_ionization_is_forwarded_and_coefficients_are_saved_per_node(self):
         ion = lambda theta: (1+theta, .2*(1+theta))
         theta, js = [.13, .14], [1.3, 1.4]
-        with patch('isothermal_cx_model.recombination_map.solve_trial', wraps=solve_trial) as calls:
+        with patch('isothermal_cx_model.residual_map.solve_trial', wraps=solve_trial) as calls:
             scan = scan_residuals(theta, js, .5, 0., 5., constant_B(), ionization=ion)
         self.assertTrue(scan['valid'].all())
         self.assertTrue(all(call.kwargs['ionization'] is ion for call in calls.call_args_list))
@@ -120,7 +120,7 @@ class AtomicMapTests(unittest.TestCase):
 class AtomicMapCLITests(unittest.TestCase):
     def command(self, *args):
         return subprocess.run([sys.executable, '-B', '-m',
-            'isothermal_cx_model.scan_recombination', *map(str, args)],
+            'isothermal_cx_model.scan_stationary', *map(str, args)],
             capture_output=True, text=True)
 
     def test_actual_auto_root_without_manual_guess_and_complete_provenance(self):

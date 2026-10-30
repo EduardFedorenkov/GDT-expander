@@ -15,9 +15,9 @@ import numpy as np
 
 from isothermal_cx_model.geometry import quadratic_area_legacy
 from isothermal_cx_model.ionization import k_ion
-from isothermal_cx_model.recombination_batch import scan_lambda_neutral
-from isothermal_cx_model.scan_lambda_recombination import main
-from test_recombination_batch import fake_scan, flag, source_file
+from isothermal_cx_model.parameter_scan import scan_lambda_neutral
+from isothermal_cx_model.scan_lambda import main
+from test_parameter_scan import fake_scan, flag, source_file
 
 
 class AtomicBatchTests(unittest.TestCase):
@@ -46,7 +46,7 @@ class AtomicBatchTests(unittest.TestCase):
         return child
 
     def test_scale_forwarded_once_manifest_and_counts_written(self):
-        with patch('isothermal_cx_model.recombination_batch._run_scan', side_effect=fake_scan) as child:
+        with patch('isothermal_cx_model.parameter_scan._run_scan', side_effect=fake_scan) as child:
             roots, grid = self.run_scan()
         self.assertEqual(child.call_count, 2)
         self.assertEqual(len(roots), 4)  # Synthetic multi-root reports, no branch selection.
@@ -81,16 +81,16 @@ class AtomicBatchTests(unittest.TestCase):
             root.update(j_target=1.2, net_particle_loss_fraction=-.2,
                         recombination_count_per_inlet=.2)
             root['balances']['particle_recombination_integral'] = .2
-        with patch('isothermal_cx_model.recombination_batch._run_scan',
+        with patch('isothermal_cx_model.parameter_scan._run_scan',
                    side_effect=self.modified_child(above_one)):
             roots, _ = self.run_scan()
         self.assertGreater(roots[0]['j_target'], 1)
         self.assertLess(roots[0]['net_particle_loss_fraction'], 0)
 
     def test_resume_reuses_same_physics_and_rejects_changed_scale_or_schema(self):
-        with patch('isothermal_cx_model.recombination_batch._run_scan', side_effect=fake_scan):
+        with patch('isothermal_cx_model.parameter_scan._run_scan', side_effect=fake_scan):
             before = self.run_scan()
-        with patch('isothermal_cx_model.recombination_batch._run_scan') as child:
+        with patch('isothermal_cx_model.parameter_scan._run_scan') as child:
             self.assertEqual(self.run_scan(resume=True), before)
         child.assert_not_called()
         with self.assertRaisesRegex(ValueError, 'Resume requires'):
@@ -127,7 +127,7 @@ class AtomicBatchTests(unittest.TestCase):
                    wrong_energy, wrong_count, bad_residual, bad_j]
         for index, change in enumerate(changes):
             self.output = self.base/f'bad_{index}'
-            with self.subTest(index=index), patch('isothermal_cx_model.recombination_batch._run_scan',
+            with self.subTest(index=index), patch('isothermal_cx_model.parameter_scan._run_scan',
                 side_effect=self.modified_child(change)), self.assertRaises(RuntimeError):
                 self.run_scan()
             progress = json.loads((self.output/'progress.json').read_text())
@@ -136,7 +136,7 @@ class AtomicBatchTests(unittest.TestCase):
             self.assertFalse((self.output/'roots_temperature_recombination.csv').exists())
 
     def test_resume_revalidates_stored_case_physics(self):
-        with patch('isothermal_cx_model.recombination_batch._run_scan', side_effect=fake_scan):
+        with patch('isothermal_cx_model.parameter_scan._run_scan', side_effect=fake_scan):
             self.run_scan()
         report_path = self.output/'cases/pair_00001/attempt_001/result/summary.json'
         report = json.loads(report_path.read_text())
@@ -148,7 +148,7 @@ class AtomicBatchTests(unittest.TestCase):
     def test_active_empty_search_is_completed_without_claiming_nonexistence(self):
         def empty(command, cwd, log_path):
             return fake_scan(command, cwd, log_path, empty=True)
-        with patch('isothermal_cx_model.recombination_batch._run_scan', side_effect=empty):
+        with patch('isothermal_cx_model.parameter_scan._run_scan', side_effect=empty):
             roots, grid = self.run_scan()
         self.assertEqual(roots, [])
         self.assertTrue(all(r['n_roots'] == 0 and r['ionization_scale'] == 1 for r in grid))
@@ -161,11 +161,11 @@ class AtomicBatchTests(unittest.TestCase):
                 Path(log_path).write_text('partial ionization run', encoding='utf-8')
                 raise KeyboardInterrupt
             return fake_scan(command, cwd, log_path)
-        with patch('isothermal_cx_model.recombination_batch._run_scan', side_effect=interrupt), \
+        with patch('isothermal_cx_model.parameter_scan._run_scan', side_effect=interrupt), \
                 self.assertRaises(KeyboardInterrupt):
             self.run_scan()
         self.assertEqual(len(json.loads((self.output/'progress.json').read_text())['completed']), 1)
-        with patch('isothermal_cx_model.recombination_batch._run_scan', side_effect=fake_scan) as child:
+        with patch('isothermal_cx_model.parameter_scan._run_scan', side_effect=fake_scan) as child:
             roots, grid = self.run_scan(resume=True)
         self.assertEqual(child.call_count, 1)
         self.assertEqual(len(roots), 4)
@@ -179,7 +179,7 @@ class AtomicBatchTests(unittest.TestCase):
         matplotlib.use('Agg', force=True)
         import matplotlib.pyplot as plt
         from isothermal_cx_model.plot_lambda_results import load_roots_csv, plot_roots
-        with patch('isothermal_cx_model.recombination_batch._run_scan', side_effect=fake_scan):
+        with patch('isothermal_cx_model.parameter_scan._run_scan', side_effect=fake_scan):
             self.run_scan()
         rows = load_roots_csv(self.output/'roots_temperature_recombination.csv')
         figure, axes = plot_roots(rows+[dict(rows[0], ionization_scale=0.)])
@@ -196,10 +196,10 @@ class AtomicBatchTests(unittest.TestCase):
 
     def test_cli_effective_default_grid_is_consistent_with_child(self):
         for scale, upper in [(0, 1.), (1, 10.)]:
-            with self.subTest(scale=scale), patch('sys.argv', ['scan_lambda_recombination',
+            with self.subTest(scale=scale), patch('sys.argv', ['scan_lambda',
                 '--ionization-scale', str(scale), '--lambdas', '7', '--densities', '1e15',
                 '--no-plot', '--output', str(self.output)]), contextlib.redirect_stdout(io.StringIO()), \
-                patch('isothermal_cx_model.scan_lambda_recombination.scan_lambda_neutral',
+                patch('isothermal_cx_model.scan_lambda.scan_lambda_neutral',
                       return_value=([], [])) as batch:
                 self.assertEqual(main(), 0)
             self.assertEqual(batch.call_args.kwargs['ionization_scale'], scale)
@@ -224,7 +224,7 @@ class ActualAtomicBatchCLITests(unittest.TestCase):
                 '--j-min', '1.35', '--j-max', '1.9', '--j-count', '7', '--j-grid', 'linear',
                 '--j-axis', 'linear', '--max-starts', '2', '--points', '4000', '--no-show']
             args = inner+['--lambdas', '7', '--densities', '9e14', '1e15', '--output', output]
-            result = self.command('isothermal_cx_model.scan_lambda_recombination', args)
+            result = self.command('isothermal_cx_model.scan_lambda', args)
             self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
             csv_path = output/'roots_temperature_recombination.csv'
             with csv_path.open(encoding='utf-8-sig') as stream:
@@ -241,14 +241,14 @@ class ActualAtomicBatchCLITests(unittest.TestCase):
                 self.assertGreater(float(row['ionization_count_per_inlet']), .5)
                 self.assertLess(float(row['net_particle_loss_fraction']), 0)
                 self.assertGreater(root['balances']['particle_ionization_integral'], .5)
-            single = self.command('isothermal_cx_model.scan_recombination', inner+
+            single = self.command('isothermal_cx_model.scan_stationary', inner+
                 ['--density', '1e15', '--lambda-sh', '7', '--output', base/'single'])
             self.assertEqual(single.returncode, 0, single.stdout+single.stderr)
             root = json.loads((base/'single/summary.json').read_text())['solutions'][0]
             for key in ('T_eV', 'alpha', 'j_target'):
                 self.assertAlmostEqual(float(roots[1][key]), root[key], delta=1e-8)
             csv_before = csv_path.read_bytes()
-            repeated = self.command('isothermal_cx_model.scan_lambda_recombination', args+['--resume'])
+            repeated = self.command('isothermal_cx_model.scan_lambda', args+['--resume'])
             self.assertEqual(repeated.returncode, 0, repeated.stdout+repeated.stderr)
             self.assertEqual(repeated.stdout.count('Reusing completed pair.'), 2)
             self.assertNotIn('Temperature columns:', repeated.stdout)
@@ -256,7 +256,7 @@ class ActualAtomicBatchCLITests(unittest.TestCase):
             self.assertEqual(config.read_bytes(), before)
             changed = args.copy()
             changed[changed.index('--ionization-scale')+1] = '0'
-            result = self.command('isothermal_cx_model.scan_lambda_recombination', changed+['--resume'])
+            result = self.command('isothermal_cx_model.scan_lambda', changed+['--resume'])
             self.assertEqual(result.returncode, 2)
             self.assertIn('Resume requires', result.stderr)
             self.assertEqual(csv_path.read_bytes(), csv_before)

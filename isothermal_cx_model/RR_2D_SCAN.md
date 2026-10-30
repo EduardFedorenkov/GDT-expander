@@ -1,13 +1,14 @@
 # Автоматический двумерный поиск стационарных решений
 
-Этот скрипт использует уже установленный `stationary_recombination.py`.
+Этот скрипт использует уже установленный `stationary.py`.
 Физика, IVP и проверка корней не меняются. Ручное `--guess` **не требуется**.
-Старый `run_recombination` остаётся самостоятельным локальным решателем.
+Старый `run_stationary` остаётся самостоятельным локальным решателем.
 
-IVP находится в `solver_atomic.py`. Прямая ионизация теперь включается флагом
+IVP находится в `transport.py`. Прямая ионизация теперь включается флагом
 `--ionization-scale 1` и передаётся как в карту, так и во все уточнения корней.
-По умолчанию множитель равен 0: старые команды сохраняют прежнюю физику.
-Сетка и выбор стартов допускают j_t>1. Пакетный scan_lambda_recombination
+В CLI по умолчанию множитель равен 1. Для предела без ионизации используйте
+--ionization-scale 0 (этот флаг явно указан в соответствующих примерах).
+Сетка и выбор стартов допускают j_t>1. Пакетный scan_lambda
 тоже подключён к --ionization-scale 1; см. RR_LAMBDA_SCAN.md.
 
 ## Запуск
@@ -15,7 +16,7 @@ IVP находится в `solver_atomic.py`. Прямая ионизация т
 Из корня проекта:
 
 ```powershell
-python -B -m isothermal_cx_model.scan_recombination --no-show --output rr_map_01
+python -B -m isothermal_cx_model.scan_stationary --ionization-scale 0 --no-show --output rr_map_01
 ```
 
 Параметры источника, нейтральная плотность и lambda читаются из существующего
@@ -25,20 +26,20 @@ python -B -m isothermal_cx_model.scan_recombination --no-show --output rr_map_01
 Контрольный случай с изменением только n0 и lambda в памяти:
 
 ```powershell
-python -B -m isothermal_cx_model.scan_recombination --density 1e15 --lambda-sh 7 --temperature-min .01 --temperature-max 100 --temperature-count 55 --j-count 60 --no-show --output rr_map_control
+python -B -m isothermal_cx_model.scan_stationary --ionization-scale 0 --density 1e15 --lambda-sh 7 --temperature-min .01 --temperature-max 100 --temperature-count 55 --j-count 60 --no-show --output rr_map_control
 ```
 
 Только построить карту, без уточнения корней:
 
 ```powershell
-python -B -m isothermal_cx_model.scan_recombination --map-only --no-show --output rr_map_only
+python -B -m isothermal_cx_model.scan_stationary --ionization-scale 0 --map-only --no-show --output rr_map_only
 ```
 
 Проверенный небольшой пример с полной ионизацией и автоматическим поиском,
 без ручного --guess (49 пробных узлов):
 
 ```powershell
-python -B -m isothermal_cx_model.scan_recombination --density 1e15 --lambda-sh 7 --ionization-scale 1 --temperature-min 80 --temperature-max 110 --temperature-count 7 --j-min 1.35 --j-max 1.9 --j-count 7 --j-grid linear --j-axis linear --max-starts 2 --no-show --output atomic_hot_map
+python -B -m isothermal_cx_model.scan_stationary --density 1e15 --lambda-sh 7 --ionization-scale 1 --temperature-min 80 --temperature-max 110 --temperature-count 7 --j-min 1.35 --j-max 1.9 --j-count 7 --j-grid linear --j-axis linear --max-starts 2 --no-show --output atomic_hot_map
 ```
 
 Получается проверенный корень T около 96.170457 эВ, a около 184.422155 см,
@@ -49,7 +50,7 @@ ATOMIC_STATIONARY.md. Пустые кружки показывают старт�
 Для более широкого первичного обзора с тем же n0 и lambda:
 
 ```powershell
-python -B -m isothermal_cx_model.scan_recombination --density 1e15 --lambda-sh 7 --ionization-scale 1 --temperature-min .001 --temperature-max 150 --temperature-count 60 --j-min 1e-6 --j-max 10 --j-count 64 --j-axis log --max-starts 24 --no-show --output atomic_map_wide
+python -B -m isothermal_cx_model.scan_stationary --density 1e15 --lambda-sh 7 --ionization-scale 1 --temperature-min .001 --temperature-max 150 --temperature-count 60 --j-min 1e-6 --j-max 10 --j-count 64 --j-axis log --max-starts 24 --no-show --output atomic_map_wide
 ```
 
 Это уже несколько тысяч IVP плюс уточнения. Такая конечная сетка не гарантирует
@@ -135,7 +136,7 @@ python -B -m isothermal_cx_model.scan_recombination --density 1e15 --lambda-sh 7
 Для узкого участка около холодного корня полезна линейная сетка j_t:
 
 ```powershell
-python -B -m isothermal_cx_model.scan_recombination --density 1e15 --lambda-sh 7 --temperature-min .08 --temperature-max .17 --temperature-count 25 --j-min .65 --j-max .9 --j-count 25 --j-grid linear --j-axis linear --max-starts 4 --no-show --output rr_cold_zoom
+python -B -m isothermal_cx_model.scan_stationary --ionization-scale 0 --density 1e15 --lambda-sh 7 --temperature-min .08 --temperature-max .17 --temperature-count 25 --j-min .65 --j-max .9 --j-count 25 --j-grid linear --j-axis linear --max-starts 4 --no-show --output rr_cold_zoom
 ```
 
 Границы T ограничивают и локальное уточнение. `j_min` также служит нижней
@@ -181,7 +182,7 @@ recombination_count_per_inlet и ionization_count_per_inlet из независ�
 NPZ каждого корня также содержит ionization_scale,D_ion,E_ion. Старые файлы
 не перезаписываются, читатели NPZ могут игнорировать новые числовые поля.
 
-Функции доступны из `recombination_map.py`: `make_j_grid`, `scan_residuals`,
+Функции доступны из `residual_map.py`: `make_j_grid`, `scan_residuals`,
 `candidate_cells`, `choose_starts`, `plot_residuals`. На вход API температура
 подаётся как theta, в отличие от CLI, где она задаётся в эВ.
 
@@ -206,5 +207,5 @@ CX и множителей RR/возбуждения/ионизации. При 
 
 Код выхода: 0 — построена карта `--map-only` или найден хотя бы один проверенный
 корень; 1 — из выбранных стартов корни не найдены; 2 — ошибка аргументов.
-Тесты: `python -B -m unittest discover -s tests -p test_recombination_map.py -v`.
+Тесты: `python -B -m unittest discover -s tests -p test_residual_map.py -v`.
 Новые тесты: `python -B -m unittest discover -s tests -p test_atomic_map.py -v`.

@@ -1,6 +1,6 @@
 # Потери энергии на возбуждение атомов
 
-Патч для общего решателя `solver_general.py`, включая кинетическое входное
+Коэффициенты в excitation.py используются решателем transport.py, включая кинетическое входное
 условие. Старые аналитические решатели `solver.py` и пакет `simple_cx_model`
 не изменяются. Тормозное излучение, ионизация и рекомбинация не добавляются.
 
@@ -52,48 +52,17 @@ theta по входной невязке импульса. При проверк
 
 ## Запуск из корня проекта
 
-По умолчанию возбуждение отключено. Прежние команды и JSON остаются рабочими.
+Актуальный решатель включает также RR и ионизацию.
+Для исследования только CX + возбуждения задайте --rr-scale 0 --ionization-scale 0.
+Начальный старт в локальном решателе не гарантирует сходимость.
 
 ```powershell
-# Старое решение
-python -B -m isothermal_cx_model.plot_profiles --cx-mode temperature --excitation-scale 0
-
-# Постепенное включение: eta=0.1 или 0.25
-python -B -m isothermal_cx_model.plot_profiles --cx-mode temperature --excitation-scale 0.25
-
-# Полный новый сток, скан заданных плотностей
-python -B -m isothermal_cx_model.scan_neutral --cx-mode temperature --excitation-scale 1 --densities 1e13 3e13 1e14 --no-plot
-
-# Диагностика невязки по температуре
-python -B -m isothermal_cx_model.scan --cx-mode temperature --excitation-scale 1
-
-# Сохранение результатов и диагностики даже при отсутствии корней
-python -B -m isothermal_cx_model.scan_lambda --cx-mode temperature --excitation-scale 1 --lambdas 8 --densities 1e14 --output excitation_eta1_results --no-plot
+python -B -m isothermal_cx_model.scan_stationary --excitation-scale 0.25 --rr-scale 0 --ionization-scale 0 --no-show --output excitation_check
+python -B -m isothermal_cx_model.scan_lambda --lambdas 8 --densities 1e14 --excitation-scale 1 --rr-scale 0 --ionization-scale 0 --no-show --output excitation_scan
 ```
 
-Можно по-прежнему выбрать `--cx-mode constant`, любую поддерживаемую геометрию
-через `--geometry` и прежний режим входного импульса. Если геометрия не указана,
-остаётся A/A_m=500*(z/L)^2, применяемая только в своей допустимой области.
-
-Новые параметры Python API:
-
-```python
-from isothermal_cx_model.excitation import make_E_exc
-
-E = make_E_exc(parameters, n0_cm3=n0, scale=1.0)
-# solve_at_theta(..., E_exc=E)
-# find_temperature_solutions(..., E_exc=E)
-# find_density_solutions(..., excitation_scale=1.0)
-# scan_neutrals(..., excitation_scale=1.0)
-# scan_lambda_neutral(..., excitation_scale=1.0)
-```
-
-В сканах одна и та же текущая n_0 передаётся и в D(theta), и в E_exc(theta).
-Скалярный E_exc сохраняется в строках корней и профилях; excitation_scale —
-в корнях, диагностике сетки и parameters.json. При eta>0 файлы скана имеют
-имена roots_temperature_excitation.csv и grid_temperature_excitation.csv
-(или constant вместо temperature). Для каждого eta используйте отдельную
-папку --output: одинаковая папка и режим перезаписывают прежние результаты.
+Для каждого расчёта выбирайте новую папку --output.
+D(theta) и E_exc(theta) используют одну и ту же заданную плотность нейтралов.
 
 ## Проверка на конфиге проекта от 24 октября 2026
 
@@ -118,17 +87,10 @@ L=184.5 см, квадратичная площадь K=500, кинетичес�
 ## Тесты
 
 ```powershell
-python -B -m unittest discover -s tests -p test_excitation.py -v
-python -B -m unittest discover -s tests -v
+python -B -m unittest discover -s tests -p "test_excitation*.py" -v
 ```
 
-17 новых тестов проходят: коэффициент и СГС-нормировка, нулевая температура,
-валидация входов, точное воспроизведение старого RHS при eta=0, независимый
-аналитический интеграл при A=const, знак смещения a при заданной theta,
-размерный и безразмерный баланс энергии, уточнение корней, передача n_0,
-восстановление профилей, CSV-метаданные и интерфейсы запуска.
-
-В полном наборе проходит 82 из 83 тестов. Один исходный тест
-test_kinetic_inlet.KineticSolverTests.test_constant_area_independent_analytic_solution_above_b_one
-падает и ДО патча: brentq не получает смены знака на заданном интервале при
-текущем JSON. Его предпосылки зависят от конфига; этот патч его не меняет.
+Проверяются коэффициенты и нормировка, независимый аналитический интеграл
+при A=const и уточнение стационарного решения текущим решателем.
+Приведённая выше таблица — исторические результаты CX + возбуждения,
+не результаты полного атомарного набора.

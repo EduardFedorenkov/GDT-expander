@@ -1,5 +1,9 @@
 # Поиск изотермического CX-решения с кинетическим входным импульсом
 
+Исторический вывод для предела только CX. В текущей модели с реакциями
+поток J переменный и подбираются theta и j_t; общий алгоритм описан в README.md.
+Формулы кинетического входного импульса остаются в inlet.py и kinetic_momentum.py.
+
 ## 1. Физическая постановка и фиксированные величины
 
 В гидродинамической области a<z<L принимаются J=J0, T_i=T_e=T=const,
@@ -252,23 +256,16 @@ CSV сетки содержит статусы, причины кинетиче�
 | Пробная theta -> alpha из энергии | да | без изменений |
 | Число внешних неизвестных | одна theta | одна theta: chi задана |
 
-В режиме --inlet-momentum constant сохраняются прежнее ГУ и прежний предел b<1.
-Низкоуровневый API без inlet_momentum также сохраняет старый режим для
-совместимости; команды и find_density_solutions/scan_neutrals по умолчанию
-используют kinetic. Старый специализированный solver.py не изменён.
+В актуальном решателе --inlet-momentum constant задаёт mu(a)=1,
+но не включает удалённый одномерный алгоритм поиска.
 
-## 10. Запуск из корня проекта
+## 10. Актуальные команды
 
 ```powershell
 python -B -m unittest discover -s tests -v
-
-python -B -m isothermal_cx_model.scan_neutral --geometry isothermal_cx_model/geometry_linear_B.json --cx-mode temperature --densities 1e13 1e14 1e15 --no-plot
-
-python -B -m isothermal_cx_model.scan_lambda --geometry isothermal_cx_model/geometry_legacy.json --lambdas 5 6 7 8 9 10 --cx-mode temperature --output kinetic_results --no-plot
-
-python -B -m isothermal_cx_model.plot_profiles --geometry isothermal_cx_model/geometry_legacy.json --density 1e14 --cx-mode temperature
+python -B -m isothermal_cx_model.scan_stationary --geometry isothermal_cx_model/geometry_linear_B.json --cx-mode temperature --rr-scale 0 --ionization-scale 0 --excitation-scale 0 --no-show --output kinetic_map
+python -B -m isothermal_cx_model.scan_lambda --geometry isothermal_cx_model/geometry_legacy.json --lambdas 5 6 7 8 9 10 --cx-mode temperature --rr-scale 0 --ionization-scale 0 --excitation-scale 0 --no-show --output kinetic_results
 ```
 
-Добавление --inlet-momentum constant к любой из четырёх команд модели
-возвращает прежнее граничное условие. Опция --cx-mode имеет независимый смысл:
-она выбирает постоянный или температурный коэффициент CX, а не тип входного ГУ.
+Примеры явно отключают процессы, кроме CX, как в историческом выводе.
+Для полного атомарного набора используйте множители процессов 1.

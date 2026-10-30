@@ -9,7 +9,7 @@
 
 ## Имена и совместимость
 
-Единственная реализация - `solver_atomic.py`: CX, возбуждение, Case A RR,
+Единственная реализация - `transport.py`: CX, возбуждение, Case A RR,
 опциональная прямая ионизация атомов. Старый `solver_recombination.py` содержит
 только переэкспорт solve_trial, без второй версии уравнений. Внутренние клиенты
 переведены на новое имя. Старые внешние импорты продолжают работать.
@@ -17,7 +17,7 @@
 
 Выходная метка model теперь atomic_trial. Старый восстановитель профилей,
 предполагающий J=J0, явно отвергает как atomic_trial, так и старый rr_trial.
-Проверки балансов также находятся в solver_atomic и переэкспортируются
+Проверки балансов также находятся в transport и переэкспортируются
 стационарным RR-решателем; нет двух разных формул балансов.
 
 ## Физика и API
@@ -29,7 +29,7 @@
 
 ```python
 from isothermal_cx_model.ionization import make_ionization_coefficients
-from isothermal_cx_model.solver_atomic import solve_trial, balance_checks
+from isothermal_cx_model.transport import solve_trial, balance_checks
 
 ion = make_ionization_coefficients(p, scale=1)
 state = solve_trial(theta, j_target, p['beta'], D, p['lambda_sh'], geometry,
@@ -97,7 +97,7 @@ particle_net_source_integral - разность рождения и рекомб
 ## Пробный запуск
 
 ```powershell
-python -B -m isothermal_cx_model.trial_atomic_example --temperature 3.272 --j-target 5 --density 1e15 --lambda-sh 7 --ionization-scale 1
+python -B -m isothermal_cx_model.trial_example --temperature 3.272 --j-target 5 --density 1e15 --lambda-sh 7 --ionization-scale 1
 ```
 
 Это намеренно ПРОБНЫЙ профиль, не готовое стационарное решение. В текущем
@@ -125,9 +125,9 @@ j_t>1, немонотонный j, звуковой старт, все разм�
 
 ## Что оставалось после первого коммита
 
-Этап 2 подключил ionization к stationary_recombination и --ionization-scale
-к run_recombination, снял локальный потолок j_t=1, обновил вывод и графики.
-Этап 3 добавил ионизацию к scan_recombination, автоматическим сеткам/стартам
+Этап 2 подключил ionization к stationary и --ionization-scale
+к run_stationary, снял локальный потолок j_t=1, обновил вывод и графики.
+Этап 3 добавил ионизацию к scan_stationary, автоматическим сеткам/стартам
 и их метаданным; см. RR_2D_SCAN.md. Этап 4 подключает её к пакетному lambda-скану,
 его CSV версии 2 и resume; см. RR_LAMBDA_SCAN.md.
 
