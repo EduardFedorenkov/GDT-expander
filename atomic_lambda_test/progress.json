@@ -1,0 +1,150 @@
+{
+  "active_case": null,
+  "completed": {
+    "pair_00001": {
+      "exit_code": 1,
+      "report": "cases/pair_00001/attempt_001/result/summary.json"
+    },
+    "pair_00002": {
+      "exit_code": 0,
+      "report": "cases/pair_00002/attempt_001/result/summary.json"
+    },
+    "pair_00003": {
+      "exit_code": 0,
+      "report": "cases/pair_00003/attempt_001/result/summary.json"
+    },
+    "pair_00004": {
+      "exit_code": 0,
+      "report": "cases/pair_00004/attempt_001/result/summary.json"
+    },
+    "pair_00005": {
+      "exit_code": 0,
+      "report": "cases/pair_00005/attempt_001/result/summary.json"
+    },
+    "pair_00006": {
+      "exit_code": 0,
+      "report": "cases/pair_00006/attempt_001/result/summary.json"
+    },
+    "pair_00007": {
+      "exit_code": 0,
+      "report": "cases/pair_00007/attempt_001/result/summary.json"
+    },
+    "pair_00008": {
+      "exit_code": 0,
+      "report": "cases/pair_00008/attempt_001/result/summary.json"
+    },
+    "pair_00009": {
+      "exit_code": 0,
+      "report": "cases/pair_00009/attempt_001/result/summary.json"
+    },
+    "pair_00010": {
+      "exit_code": 1,
+      "report": "cases/pair_00010/attempt_001/result/summary.json"
+    },
+    "pair_00011": {
+      "exit_code": 0,
+      "report": "cases/pair_00011/attempt_001/result/summary.json"
+    },
+    "pair_00012": {
+      "exit_code": 0,
+      "report": "cases/pair_00012/attempt_001/result/summary.json"
+    },
+    "pair_00013": {
+      "exit_code": 0,
+      "report": "cases/pair_00013/attempt_001/result/summary.json"
+    },
+    "pair_00014": {
+      "exit_code": 0,
+      "report": "cases/pair_00014/attempt_001/result/summary.json"
+    },
+    "pair_00015": {
+      "exit_code": 0,
+      "report": "cases/pair_00015/attempt_001/result/summary.json"
+    },
+    "pair_00016": {
+      "exit_code": 0,
+      "report": "cases/pair_00016/attempt_002/result/summary.json"
+    },
+    "pair_00017": {
+      "exit_code": 0,
+      "report": "cases/pair_00017/attempt_001/result/summary.json"
+    },
+    "pair_00018": {
+      "exit_code": 0,
+      "report": "cases/pair_00018/attempt_001/result/summary.json"
+    },
+    "pair_00019": {
+      "exit_code": 1,
+      "report": "cases/pair_00019/attempt_001/result/summary.json"
+    },
+    "pair_00020": {
+      "exit_code": 0,
+      "report": "cases/pair_00020/attempt_001/result/summary.json"
+    },
+    "pair_00021": {
+      "exit_code": 0,
+      "report": "cases/pair_00021/attempt_001/result/summary.json"
+    },
+    "pair_00022": {
+      "exit_code": 0,
+      "report": "cases/pair_00022/attempt_001/result/summary.json"
+    },
+    "pair_00023": {
+      "exit_code": 0,
+      "report": "cases/pair_00023/attempt_001/result/summary.json"
+    },
+    "pair_00024": {
+      "exit_code": 0,
+      "report": "cases/pair_00024/attempt_001/result/summary.json"
+    },
+    "pair_00025": {
+      "exit_code": 0,
+      "report": "cases/pair_00025/attempt_001/result/summary.json"
+    },
+    "pair_00026": {
+      "exit_code": 0,
+      "report": "cases/pair_00026/attempt_001/result/summary.json"
+    },
+    "pair_00027": {
+      "exit_code": 0,
+      "report": "cases/pair_00027/attempt_001/result/summary.json"
+    },
+    "pair_00028": {
+      "exit_code": 1,
+      "report": "cases/pair_00028/attempt_001/result/summary.json"
+    },
+    "pair_00029": {
+      "exit_code": 0,
+      "report": "cases/pair_00029/attempt_001/result/summary.json"
+    },
+    "pair_00030": {
+      "exit_code": 0,
+      "report": "cases/pair_00030/attempt_001/result/summary.json"
+    },
+    "pair_00031": {
+      "exit_code": 0,
+      "report": "cases/pair_00031/attempt_001/result/summary.json"
+    },
+    "pair_00032": {
+      "exit_code": 0,
+      "report": "cases/pair_00032/attempt_001/result/summary.json"
+    },
+    "pair_00033": {
+      "exit_code": 0,
+      "report": "cases/pair_00033/attempt_001/result/summary.json"
+    },
+    "pair_00034": {
+      "exit_code": 0,
+      "report": "cases/pair_00034/attempt_001/result/summary.json"
+    },
+    "pair_00035": {
+      "exit_code": 0,
+      "report": "cases/pair_00035/attempt_001/result/summary.json"
+    },
+    "pair_00036": {
+      "exit_code": 0,
+      "report": "cases/pair_00036/attempt_001/result/summary.json"
+    }
+  },
+  "stage": "complete"
+}

@@ -32,7 +32,7 @@ def main():
     parser.add_argument('--cx-mode', choices=['constant', 'temperature'], default='temperature')
     parser.add_argument('--rr-scale', type=validate_excitation_scale, default=1.)
     parser.add_argument('--excitation-scale', type=validate_excitation_scale, default=1.)
-    parser.add_argument('--ionization-scale', type=validate_excitation_scale, default=0.,
+    parser.add_argument('--ionization-scale', type=validate_excitation_scale, default=1.,
                         help='0: previous physics (default); 1: full atomic ionization.')
     parser.add_argument('--temperature-min', type=float)
     parser.add_argument('--temperature-max', type=float)

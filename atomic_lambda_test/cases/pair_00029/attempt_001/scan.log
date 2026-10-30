@@ -1,0 +1,17 @@
+Temperature columns: 1/45
+Temperature columns: 5/45
+Temperature columns: 10/45
+Temperature columns: 15/45
+Temperature columns: 20/45
+Temperature columns: 25/45
+Temperature columns: 30/45
+Temperature columns: 35/45
+Temperature columns: 40/45
+Temperature columns: 45/45
+Joint valid trials: 8/2205; candidate cells: 0; starts: 6
+Refining automatic/manual starts with the checked stationary solver...
+root_001: T=11.2808901 eV, a=126.983384 cm, jt=6.87642073948, R_J=-8.59e-14, R_M=1.11e-14
+root_002: T=27.5763675 eV, a=157.306128 cm, jt=3.63258400061, R_J=9.40e-13, R_M=5.06e-14
+Attempt statuses: {'converged': 6}
+Finite grid + local corrections: NOT a proof of completeness or nonexistence.
+Output: C:\Projects\1D-plasma-expander-model\atomic_lambda_test\cases\pair_00029\attempt_001\result

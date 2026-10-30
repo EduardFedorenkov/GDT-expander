@@ -1,0 +1,811 @@
+{
+  "format_version": 2,
+  "stage": "refinement_complete",
+  "source_config": "C:\\Projects\\1D-plasma-expander-model\\atomic_lambda_test\\source_config.json",
+  "parameters": {
+    "A_m_cm2": 38.48451000647496,
+    "n_c_cm3": 30000000000000.0,
+    "T_c_eV": 150.0,
+    "chi_E": 8.0,
+    "chi": 5.0,
+    "k_cx_cm3_per_s": 1e-08,
+    "lambda_sh": 7.0,
+    "L_cm": 184.5,
+    "n0_cm3": 5000000000000.0,
+    "m_D_g": 3.3435837724e-24,
+    "A0_cm2": 38.48451000647496,
+    "n_m_cm3": 15000000000000.0,
+    "T_m_eV": 150.0,
+    "J0_per_s": 3.9049187683314004e+21,
+    "M0_dyn": 277465.4221649102,
+    "W0_erg_per_s": 7507643529946.354,
+    "U_star_cm_per_s": 21251258.60316408,
+    "T_star_erg": 1.9226119607999998e-09,
+    "T_star_eV": 1200.0,
+    "n_star_cm3": 4774648292756.861,
+    "A_star_cm2": 38.48451000647496,
+    "L_star_cm": 184.5,
+    "J_star_per_s": 3.9049187683314004e+21,
+    "M_star_dyn": 277465.4221649102,
+    "W_star_erg_per_s": 7507643529946.354,
+    "nu_cx_per_s": 50000.0,
+    "beta": 1.2732395447351628,
+    "D": 0.43409193649483413
+  },
+  "geometry": {
+    "type": "quadratic_area_legacy",
+    "K": 500.0,
+    "g_min": 1e-06
+  },
+  "cx_mode": "temperature",
+  "rr_scale": 1.0,
+  "excitation_scale": 1.0,
+  "ionization_scale": 1.0,
+  "inlet_momentum": "kinetic",
+  "scan_shape": [
+    49,
+    45
+  ],
+  "controls": {
+    "max_starts": 16,
+    "max_iterations": 40,
+    "n_points": 4000,
+    "residual_tol": 1e-09,
+    "balance_tol": 5e-06,
+    "theta_bounds": [
+      8.333333333333333e-07,
+      0.08333333333333333
+    ],
+    "j_min": 1e-06,
+    "j_max": 10.0,
+    "refinement_j_max": null,
+    "j_grid": "mixed",
+    "rtol": 1e-09,
+    "atol": 1e-11,
+    "max_step": 0.02
+  },
+  "summary": {
+    "n_trials": 2205,
+    "n_valid": 7,
+    "statuses": {
+      "sonic_return": 1710,
+      "nonpositive_particle_flux": 470,
+      "energy_matched": 7,
+      "energy_temperature_limit": 14,
+      "inadmissible_wall": 4
+    },
+    "reason_counts": {},
+    "unresolved_numerical_count": 0,
+    "warning": "Finite grid, not a proof of existence, absence or completeness of roots.",
+    "nearest_sample_not_root": {
+      "theta": 0.049379424796213954,
+      "j_target": 2.4620924014946306,
+      "log_residual_norm": 0.020460203369442636,
+      "R_J": 0.01752733293859743,
+      "R_M": 0.03294086592338652
+    },
+    "candidate_cell_count": 0
+  },
+  "starts": [
+    {
+      "theta": 0.049379424796213954,
+      "j_target": 2.4620924014946306,
+      "j_index": 46,
+      "theta_index": 42,
+      "source": "grid_local_minimum",
+      "grid_log_residual_norm": 0.020460203369442636,
+      "start_id": "start_001",
+      "T_eV": 59.25530975545674
+    },
+    {
+      "theta": 0.08333333333333333,
+      "j_target": 1.5,
+      "j_index": 45,
+      "theta_index": 44,
+      "source": "grid_local_minimum",
+      "grid_log_residual_norm": 0.2337946083319776,
+      "start_id": "start_002",
+      "T_eV": 100.0
+    },
+    {
+      "theta": 0.022523554865876354,
+      "j_target": 4.961947603002908,
+      "j_index": 47,
+      "theta_index": 39,
+      "source": "grid_local_minimum",
+      "grid_log_residual_norm": 0.3889014710364779,
+      "start_id": "start_003",
+      "T_eV": 27.028265839051624
+    },
+    {
+      "theta": 0.006087726285553707,
+      "j_target": 10.0,
+      "j_index": 48,
+      "theta_index": 34,
+      "source": "grid_local_minimum",
+      "grid_log_residual_norm": 1.0003572938353753,
+      "start_id": "start_004",
+      "T_eV": 7.305271542664449
+    },
+    {
+      "theta": 0.010273722828683883,
+      "j_target": 10.0,
+      "j_index": 48,
+      "theta_index": 36,
+      "source": "low_residual_sample",
+      "grid_log_residual_norm": 1.681522564782119,
+      "start_id": "start_005",
+      "T_eV": 12.32846739442066
+    }
+  ],
+  "solutions": [
+    {
+      "solution_id": "root_001",
+      "theta": 0.00798573447077792,
+      "T_eV": 9.582881364933504,
+      "j_target": 8.842144845578217,
+      "alpha": 0.5909650164914306,
+      "a_cm": 109.03304554266894,
+      "outside_scan_j_range": false,
+      "net_particle_loss_fraction": -7.842144845578217,
+      "recombination_count_per_inlet": 3.48017708791074e-05,
+      "ionization_count_per_inlet": 7.842176362019117,
+      "R_J": -7.749356711883593e-14,
+      "R_M": -2.0650148258027912e-14,
+      "R_E": 0.0,
+      "mu_target": 1.593285470864425,
+      "coefficients": {
+        "D": 0.575157690377828,
+        "E_exc": 0.0028434521388493645,
+        "R_rr": 2.668624918018346e-06,
+        "Q_rr": 1.3249216429981538e-08,
+        "D_ion": 0.19652289779931598,
+        "E_ion": 0.002227259508392248
+      },
+      "verification": {
+        "residual_tol": 1e-09,
+        "refined_tol": 1e-11,
+        "balance_tol": 5e-06,
+        "n_points": 4000,
+        "rtol": 1e-11,
+        "atol": 9.999999999999999e-14,
+        "max_step": 0.01
+      },
+      "balances": {
+        "particle_abs": 3.285330056002067e-06,
+        "momentum_abs": 6.798562506293848e-07,
+        "energy_abs": 1.2316374586873735e-07,
+        "particle_loss_integral": 3.48017708791074e-05,
+        "particle_recombination_integral": 3.48017708791074e-05,
+        "particle_ionization_integral": 7.842176362019117,
+        "particle_net_source_integral": 7.842141560248238,
+        "energy_ionization_integral": 0.08887799876955
+      }
+    },
+    {
+      "solution_id": "root_002",
+      "theta": 0.0520229529220295,
+      "T_eV": 62.4275435064354,
+      "j_target": 2.346317848748994,
+      "alpha": 0.8806444229977252,
+      "a_cm": 162.47889604308028,
+      "outside_scan_j_range": false,
+      "net_particle_loss_fraction": -1.3463178487489942,
+      "recombination_count_per_inlet": 1.2615407050203017e-08,
+      "ionization_count_per_inlet": 1.3463174928918875,
+      "R_J": 1.1723955140041653e-13,
+      "R_M": -4.596323321948148e-14,
+      "R_E": 0.0,
+      "mu_target": 1.5935833649179028,
+      "coefficients": {
+        "D": 1.135219528722781,
+        "E_exc": 0.003895784004620067,
+        "R_rr": 4.310322976232637e-07,
+        "Q_rr": 9.651346243815371e-09,
+        "D_ion": 1.1001112814678147,
+        "E_ion": 0.012467927856635233
+      },
+      "verification": {
+        "residual_tol": 1e-09,
+        "refined_tol": 1e-11,
+        "balance_tol": 5e-06,
+        "n_points": 4000,
+        "rtol": 1e-11,
+        "atol": 9.999999999999999e-14,
+        "max_step": 0.01
+      },
+      "balances": {
+        "particle_abs": 3.6847239637261e-07,
+        "momentum_abs": 8.873986323543193e-08,
+        "energy_abs": 1.5371479450410064e-08,
+        "particle_loss_integral": 1.2615407050203017e-08,
+        "particle_recombination_integral": 1.2615407050203017e-08,
+        "particle_ionization_integral": 1.3463174928918875,
+        "particle_net_source_integral": 1.3463174802764806,
+        "energy_ionization_integral": 0.015258264919441392
+      }
+    }
+  ],
+  "diagnostic": {
+    "attempts": [
+      {
+        "status": "converged",
+        "initial_guess": [
+          0.049379424796213954,
+          2.4620924014946306
+        ],
+        "search_bounds": {
+          "theta": [
+            8.333333333333333e-07,
+            0.08333333333333333
+          ],
+          "j_min": 1e-06,
+          "j_max": null
+        },
+        "evaluations": 23,
+        "invalid_trials": {},
+        "history": [
+          {
+            "phase": "search",
+            "iteration": 0,
+            "theta": 0.04937942479621396,
+            "j_target": 2.4620924014946306,
+            "norm": 0.020460203369442636,
+            "R_J": 0.017527332938601203,
+            "R_M": 0.03294086592338652
+          },
+          {
+            "phase": "search",
+            "iteration": 1,
+            "theta": 0.05203245265294851,
+            "j_target": 2.3461025705777723,
+            "norm": 0.0007984490732374984,
+            "R_J": 0.0007987679185537111,
+            "R_M": 0.00015131884131958095
+          },
+          {
+            "phase": "search",
+            "iteration": 2,
+            "theta": 0.052022945246180646,
+            "j_target": 2.3463180662335663,
+            "norm": 4.2302491342287455e-07,
+            "R_J": -4.2302482394784846e-07,
+            "R_M": -5.136531777694131e-08
+          },
+          {
+            "phase": "search",
+            "iteration": 3,
+            "theta": 0.05202295313437068,
+            "j_target": 2.3463178368597006,
+            "norm": 4.8235859751005515e-12,
+            "R_J": -4.823585975088918e-12,
+            "R_M": -1.6298074001497298e-13
+          },
+          {
+            "phase": "verification",
+            "iteration": 0,
+            "theta": 0.05202295313437068,
+            "j_target": 2.3463178368597006,
+            "norm": 1.5766520768902735e-08,
+            "R_J": -1.5766520644611148e-08,
+            "R_M": -7.013258862542671e-09
+          },
+          {
+            "phase": "verification",
+            "iteration": 1,
+            "theta": 0.0520229529220295,
+            "j_target": 2.346317848748994,
+            "norm": 1.1723955140040966e-13,
+            "R_J": 1.1723955140041653e-13,
+            "R_M": -4.596323321948148e-14
+          }
+        ],
+        "last_jacobian_condition": 63.04255771007671,
+        "last_jacobian": [
+          [
+            9.97759121410381,
+            11.14850974018058
+          ],
+          [
+            1.6071926668942487,
+            2.163119095773189
+          ]
+        ],
+        "balances": {
+          "particle_abs": 3.6847239637261e-07,
+          "momentum_abs": 8.873986323543193e-08,
+          "energy_abs": 1.5371479450410064e-08,
+          "particle_loss_integral": 1.2615407050203017e-08,
+          "particle_recombination_integral": 1.2615407050203017e-08,
+          "particle_ionization_integral": 1.3463174928918875,
+          "particle_net_source_integral": 1.3463174802764806,
+          "energy_ionization_integral": 0.015258264919441392
+        },
+        "last_parameters": {
+          "theta": 0.0520229529220295,
+          "j_target": 2.346317848748994
+        },
+        "start_id": "start_001",
+        "converged_to": "root_002"
+      },
+      {
+        "status": "converged",
+        "initial_guess": [
+          0.08333333333333333,
+          1.5
+        ],
+        "search_bounds": {
+          "theta": [
+            8.333333333333333e-07,
+            0.08333333333333333
+          ],
+          "j_min": 1e-06,
+          "j_max": null
+        },
+        "evaluations": 27,
+        "invalid_trials": {},
+        "history": [
+          {
+            "phase": "search",
+            "iteration": 0,
+            "theta": 0.08333333333333333,
+            "j_target": 1.5,
+            "norm": 0.2337946083319776,
+            "R_J": -0.2084756282878064,
+            "R_M": -0.2945939376133162
+          },
+          {
+            "phase": "search",
+            "iteration": 1,
+            "theta": 0.05232564048869717,
+            "j_target": 2.342034771695017,
+            "norm": 0.03667767453421326,
+            "R_J": 0.037358599850967344,
+            "R_M": 0.008474748781868158
+          },
+          {
+            "phase": "search",
+            "iteration": 2,
+            "theta": 0.05200781252372743,
+            "j_target": 2.3467484452480787,
+            "norm": 0.0008589808898052703,
+            "R_J": -0.0008586120713309775,
+            "R_M": -0.00011299629091832131
+          },
+          {
+            "phase": "search",
+            "iteration": 3,
+            "theta": 0.05202294183692353,
+            "j_target": 2.3463181727203017,
+            "norm": 5.70920921311298e-07,
+            "R_J": -5.709207583359799e-07,
+            "R_M": -6.276421160578138e-08
+          },
+          {
+            "phase": "search",
+            "iteration": 4,
+            "theta": 0.052022953134308,
+            "j_target": 2.3463178368617803,
+            "norm": 6.9597660967944006e-12,
+            "R_J": -6.959766096770181e-12,
+            "R_M": -1.8540724511240114e-13
+          },
+          {
+            "phase": "verification",
+            "iteration": 0,
+            "theta": 0.052022953134308,
+            "j_target": 2.3463178368617803,
+            "norm": 1.5768657615191927e-08,
+            "R_J": -1.5768657490866644e-08,
+            "R_M": -7.013293945590249e-09
+          },
+          {
+            "phase": "verification",
+            "iteration": 1,
+            "theta": 0.052022952922028964,
+            "j_target": 2.3463178487490155,
+            "norm": 1.1279865930190954e-13,
+            "R_J": 1.127986593019159e-13,
+            "R_M": -4.1300296516055823e-14
+          }
+        ],
+        "last_jacobian_condition": 63.04255770834728,
+        "last_jacobian": [
+          [
+            9.977591214134558,
+            11.14850974023217
+          ],
+          [
+            1.6071926669407839,
+            2.163119095840404
+          ]
+        ],
+        "balances": {
+          "particle_abs": 3.684723977048776e-07,
+          "momentum_abs": 8.873986331869865e-08,
+          "energy_abs": 1.5371479200609883e-08,
+          "particle_loss_integral": 1.2615407050203634e-08,
+          "particle_recombination_integral": 1.2615407050203634e-08,
+          "particle_ionization_integral": 1.346317492891912,
+          "particle_net_source_integral": 1.346317480276505,
+          "energy_ionization_integral": 0.01525826491944167
+        },
+        "last_parameters": {
+          "theta": 0.052022952922028964,
+          "j_target": 2.3463178487490155
+        },
+        "start_id": "start_002",
+        "converged_to": "root_002"
+      },
+      {
+        "status": "converged",
+        "initial_guess": [
+          0.022523554865876354,
+          4.961947603002908
+        ],
+        "search_bounds": {
+          "theta": [
+            8.333333333333333e-07,
+            0.08333333333333333
+          ],
+          "j_min": 1e-06,
+          "j_max": null
+        },
+        "evaluations": 40,
+        "invalid_trials": {},
+        "history": [
+          {
+            "phase": "search",
+            "iteration": 0,
+            "theta": 0.022523554865876354,
+            "j_target": 4.961947603002908,
+            "norm": 0.3889014710364779,
+            "R_J": 0.4753591785607718,
+            "R_M": 0.5766431502986393
+          },
+          {
+            "phase": "search",
+            "iteration": 1,
+            "theta": 0.028920816921946094,
+            "j_target": 4.0419888147413845,
+            "norm": 0.37869133327267784,
+            "R_J": 0.4603721978606985,
+            "R_M": 0.44695208749504345
+          },
+          {
+            "phase": "search",
+            "iteration": 2,
+            "theta": 0.05720828386223862,
+            "j_target": 2.211088523140405,
+            "norm": 0.23470589800524191,
+            "R_J": 0.26453681124022177,
+            "R_M": 0.03212035401094604
+          },
+          {
+            "phase": "search",
+            "iteration": 3,
+            "theta": 0.0510664842131156,
+            "j_target": 2.37203174955912,
+            "norm": 0.06671114939678227,
+            "R_J": -0.06453462794758236,
+            "R_M": -0.010259765363802797
+          },
+          {
+            "phase": "search",
+            "iteration": 4,
+            "theta": 0.05196370122943221,
+            "j_target": 2.348095925988148,
+            "norm": 0.0029320041883072073,
+            "R_J": -0.0029277100618512186,
+            "R_M": -0.00030816039927072936
+          },
+          {
+            "phase": "search",
+            "iteration": 5,
+            "theta": 0.052022814285816704,
+            "j_target": 2.3463219871564793,
+            "norm": 6.909968039297093e-06,
+            "R_J": -6.90994416552293e-06,
+            "R_M": -7.383724218712473e-07
+          },
+          {
+            "phase": "search",
+            "iteration": 6,
+            "theta": 0.05202295313143003,
+            "j_target": 2.346317836954039,
+            "norm": 1.205623378980848e-10,
+            "R_J": -1.2056233789081716e-10,
+            "R_M": -6.3227201252402665e-12
+          },
+          {
+            "phase": "verification",
+            "iteration": 0,
+            "theta": 0.05202295313143003,
+            "j_target": 2.346317836954039,
+            "norm": 1.5882266406032822e-08,
+            "R_J": -1.588226627990963e-08,
+            "R_M": -7.019409942188304e-09
+          },
+          {
+            "phase": "verification",
+            "iteration": 1,
+            "theta": 0.05202295292203202,
+            "j_target": 2.3463178487488934,
+            "norm": 1.243449787580098e-13,
+            "R_J": 1.2434497875801753e-13,
+            "R_M": -7.127631818093505e-14
+          }
+        ],
+        "last_jacobian_condition": 63.042557711143466,
+        "last_jacobian": [
+          [
+            9.977591215783285,
+            11.148509741974397
+          ],
+          [
+            1.6071926670021617,
+            2.163119095930869
+          ]
+        ],
+        "balances": {
+          "particle_abs": 3.6847239637261e-07,
+          "momentum_abs": 8.873986373503229e-08,
+          "energy_abs": 1.537147967245467e-08,
+          "particle_loss_integral": 1.2615407050200221e-08,
+          "particle_recombination_integral": 1.2615407050200221e-08,
+          "particle_ionization_integral": 1.3463174928917796,
+          "particle_net_source_integral": 1.3463174802763727,
+          "energy_ionization_integral": 0.01525826491944017
+        },
+        "last_parameters": {
+          "theta": 0.05202295292203202,
+          "j_target": 2.3463178487488934
+        },
+        "start_id": "start_003",
+        "converged_to": "root_002"
+      },
+      {
+        "status": "converged",
+        "initial_guess": [
+          0.006087726285553707,
+          10.0
+        ],
+        "search_bounds": {
+          "theta": [
+            8.333333333333333e-07,
+            0.08333333333333333
+          ],
+          "j_min": 1e-06,
+          "j_max": null
+        },
+        "evaluations": 33,
+        "invalid_trials": {},
+        "history": [
+          {
+            "phase": "search",
+            "iteration": 0,
+            "theta": 0.006087726285553707,
+            "j_target": 10.000000000000002,
+            "norm": 1.0003572938353757,
+            "R_J": 1.7192532273262473,
+            "R_M": -0.21017111128431654
+          },
+          {
+            "phase": "search",
+            "iteration": 1,
+            "theta": 0.0083076034320284,
+            "j_target": 8.63805103881122,
+            "norm": 0.28352597127606294,
+            "R_J": -0.24687643769387746,
+            "R_M": -0.0024746420366075217
+          },
+          {
+            "phase": "search",
+            "iteration": 2,
+            "theta": 0.008018307943634211,
+            "j_target": 8.822229329106639,
+            "norm": 0.024188158238057585,
+            "R_J": -0.023897969160186827,
+            "R_M": 0.0006799589936201667
+          },
+          {
+            "phase": "search",
+            "iteration": 3,
+            "theta": 0.007985966341563547,
+            "j_target": 8.842006947600998,
+            "norm": 0.00016286748665914614,
+            "R_J": -0.00016285422447004372,
+            "R_M": 8.077531175931796e-06
+          },
+          {
+            "phase": "search",
+            "iteration": 4,
+            "theta": 0.00798573447380469,
+            "j_target": 8.842144828312005,
+            "norm": 8.124796202190534e-09,
+            "R_J": -8.124796169184378e-09,
+            "R_M": 4.3478420863607425e-10
+          },
+          {
+            "phase": "search",
+            "iteration": 5,
+            "theta": 0.007985734462132934,
+            "j_target": 8.842144835215624,
+            "norm": 4.9071857688433124e-14,
+            "R_J": -4.907185768843192e-14,
+            "R_M": 9.992007221626409e-15
+          },
+          {
+            "phase": "verification",
+            "iteration": 0,
+            "theta": 0.007985734462132934,
+            "j_target": 8.842144835215624,
+            "norm": 2.4401547747033095e-08,
+            "R_J": -2.440154744931533e-08,
+            "R_M": -1.2067409516092198e-08
+          },
+          {
+            "phase": "verification",
+            "iteration": 1,
+            "theta": 0.00798573447077792,
+            "j_target": 8.842144845578217,
+            "norm": 7.749356711883893e-14,
+            "R_J": -7.749356711883593e-14,
+            "R_M": -2.0650148258027912e-14
+          }
+        ],
+        "last_jacobian_condition": 12.660781160124934,
+        "last_jacobian": [
+          [
+            3.7253696417511053,
+            17.38005613502504
+          ],
+          [
+            2.4366516597927523,
+            4.211861494483047
+          ]
+        ],
+        "balances": {
+          "particle_abs": 3.285330056002067e-06,
+          "momentum_abs": 6.798562506293848e-07,
+          "energy_abs": 1.2316374586873735e-07,
+          "particle_loss_integral": 3.48017708791074e-05,
+          "particle_recombination_integral": 3.48017708791074e-05,
+          "particle_ionization_integral": 7.842176362019117,
+          "particle_net_source_integral": 7.842141560248238,
+          "energy_ionization_integral": 0.08887799876955
+        },
+        "last_parameters": {
+          "theta": 0.00798573447077792,
+          "j_target": 8.842144845578217
+        },
+        "start_id": "start_004",
+        "converged_to": "root_001"
+      },
+      {
+        "status": "converged",
+        "initial_guess": [
+          0.010273722828683883,
+          10.0
+        ],
+        "search_bounds": {
+          "theta": [
+            8.333333333333333e-07,
+            0.08333333333333333
+          ],
+          "j_min": 1e-06,
+          "j_max": null
+        },
+        "evaluations": 34,
+        "invalid_trials": {
+          "nonpositive_particle_flux": 1
+        },
+        "history": [
+          {
+            "phase": "search",
+            "iteration": 0,
+            "theta": 0.010273722828683881,
+            "j_target": 10.000000000000002,
+            "norm": 1.6815225647821188,
+            "R_J": 4.373731600063043,
+            "R_M": 1.5315968106469604
+          },
+          {
+            "phase": "search",
+            "iteration": 1,
+            "theta": 0.008453114871735997,
+            "j_target": 9.042665626493092,
+            "norm": 0.507066299229493,
+            "R_J": 0.6604128881291911,
+            "R_M": 0.3551358374434508
+          },
+          {
+            "phase": "search",
+            "iteration": 2,
+            "theta": 0.007940253433013012,
+            "j_target": 8.798378434552104,
+            "norm": 0.11270555987607611,
+            "R_J": -0.10658632177329486,
+            "R_M": -0.0559142316004142
+          },
+          {
+            "phase": "search",
+            "iteration": 3,
+            "theta": 0.00798735740707459,
+            "j_target": 8.839230113571602,
+            "norm": 0.0049848983838187136,
+            "R_J": -0.004972494397300076,
+            "R_M": -0.0014237926366607034
+          },
+          {
+            "phase": "search",
+            "iteration": 4,
+            "theta": 0.007985746585368264,
+            "j_target": 8.842135920695496,
+            "norm": 1.186676949664611e-05,
+            "R_J": -1.186669908681548e-05,
+            "R_M": -8.718983737221464e-07
+          },
+          {
+            "phase": "search",
+            "iteration": 5,
+            "theta": 0.00798573446231802,
+            "j_target": 8.842144835100466,
+            "norm": 1.4006573679651895e-10,
+            "R_J": -1.4006573678670975e-10,
+            "R_M": 2.58748578119139e-12
+          },
+          {
+            "phase": "verification",
+            "iteration": 0,
+            "theta": 0.00798573446231802,
+            "j_target": 8.842144835100466,
+            "norm": 2.454155886427328e-08,
+            "R_J": -2.454155856312923e-08,
+            "R_M": -1.2064819809864957e-08
+          },
+          {
+            "phase": "verification",
+            "iteration": 1,
+            "theta": 0.007985734470777892,
+            "j_target": 8.842144845578224,
+            "norm": 9.481304630299286e-14,
+            "R_J": -9.481304630298837e-14,
+            "R_M": -2.9976021664879227e-14
+          }
+        ],
+        "last_jacobian_condition": 12.660781162519864,
+        "last_jacobian": [
+          [
+            3.7253696426924057,
+            17.380056137531326
+          ],
+          [
+            2.4366516598050807,
+            4.211861494470107
+          ]
+        ],
+        "balances": {
+          "particle_abs": 3.285330056002067e-06,
+          "momentum_abs": 6.798562516285855e-07,
+          "energy_abs": 1.2316374597975965e-07,
+          "particle_loss_integral": 3.480177087910788e-05,
+          "particle_recombination_integral": 3.480177087910788e-05,
+          "particle_ionization_integral": 7.842176362019142,
+          "particle_net_source_integral": 7.842141560248263,
+          "energy_ionization_integral": 0.08887799876955027
+        },
+        "last_parameters": {
+          "theta": 0.007985734470777892,
+          "j_target": 8.842144845578224
+        },
+        "start_id": "start_005",
+        "converged_to": "root_001"
+      }
+    ],
+    "duplicate_convergences": 3,
+    "n_solutions": 2,
+    "warning": "Local/multistart results only; not a proof of completeness, uniqueness or stability."
+  },
+  "physical_scope": "Isothermal atomic CX, excitation, Case-A RR and optional direct ionization; prescribed constant neutrals; no three-body recombination or molecules."
+}
