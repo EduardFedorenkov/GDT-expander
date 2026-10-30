@@ -16,6 +16,7 @@ from .geometry import quadratic_area_legacy
 from .inlet import evaluate_inlet, KineticInletDomainError
 from .recombination import RRTemperatureDomainError
 from .diagnostics import classify_profile
+from .sources import atomic_sources
 
 
 def _nonnegative(value, theta, name):
@@ -38,19 +39,9 @@ def atomic_rhs(g, state, *, theta, beta, D, E_exc, R, Q,
     radical = sqrt(max((mu-b*j)*(mu+b*j), 0.0))
     H = mu+radical
     area = geometry.A_ratio(g)
-    phi = H*H/(16*beta*beta*theta*theta*area)
-    j_rhs = -R*phi
-    if D_ion != 0:
-        j_rhs += D_ion*H/(4*beta*theta)
-    mu_rhs = -.5*geometry.dlnB_dg(g)*H-D*j-R*j*H/(4*beta*theta*area)
-    energy_rhs = -D*(5*mu+radical)/(8*beta)
-    if E_exc != 0:
-        energy_rhs -= E_exc*H/(4*beta*theta)
-    if E_ion != 0:
-        energy_rhs -= E_ion*H/(4*beta*theta)
-    if R != 0:
-        energy_rhs -= R*j*j/(2*beta*area)+(1.5*R*theta+Q)*phi
-    return [j_rhs, mu_rhs, energy_rhs]
+    sources = atomic_sources(j, mu, radical, H, area, theta=theta, beta=beta,
+        D=D, E_exc=E_exc, R=R, Q=Q, D_ion=D_ion, E_ion=E_ion)
+    return sources.rhs(-.5*geometry.dlnB_dg(g)*H)
 
 
 def balance_checks(state, beta):
