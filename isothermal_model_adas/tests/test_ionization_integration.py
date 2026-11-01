@@ -202,7 +202,7 @@ class CommandTests(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         output=Path(temp.name)/'output'
         argv=['run_stationary','--config',str(PACKAGE/'config.json'),'--guess','5','2','.8',
-              '--scale','0','--cx-mode','constant','--output',str(output),*extra]
+              '--scale','0','--cx-mode','constant','--excitation-scale','0','--output',str(output),*extra]
         outcome=dict(status='mock_not_solved',diagnostic=dict(evaluations=0))
         with patch.object(sys,'argv',argv),patch.object(cli,'solve_stationary',return_value=outcome) as solver:
             with patch.object(cli,'ADASRecombination',side_effect=AssertionError('ACD/PRB off')):
@@ -212,7 +212,7 @@ class CommandTests(unittest.TestCase):
     @unittest.skipUnless(SCD_PATH.exists(),'SCD not distributed with code.')
     def test_default_enabled_local_SCD_and_hash(self):
         solver,report=self.mocked_run([])
-        self.assertEqual(report['schema_version'],3)
+        self.assertEqual(report['schema_version'],4)
         self.assertEqual(report['ionization_scale'],1.)
         self.assertEqual(set(report['data_sha256']),{'scd12_h.dat'})
         provider=solver.call_args.kwargs['ionization']

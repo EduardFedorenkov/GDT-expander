@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 from .config import load_config
 from .cx_adas import ADASCX, make_D
+from .exitation_adas import ADASExcitation, make_E_exc, validate_excitation_scale
 from .geometry import add_geometry_arguments, geometry_from_args
 from .inlet import make_inlet_momentum
 from .ionization_adas import ADASIonization, make_ionization_coefficients
@@ -23,9 +24,10 @@ def main():
     parser.add_argument('--inlet-momentum', choices=('auto', 'kinetic', 'constant'), default='auto')
     parser.add_argument('--scale', type=float, default=1., help='Entire ACD/PRB channel, including bremsstrahlung.')
     parser.add_argument('--ionization-scale', type=float, default=1., help='0: off; 1: full local SCD and I*SCD cost.')
+    parser.add_argument('--excitation-scale', type=validate_excitation_scale, default=1., help='0: off; 1: local PLT line cooling.')
     parser.add_argument('--cx-mode', choices=('temperature', 'constant'), default='temperature',
                         help='temperature: CCD96_D(theta); constant: explicit k_cx from config.')
-    parser.add_argument('--density', type=float, help='Override neutral n0 [cm^-3]; 0 disables CX and ionization.')
+    parser.add_argument('--density', type=float, help='Override neutral n0 [cm^-3]; 0 disables CX, ionization and PLT.')
     parser.add_argument('--j-min', type=float, default=1e-12, help='Positive numerical search lower bound.')
     parser.add_argument('--j-max', type=float, help='Optional numerical search upper bound; values >1 allowed.')
     parser.add_argument('--points', type=int, default=4000)
@@ -58,13 +60,15 @@ def main():
         D = make_D(p, args.cx_mode, data=cx_tables)
         ion_tables = ADASIonization() if p['n0_cm3'] > 0 and args.ionization_scale > 0 else None
         ionization = make_ionization_coefficients(p, args.ionization_scale, data=ion_tables)
+        plt_tables = ADASExcitation() if p['n0_cm3'] > 0 and args.excitation_scale > 0 else None
+        excitation = make_E_exc(p, scale=args.excitation_scale, data=plt_tables)
         # Use nominal printed endpoints; the reader accounts for log-grid rounding.
         # All distributed active ADAS datasets cover nominal .2..1e4 eV.
         bounds = (.2/p['T_star_eV'], 1e4/p['T_star_eV']) if any(
-            item is not None for item in (tables, cx_tables, ion_tables)) else None
+            item is not None for item in (tables, cx_tables, ion_tables, plt_tables)) else None
         T, jt, alpha = args.guess
         outcome = solve_stationary(T/p['T_star_eV'], jt, alpha, p['beta'],
-            p['lambda_sh'], coefficients, geometry, D=D, ionization=ionization,
+            p['lambda_sh'], coefficients, geometry, D=D, ionization=ionization, excitation=excitation,
             inlet_momentum=make_inlet_momentum(p, geometry, mode),
             theta_bounds=bounds, j_bounds=j_bounds, n_points=args.points)
     except (ValueError, OSError) as error:
@@ -74,16 +78,19 @@ def main():
         data_paths.append(cx_tables.path)
     if ion_tables is not None:
         data_paths.append(ion_tables.path)
+    if plt_tables is not None:
+        data_paths.append(plt_tables.path)
     hashes = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in data_paths}
-    report = dict(schema_version=3, model='isothermal_adas', status=outcome['status'],
+    report = dict(schema_version=4, model='isothermal_adas', status=outcome['status'],
         parameters=p, geometry=geometry.to_dict(), inlet_momentum=mode,
-        scale=args.scale, ionization_scale=args.ionization_scale, cx_mode=args.cx_mode,
+        scale=args.scale, ionization_scale=args.ionization_scale,
+        excitation_scale=args.excitation_scale, cx_mode=args.cx_mode,
         j_min=args.j_min, j_max=args.j_max, data_sha256=hashes, guess_T_j_alpha=args.guess,
         diagnostic=outcome['diagnostic'], reason=outcome.get('reason'),
-        physical_scope='ACD/PRB, optional CX and local effective SCD ionization; constant Ti=Te; prescribed cold stationary '
+        physical_scope='ACD/PRB, optional CX, local effective SCD ionization and PLT excitation radiation; constant Ti=Te; prescribed cold stationary '
                        'neutral moment closure with k_model(T)=CCD(T) approximation in temperature mode; '
-                       'SCD energy source is I*SCD only, no PLT excitation radiation; '
-                       'no molecules, impurities or neutral dynamics; PRB includes bremsstrahlung.')
+                       'SCD binding-energy cost and PLT photon power are distinct channels; '
+                       'no radiation transport/reabsorption, molecules, impurities or neutral dynamics; PRB includes bremsstrahlung.')
     state = outcome.get('solution')
     if state is not None:
         report['solution'] = dict(theta=state['theta'], T_eV=state['theta']*p['T_star_eV'],

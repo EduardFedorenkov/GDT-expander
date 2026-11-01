@@ -20,7 +20,8 @@ def dimensional_profiles(solution, parameters):
         R=s['R_profile'], Q_eff=s['Q_eff_profile'],
         D_cx=np.full_like(s['g'], float(s.get('D', 0.))),
         D_ion=np.asarray(s.get('D_ion_profile', np.zeros_like(s['g']))),
-        E_ion=np.asarray(s.get('E_ion_profile', np.zeros_like(s['g']))))
+        E_ion=np.asarray(s.get('E_ion_profile', np.zeros_like(s['g']))),
+        E_exc=np.asarray(s.get('E_exc_profile', np.zeros_like(s['g']))))
 
 
 def plot_profiles(profile):

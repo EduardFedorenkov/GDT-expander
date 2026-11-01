@@ -11,7 +11,7 @@ from scipy.integrate import solve_ivp, simpson
 from .geometry import quadratic_area_legacy
 from .inlet import evaluate_inlet, KineticInletDomainError
 from .recombination_adas import ADASDomainError
-from .sources import coefficients_at, ionization_at, adas_sources
+from .sources import coefficients_at, ionization_at, excitation_at, adas_sources
 
 
 class StateDomainError(ValueError):
@@ -55,18 +55,19 @@ def wall_slope_per_j(theta, jt, beta, R_t, D, geometry, *, D_ion_t=0.):
     return slope, tolerance
 
 
-def rhs_g(g, state, *, theta, beta, recombination, geometry, D=0., ionization=(0., 0.)):
+def rhs_g(g, state, *, theta, beta, recombination, geometry, D=0., ionization=(0., 0.), excitation=0.):
     """Right-hand side per g. D is the frozen nonnegative CX coefficient."""
     H, area, N, v = reconstruct(g, state, theta, beta, geometry)
     R, Q = coefficients_at(recombination, theta, N)
     D_ion, E_ion = ionization_at(ionization, theta, N)
+    E_exc = excitation_at(excitation, theta, N)
     particles, momentum, energy = adas_sources(state[0], N, v, area,
-        theta=theta, beta=beta, R=R, Q_eff=Q, D=D, D_ion=D_ion, E_ion=E_ion)
+        theta=theta, beta=beta, R=R, Q_eff=Q, D=D, D_ion=D_ion, E_ion=E_ion, E_exc=E_exc)
     return np.array([particles, -.5*geometry.dlnB_dg(g)*H+momentum, energy])
 
 
 def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
-                geometry=None, *, D=0., ionization=(0., 0.), inlet_momentum=None, n_points=1200,
+                geometry=None, *, D=0., ionization=(0., 0.), excitation=0., inlet_momentum=None, n_points=1200,
                 rtol=1e-9, atol=1e-11, max_step=.02):
     """An IVP, NOT a BVP solution. Return status and all three inlet residuals.
 
@@ -75,6 +76,7 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
     not proof of physical nonexistence. Malformed data/program errors raise.
     D is a scalar or D(theta), evaluated once because the layer is isothermal.
     ionization is a pair or (theta,N)->(D_ion,E_ion), evaluated LOCALLY.
+    excitation is a nonnegative E_exc or local (theta,N)->E_exc from PLT.
     Default off preserves the old calls. Positive j_target>1 is permitted.
     """
     theta, jt, alpha, beta, lam, rtol, atol, max_step = map(float,
@@ -107,11 +109,12 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
         D_value = cx_coefficient(D, theta)
         R_t, Q_t = coefficients_at(recombination, theta, N_t)
         D_ion_t, E_ion_t = ionization_at(ionization, theta, N_t)
+        E_exc_t = excitation_at(excitation, theta, N_t)
     except ADASDomainError as error:
         return stop('adas_outside_domain', error)
     slope, tolerance = wall_slope_per_j(theta, jt, beta, R_t, D_value, geometry, D_ion_t=D_ion_t)
     result.update(D=D_value, wall_slope_per_j=slope, R_wall=R_t, Q_eff_wall=Q_t,
-                  N_wall=N_t, D_ion_wall=D_ion_t, E_ion_wall=E_ion_t)
+                  N_wall=N_t, D_ion_wall=D_ion_t, E_ion_wall=E_ion_t, E_exc_wall=E_exc_t)
     if slope > tolerance:
         return stop('inadmissible_wall', 'Geometry, recombination, CX and ionization cannot launch a backward subsonic branch.')
     if abs(slope) <= tolerance:
@@ -121,7 +124,8 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
 
     def rhs(xi, state):
         return length*rhs_g(alpha+length*xi, state, theta=theta, beta=beta,
-                            recombination=recombination, geometry=geometry, D=D_value, ionization=ionization)
+                            recombination=recombination, geometry=geometry, D=D_value,
+                            ionization=ionization, excitation=excitation)
 
     def sonic_return(xi, state):
         return state[1]-b*state[0]
@@ -159,6 +163,7 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
         H, area, N, v = reconstruct(g, (j, mu, omega), theta, beta, geometry)
         R, Q = coefficients_at(recombination, theta, N)
         D_ion, E_ion = ionization_at(ionization, theta, N)
+        E_exc = excitation_at(excitation, theta, N)
         inlet = evaluate_inlet(alpha, inlet_momentum)
     except ADASDomainError as error:
         return stop('adas_outside_domain', error)
@@ -170,20 +175,21 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
     result.update(xi=xi, g=g, j=j, mu=mu, omega=omega, H=H,
         A_over_A_star=area, n_over_n_star=N, u_over_u_star=v,
         u_over_cs=2*v/b, R_profile=R, Q_eff_profile=Q,
-        D_ion_profile=D_ion, E_ion_profile=E_ion,
+        D_ion_profile=D_ion, E_ion_profile=E_ion, E_exc_profile=E_exc,
         Aq_e_over_W0=omega-j*(v*v/(2*beta)+5*theta),
         R_J=float(j[0]-1), R_M=float(mu[0]-inlet['mu_target']),
         R_E=float(omega[0]-1), **inlet)
     return stop('integrated')
 
 
-def balance_checks(state, recombination, ionization=None):
+def balance_checks(state, recombination, ionization=None, *, excitation=None):
     """Independent dimensional-form budgets, not a call to adas_sources.
 
     Re-evaluates local coefficients; no frozen wall/inlet values. W+I*J
     conservation offers an additional photon/chemical-energy audit in tests.
     Pass the active ionization provider explicitly. Omitting it is allowed
     only for old/off solutions, never silently drops a stored active source.
+    The same rule applies to the keyword-only excitation provider.
     """
     g, j, mu, w, N, v, A, H = (np.asarray(state[k]) for k in
         ('g', 'j', 'mu', 'omega', 'n_over_n_star', 'u_over_u_star', 'A_over_A_star', 'H'))
@@ -195,6 +201,11 @@ def balance_checks(state, recombination, ionization=None):
             raise ValueError('Pass the local ionization provider to balance_checks for an active solution.')
         ionization = (0., 0.)
     D_ion, E_ion = ionization_at(ionization, theta, N)
+    if excitation is None:
+        if np.any(np.asarray(state.get('E_exc_profile', 0.)) != 0):
+            raise ValueError('Pass the local excitation provider to balance_checks for an active solution.')
+        excitation = 0.
+    E_exc = excitation_at(excitation, theta, N)
     created = D_ion*A*N
     removed = R*A*N*N
     D = cx_coefficient(state.get('D', 0.), theta)
@@ -203,9 +214,10 @@ def balance_checks(state, recombination, ionization=None):
     ion_loss, effective_loss = removed*ion_energy, Q*A*N*N
     cx_loss = D*A*N*ion_energy
     ionization_loss = E_ion*A*N
+    excitation_loss = E_exc*A*N
     lost = float(simpson(removed, x=g))
     born = float(simpson(created, x=g))
-    energy_loss = float(simpson(cx_loss+ion_loss+effective_loss+ionization_loss, x=g))
+    energy_loss = float(simpson(cx_loss+ion_loss+effective_loss+ionization_loss+excitation_loss, x=g))
     return dict(particle_abs=abs(float(j[-1]-j[0])-(born-lost)),
         momentum_abs=abs(float(mu[-1]-mu[0])-float(simpson(momentum, x=g))),
         energy_abs=abs(float(w[0]-w[-1])-energy_loss),
@@ -215,4 +227,5 @@ def balance_checks(state, recombination, ionization=None):
         effective_energy_loss_integral=float(simpson(effective_loss, x=g)),
         cx_energy_loss_integral=float(simpson(cx_loss, x=g)),
         cx_momentum_loss_integral=float(simpson(D*j, x=g)),
-        ionization_energy_loss_integral=float(simpson(ionization_loss, x=g)))
+        ionization_energy_loss_integral=float(simpson(ionization_loss, x=g)),
+        excitation_energy_loss_integral=float(simpson(excitation_loss, x=g)))

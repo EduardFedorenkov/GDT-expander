@@ -1,7 +1,7 @@
 """Excitation line cooling from PLT12_H; CGS, temperatures in eV.
 
-Filename follows the requested exitation_adas spelling. Coefficients ONLY,
-not yet connected to transport. PLT already includes photon energy: convert
+Filename follows the requested exitation_adas spelling. Coefficient layer;
+transport queries E_exc(theta,N) locally. PLT includes photon energy: convert
 W cm^3 to erg cm^3/s, with no extra excitation/ionization energy multiplier.
 Use instead of the old L_exc fit, not on top of it. I*SCD and PRB remain
 separate. H data approximate D; escaping photons/local CR are assumptions.
