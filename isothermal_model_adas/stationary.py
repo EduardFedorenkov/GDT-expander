@@ -13,13 +13,14 @@ from .transport import solve_trial, balance_checks
 
 
 def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
-                     recombination, geometry=None, *, inlet_momentum=None,
+                     recombination, geometry=None, *, D=0., inlet_momentum=None,
                      theta_bounds=None, j_bounds=(1e-12, 1.),
                      max_iterations=40, residual_tol=1e-9, balance_tol=5e-6,
                      n_points=4000, rtol=1e-9, atol=1e-11, max_step=.02):
     """Return a verified solution only if all BCs AND budgets pass.
 
-    j_target<=1 follows from recombination only and j(a)=1; the numerical
+    D is a number or D(theta), passed unchanged into every trial/refinement.
+    j_target<=1 follows from recombination+CX and j(a)=1; the numerical
     j_bounds may be widened for off-root exploration or future processes.
     theta_bounds should be the intersection of active coefficient domains.
     The caller must explicitly choose a new alpha start for multiple roots.
@@ -70,7 +71,7 @@ def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
         if not geometry.g_min < alpha < 1:
             return None
         state = solve_trial(theta, jt, alpha, beta, lambda_sh, recombination,
-            geometry, inlet_momentum=inlet_momentum, n_points=points, **settings)
+            geometry, D=D, inlet_momentum=inlet_momentum, n_points=points, **settings)
         diagnostic['evaluations'] += 1
         if state['status'] != 'integrated':
             invalid[state['status']] += 1

@@ -1,7 +1,8 @@
 """Local integrated-tube ADAS sources per g=z/L, not per xi.
 
-R>=0; Q_eff is signed. PRB already includes bremsstrahlung. No other
-elementary process is active. Geometry is added by the transport layer.
+R>=0; Q_eff is signed. PRB already includes bremsstrahlung. CX is a
+separate momentum/energy sink with zero particle source. Geometry is
+added by the transport layer. All sources here are per g, not per xi.
 """
 
 import numpy as np
@@ -25,9 +26,15 @@ def coefficients_at(provider, theta, N):
     return R, Q
 
 
-def adas_sources(j, N, v, area, *, theta, beta, R, Q_eff):
+def adas_sources(j, N, v, area, *, theta, beta, R, Q_eff, D=0.):
     """Return (j_g, reaction part of mu_g, omega_g)."""
     phi = area*N*N
     removed = R*phi
     ion_energy = v*v/(2*beta) + 1.5*theta
-    return (-removed, -R*j*N, -(removed*ion_energy + Q_eff*phi))
+    momentum = -R*j*N
+    energy = -(removed*ion_energy + Q_eff*phi)
+    if D != 0:
+        # Same cold-stationary-neutral moment closure as the old CX model.
+        momentum = -D*j + momentum
+        energy = -D*area*N*ion_energy + energy
+    return (-removed, momentum, energy)

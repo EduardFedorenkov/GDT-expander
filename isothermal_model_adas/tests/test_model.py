@@ -69,7 +69,7 @@ class AlgebraTests(unittest.TestCase):
         self.assertEqual(p['source_mode'], 'flows')
         self.assertAlmostEqual(p['T_star_erg'], p['W0_erg_per_s']/p['J0_per_s'])
         self.assertAlmostEqual(p['n_star_cm3']*p['A_star_cm2']*p['U_star_cm_per_s']/p['J0_per_s'], 1.)
-        self.assertNotIn('n0_cm3', p)
+        self.assertEqual(p['n0_cm3'], 0.)
 
     def test_config_central_same_reference_scales(self):
         p = load_config(Path(__file__).parents[1]/'config.json')

@@ -35,22 +35,45 @@ def reconstruct(g, state, theta, beta, geometry):
     return H, area, N, v
 
 
-def rhs_g(g, state, *, theta, beta, recombination, geometry):
+def cx_coefficient(D, theta):
+    """Evaluate a nonnegative scalar D or D(theta), once per isothermal trial."""
+    value = float(D(theta) if callable(D) else D)
+    if not isfinite(value) or value < 0:
+        raise ValueError('D must give one finite nonnegative scalar.')
+    return value
+
+
+def wall_slope_per_j(theta, jt, beta, R_t, D, geometry):
+    """F_g(1)/j_t for F=mu-sqrt(8*beta*theta)*j; coefficients already evaluated."""
+    b = sqrt(8*beta*theta)
+    geom = -.5*b*float(geometry.dlnB_dg(1.))
+    rec = R_t*b*jt/(4*beta*theta*float(geometry.A_ratio(1.)))
+    slope = geom-D+rec
+    if not isfinite(slope):
+        raise ValueError('Unrepresentable wall derivative.')
+    tolerance = 64*np.finfo(float).eps*max(1., abs(geom), D, abs(rec))
+    return slope, tolerance
+
+
+def rhs_g(g, state, *, theta, beta, recombination, geometry, D=0.):
+    """Right-hand side per g. D is the frozen nonnegative CX coefficient."""
     H, area, N, v = reconstruct(g, state, theta, beta, geometry)
     R, Q = coefficients_at(recombination, theta, N)
     particles, momentum, energy = adas_sources(state[0], N, v, area,
-        theta=theta, beta=beta, R=R, Q_eff=Q)
+        theta=theta, beta=beta, R=R, Q_eff=Q, D=D)
     return np.array([particles, -.5*geometry.dlnB_dg(g)*H+momentum, energy])
 
 
 def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
-                geometry=None, *, inlet_momentum=None, n_points=1200,
+                geometry=None, *, D=0., inlet_momentum=None, n_points=1200,
                 rtol=1e-9, atol=1e-11, max_step=.02):
     """An IVP, NOT a BVP solution. Return status and all three inlet residuals.
 
     No energy monotonicity, wall_energy<1, or positive-Q assumption.
     max_step is in xi. ADAS domain failures are explicit invalid trials,
     not proof of physical nonexistence. Malformed data/program errors raise.
+    D is a scalar or D(theta), evaluated once because the layer is isothermal.
+    Default D=0 retains the former recombination-only equations.
     """
     theta, jt, alpha, beta, lam, rtol, atol, max_step = map(float,
         (theta, j_target, alpha, beta, lambda_sh, rtol, atol, max_step))
@@ -79,19 +102,15 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
     wall_area = float(geometry.A_ratio(1.))
     N_t = b*jt/(4*beta*theta*wall_area)
     try:
+        D_value = cx_coefficient(D, theta)
         R_t, Q_t = coefficients_at(recombination, theta, N_t)
     except ADASDomainError as error:
         return stop('adas_outside_domain', error)
-    geom_term = -.5*b*float(geometry.dlnB_dg(1.))
-    rec_term = R_t*b*jt/(4*beta*theta*wall_area)
-    slope = geom_term+rec_term
-    if not isfinite(slope):
-        raise ValueError('Unrepresentable wall derivative.')
-    result.update(wall_slope_per_j=slope, R_wall=R_t, Q_eff_wall=Q_t,
+    slope, tolerance = wall_slope_per_j(theta, jt, beta, R_t, D_value, geometry)
+    result.update(D=D_value, wall_slope_per_j=slope, R_wall=R_t, Q_eff_wall=Q_t,
                   N_wall=N_t)
-    tolerance = 64*np.finfo(float).eps*max(1., abs(geom_term), abs(rec_term))
     if slope > tolerance:
-        return stop('inadmissible_wall', 'Recombination/geometry cannot launch a backward subsonic branch.')
+        return stop('inadmissible_wall', 'Geometry, recombination and CX cannot launch a backward subsonic branch.')
     if abs(slope) <= tolerance:
         return stop('critical_wall_unresolved', 'First wall derivative is zero within numerical tolerance.')
 
@@ -99,7 +118,7 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
 
     def rhs(xi, state):
         return length*rhs_g(alpha+length*xi, state, theta=theta, beta=beta,
-                            recombination=recombination, geometry=geometry)
+                            recombination=recombination, geometry=geometry, D=D_value)
 
     def sonic_return(xi, state):
         return state[1]-b*state[0]
@@ -131,7 +150,7 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
     tol = 50*(atol+rtol*(1+float(np.max(abs(mu)))))
     if np.any(gap[:-1] <= 0) or abs(gap[-1]) > tol:
         return stop('sonic_resolution_limited')
-    # Recombination alone cannot increase J along +g.
+    # Recombination removes particles; CX has zero net particle source.
     if np.any(np.diff(j) > 50*(atol+rtol*(1+float(np.max(j))))):
         return stop('profile_validation_failed', 'Particle flux increases without ionization.')
     if not np.allclose([j[-1], mu[-1], omega[-1]], wall, rtol=10*rtol, atol=10*atol):
@@ -164,14 +183,18 @@ def balance_checks(state, recombination):
     theta, beta = state['theta'], state['beta']
     R, Q = coefficients_at(recombination, theta, N)
     removed = R*A*N*N
-    momentum = -.5*state['geometry'].dlnB_dg(g)*H-R*j*N
+    D = cx_coefficient(state.get('D', 0.), theta)
+    momentum = -.5*state['geometry'].dlnB_dg(g)*H-D*j-R*j*N
     ion_energy = v*v/(2*beta)+1.5*theta
     ion_loss, effective_loss = removed*ion_energy, Q*A*N*N
+    cx_loss = D*A*N*ion_energy
     lost = float(simpson(removed, x=g))
-    energy_loss = float(simpson(ion_loss+effective_loss, x=g))
+    energy_loss = float(simpson(cx_loss+ion_loss+effective_loss, x=g))
     return dict(particle_abs=abs(float(j[-1]-j[0])+lost),
         momentum_abs=abs(float(mu[-1]-mu[0])-float(simpson(momentum, x=g))),
         energy_abs=abs(float(w[0]-w[-1])-energy_loss),
         particle_recombination_integral=lost, energy_loss_integral=energy_loss,
         ion_energy_loss_integral=float(simpson(ion_loss, x=g)),
-        effective_energy_loss_integral=float(simpson(effective_loss, x=g)))
+        effective_energy_loss_integral=float(simpson(effective_loss, x=g)),
+        cx_energy_loss_integral=float(simpson(cx_loss, x=g)),
+        cx_momentum_loss_integral=float(simpson(D*j, x=g)))

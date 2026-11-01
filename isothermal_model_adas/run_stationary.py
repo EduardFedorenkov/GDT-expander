@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import numpy as np
 from .config import load_config
+from .cx_adas import ADASCX, make_D
 from .geometry import add_geometry_arguments, geometry_from_args
 from .inlet import make_inlet_momentum
 from .recombination_adas import ADASRecombination, make_adas_coefficients
@@ -20,6 +21,9 @@ def main():
                         metavar=('T_EV', 'J_TARGET', 'ALPHA'))
     parser.add_argument('--inlet-momentum', choices=('auto', 'kinetic', 'constant'), default='auto')
     parser.add_argument('--scale', type=float, default=1., help='Entire ACD/PRB channel, including bremsstrahlung.')
+    parser.add_argument('--cx-mode', choices=('temperature', 'constant'), default='temperature',
+                        help='temperature: CCD96_D(theta); constant: explicit k_cx from config.')
+    parser.add_argument('--density', type=float, help='Override neutral n0 [cm^-3]; 0 disables CX.')
     parser.add_argument('--points', type=int, default=4000)
     parser.add_argument('--output', type=Path, required=True, help='New directory; never overwrites a previous run.')
     parser.add_argument('--plot', action='store_true', help='Save profiles.png; no interactive window.')
@@ -29,35 +33,45 @@ def main():
         parser.error('Output already exists; choose a new directory.')
     try:
         p = load_config(args.config)
+        if args.density is not None:
+            if not np.isfinite(args.density) or args.density < 0:
+                raise ValueError('Neutral density must be finite and nonnegative.')
+            p['n0_cm3'] = args.density
         geometry = geometry_from_args(args)
         mode = args.inlet_momentum
         if mode == 'auto':
             mode = 'kinetic' if p['source_mode'] == 'central' else 'constant'
         if mode == 'kinetic' and p['source_mode'] != 'central':
             raise ValueError('Kinetic inlet requires central-source inputs.')
-        tables = ADASRecombination()
+        tables = ADASRecombination() if args.scale != 0 else None
         coefficients = make_adas_coefficients(p, args.scale, data=tables)
+        cx_tables = ADASCX() if p['n0_cm3'] > 0 and args.cx_mode == 'temperature' else None
+        D = make_D(p, args.cx_mode, data=cx_tables)
         # Use nominal printed endpoints; the reader accounts for log-grid rounding.
-        bounds = None if args.scale == 0 else (.2/p['T_star_eV'], 1e4/p['T_star_eV'])
+        # Both active distributed ADAS datasets cover nominal .2..1e4 eV.
+        bounds = (.2/p['T_star_eV'], 1e4/p['T_star_eV']) if tables is not None or cx_tables is not None else None
         T, jt, alpha = args.guess
         outcome = solve_stationary(T/p['T_star_eV'], jt, alpha, p['beta'],
-            p['lambda_sh'], coefficients, geometry,
+            p['lambda_sh'], coefficients, geometry, D=D,
             inlet_momentum=make_inlet_momentum(p, geometry, mode),
             theta_bounds=bounds, n_points=args.points)
     except (ValueError, OSError) as error:
         parser.error(str(error))
-    hashes = {path.name: hashlib.sha256(path.read_bytes()).hexdigest()
-              for path in (tables.acd_path, tables.prb_path)}
-    report = dict(schema_version=1, model='isothermal_adas', status=outcome['status'],
+    data_paths = [] if tables is None else [tables.acd_path, tables.prb_path]
+    if cx_tables is not None:
+        data_paths.append(cx_tables.path)
+    hashes = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in data_paths}
+    report = dict(schema_version=2, model='isothermal_adas', status=outcome['status'],
         parameters=p, geometry=geometry.to_dict(), inlet_momentum=mode,
-        scale=args.scale, data_sha256=hashes, guess_T_j_alpha=args.guess,
+        scale=args.scale, cx_mode=args.cx_mode, data_sha256=hashes, guess_T_j_alpha=args.guess,
         diagnostic=outcome['diagnostic'], reason=outcome.get('reason'),
-        physical_scope='ACD/PRB only; common constant Ti=Te; no CX, excitation, '
-                       'ionization, molecules, impurities or neutral dynamics; PRB includes bremsstrahlung.')
+        physical_scope='ACD/PRB and optional CX; common constant Ti=Te; prescribed cold stationary '
+                       'neutral moment closure with k_model(T)=CCD(T) approximation in temperature mode; '
+                       'no excitation, ionization, molecules, impurities or neutral dynamics; PRB includes bremsstrahlung.')
     state = outcome.get('solution')
     if state is not None:
         report['solution'] = dict(theta=state['theta'], T_eV=state['theta']*p['T_star_eV'],
-            alpha=state['alpha'], a_cm=state['alpha']*p['L_cm'], j_target=state['j_target'],
+            alpha=state['alpha'], a_cm=state['alpha']*p['L_cm'], j_target=state['j_target'], D=state['D'],
             residuals={k: state[k] for k in ('R_J', 'R_M', 'R_E')},
             balances=state['balances'], verification=state['verification'])
     args.output.mkdir(parents=True, exist_ok=False)

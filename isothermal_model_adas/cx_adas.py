@@ -1,6 +1,6 @@
 """CCD96_D charge-exchange rate and D_cx; CGS, temperature argument in eV.
 
-Coefficient module ONLY; not connected to transport. k_model(T)=CCD(T) is
+Coefficient layer; transport receives make_D's scalar/D(theta). k_model(T)=CCD(T) is
 an explicit approximation, not an assertion of identical cold-neutral
 averaging to the old cx.py. No cross section or arbitrary-drift rate can
 be recovered from this one-temperature table. For D+ + D the CX particle
