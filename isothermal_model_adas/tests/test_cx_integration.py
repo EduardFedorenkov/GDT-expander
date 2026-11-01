@@ -182,7 +182,7 @@ class CommandTests(unittest.TestCase):
         output = Path(temp.name)/'report'
         outcome = dict(status='mock_not_solved', diagnostic=dict(evaluations=0))
         argv = ['run_stationary', '--config', str(PACKAGE/'config.json'), '--guess',
-                '5', '.8', '.8', '--scale', '0', '--output', str(output), *extra]
+                '5', '.8', '.8', '--scale', '0', '--ionization-scale', '0', '--output', str(output), *extra]
         with patch.object(sys, 'argv', argv), patch.object(cli, 'solve_stationary', return_value=outcome) as solver:
             with patch.object(cli, 'ADASRecombination', side_effect=AssertionError('Recombination disabled')):
                 self.assertEqual(cli.main(), 1)
@@ -194,7 +194,7 @@ class CommandTests(unittest.TestCase):
         self.assertEqual(report['cx_mode'], 'temperature')
         self.assertEqual(set(report['data_sha256']), {'ccd96_d.dat'})
         self.assertTrue(callable(solver.call_args.kwargs['D']))
-        self.assertEqual(report['schema_version'], 2)
+        self.assertEqual(report['schema_version'], 3)
 
     def test_cli_constant_mode_uses_explicit_k_and_no_ccd(self):
         with patch.object(cli, 'ADASCX', side_effect=AssertionError('No CCD in constant mode')):

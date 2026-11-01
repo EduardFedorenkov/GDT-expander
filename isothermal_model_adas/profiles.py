@@ -18,7 +18,9 @@ def dimensional_profiles(solution, parameters):
         n_over_n_star=s['n_over_n_star'], n_cm3=p['n_star_cm3']*s['n_over_n_star'],
         u_cm_s=p['U_star_cm_per_s']*s['u_over_u_star'], A_cm2=A,
         R=s['R_profile'], Q_eff=s['Q_eff_profile'],
-        D_cx=np.full_like(s['g'], float(s.get('D', 0.))))
+        D_cx=np.full_like(s['g'], float(s.get('D', 0.))),
+        D_ion=np.asarray(s.get('D_ion_profile', np.zeros_like(s['g']))),
+        E_ion=np.asarray(s.get('E_ion_profile', np.zeros_like(s['g']))))
 
 
 def plot_profiles(profile):

@@ -1,6 +1,6 @@
 """Effective hydrogen ionization from SCD12_H; CGS, temperature in eV.
 
-Coefficient module only, NOT connected to transport. H data approximate D.
+Coefficient layer: transport queries (theta,N) locally. H data approximate D.
 SCD(T_e,n_e) is a collisional-radiative rate, not a ground-state-only cross
 section. L_ion=I*SCD is the binding-energy cost for W excluding binding
 energy; it is NOT full electron cooling. Excitation radiation needs PLT.

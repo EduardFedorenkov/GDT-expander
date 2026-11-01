@@ -13,15 +13,16 @@ from .transport import solve_trial, balance_checks
 
 
 def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
-                     recombination, geometry=None, *, D=0., inlet_momentum=None,
-                     theta_bounds=None, j_bounds=(1e-12, 1.),
+                     recombination, geometry=None, *, D=0., ionization=(0., 0.), inlet_momentum=None,
+                     theta_bounds=None, j_bounds=None,
                      max_iterations=40, residual_tol=1e-9, balance_tol=5e-6,
                      n_points=4000, rtol=1e-9, atol=1e-11, max_step=.02):
     """Return a verified solution only if all BCs AND budgets pass.
 
     D is a number or D(theta), passed unchanged into every trial/refinement.
-    j_target<=1 follows from recombination+CX and j(a)=1; the numerical
-    j_bounds may be widened for off-root exploration or future processes.
+    ionization is the local (theta,N)->(D_ion,E_ion) provider (default off).
+    Ionization permits j_target>1. j_bounds=None means a numerical lower
+    bound 1e-12 and no imposed upper bound beyond float representability.
     theta_bounds should be the intersection of active coefficient domains.
     The caller must explicitly choose a new alpha start for multiple roots.
     """
@@ -37,7 +38,8 @@ def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
     if not np.isfinite(alpha_guess) or not geometry.g_min < alpha_guess < 1:
         raise ValueError('Initial alpha outside the open geometry interval.')
     tb = (np.finfo(float).tiny, np.finfo(float).max) if theta_bounds is None else theta_bounds
-    tb, jb = np.asarray(tb, float), np.asarray(j_bounds, float)
+    jb = (1e-12, np.finfo(float).max) if j_bounds is None else j_bounds
+    tb, jb = np.asarray(tb, float), np.asarray(jb, float)
     if any(bound.shape != (2,) or not np.isfinite(bound).all()
            or not 0 < bound[0] < bound[1] for bound in (tb, jb)):
         raise ValueError('Ordered positive finite theta/j bounds required.')
@@ -71,7 +73,7 @@ def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
         if not geometry.g_min < alpha < 1:
             return None
         state = solve_trial(theta, jt, alpha, beta, lambda_sh, recombination,
-            geometry, D=D, inlet_momentum=inlet_momentum, n_points=points, **settings)
+            geometry, D=D, ionization=ionization, inlet_momentum=inlet_momentum, n_points=points, **settings)
         diagnostic['evaluations'] += 1
         if state['status'] != 'integrated':
             invalid[state['status']] += 1
@@ -169,7 +171,7 @@ def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
     if (abs(state['R_J']) > residual_tol or abs(state['R_E']) > residual_tol
             or abs(state['R_M']) > residual_tol*(1+abs(state['mu_target']))):
         return finish('verification_failed', 'Inlet BC mismatch.')
-    balances = balance_checks(state, recombination)
+    balances = balance_checks(state, recombination, ionization)
     if max(balances[k] for k in ('particle_abs', 'momentum_abs', 'energy_abs')) > balance_tol:
         return finish('balance_check_failed', 'Refine output sampling/ODE accuracy.')
     state.update(stationary_verified=True, balances=balances,

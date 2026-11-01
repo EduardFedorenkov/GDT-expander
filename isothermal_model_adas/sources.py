@@ -2,7 +2,8 @@
 
 R>=0; Q_eff is signed. PRB already includes bremsstrahlung. CX is a
 separate momentum/energy sink with zero particle source. Geometry is
-added by the transport layer. All sources here are per g, not per xi.
+added by the transport layer. Ionization adds particles and a binding-energy
+cost, but no conservative momentum for cold stationary atoms. Per g, not xi.
 """
 
 import numpy as np
@@ -26,7 +27,20 @@ def coefficients_at(provider, theta, N):
     return R, Q
 
 
-def adas_sources(j, N, v, area, *, theta, beta, R, Q_eff, D=0.):
+def ionization_at(provider, theta, N):
+    """Local (theta,N)->(D_ion,E_ion), or a constant/off pair.
+
+    Both coefficients are nonnegative. Unlike signed recombination Q_eff,
+    E_ion represents an ionization cost. Pure cooling belongs to another
+    channel and is not allowed with identically zero ionization rate.
+    """
+    D_ion, E_ion = coefficients_at(provider, theta, N)
+    if np.any(np.asarray(E_ion) < 0) or np.any((np.asarray(D_ion) == 0) & (np.asarray(E_ion) != 0)):
+        raise ValueError('Need D_ion,E_ion>=0 and E_ion=0 wherever D_ion=0.')
+    return D_ion, E_ion
+
+
+def adas_sources(j, N, v, area, *, theta, beta, R, Q_eff, D=0., D_ion=0., E_ion=0.):
     """Return (j_g, reaction part of mu_g, omega_g)."""
     phi = area*N*N
     removed = R*phi
@@ -37,4 +51,9 @@ def adas_sources(j, N, v, area, *, theta, beta, R, Q_eff, D=0.):
         # Same cold-stationary-neutral moment closure as the old CX model.
         momentum = -D*j + momentum
         energy = -D*area*N*ion_energy + energy
-    return (-removed, momentum, energy)
+    particles = -removed
+    if np.any(np.asarray(D_ion) != 0):
+        particles = particles + D_ion*area*N
+    if np.any(np.asarray(E_ion) != 0):
+        energy = energy - E_ion*area*N
+    return (particles, momentum, energy)

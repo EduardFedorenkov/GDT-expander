@@ -1,4 +1,4 @@
-"""CGS source scales and optional prescribed-neutral CX parameters."""
+"""CGS source scales and prescribed-neutral parameters for CX/ionization."""
 
 import json
 from pathlib import Path
@@ -50,7 +50,7 @@ def load_config(path):
                              'n_star_cm3', 'beta')]
     if not np.isfinite(scales).all() or min(scales) <= 0:
         raise ValueError('Derived scales are not representable.')
-    # Backward compatibility: a config without n0 keeps CX disabled.
+    # Backward compatibility: no n0 disables both CX and ionization.
     for key in ('n0_cm3', 'k_cx_cm3_per_s'):
         if key == 'k_cx_cm3_per_s' and key not in config:
             continue  # Required only by the explicit constant-CX mode.
