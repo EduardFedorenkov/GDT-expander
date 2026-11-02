@@ -5,6 +5,8 @@ The independent old source assembler is compared when available locally.
 """
 
 import importlib.util
+from contextlib import redirect_stderr
+import io
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -160,6 +162,18 @@ class PlumbingTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     load_config(path)
 
+    def test_legacy_constant_k_is_ignored_in_ADAS_config(self):
+        config = json.loads((PACKAGE/'config.json').read_text())
+        reference = load_config(PACKAGE/'config.json')
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder)/'legacy.json'
+            for legacy_k in (0., 1e-8, 1e10):
+                config['k_cx_cm3_per_s'] = legacy_k
+                path.write_text(json.dumps(config), encoding='utf-8')
+                actual = load_config(path)
+                self.assertEqual(actual, reference)
+                self.assertNotIn('k_cx_cm3_per_s', actual)
+
     @unittest.skipUnless(CCD_PATH.exists(), 'CCD not distributed with code/tests.')
     def test_real_D_factory_without_integrating(self):
         p = load_config(PACKAGE/'config.json')
@@ -192,19 +206,20 @@ class CommandTests(unittest.TestCase):
     @unittest.skipUnless(CCD_PATH.exists(), 'CCD not distributed with code/tests.')
     def test_cli_defaults_ADAS_and_records_ccd_hash(self):
         solver, report = self.mocked_run([])
-        self.assertEqual(report['cx_mode'], 'temperature')
+        self.assertEqual(set(report), {'schema_version', 'model', 'status', 'parameters',
+            'geometry', 'inlet_momentum', 'scale', 'ionization_scale', 'excitation_scale',
+            'j_min', 'j_max', 'data_sha256', 'guess_T_j_alpha', 'diagnostic', 'reason', 'physical_scope'})
         self.assertEqual(set(report['data_sha256']), {'ccd96_d.dat'})
         self.assertTrue(callable(solver.call_args.kwargs['D']))
-        self.assertEqual(report['schema_version'], 4)
+        self.assertEqual(report['schema_version'], 5)
 
-    def test_cli_constant_mode_uses_explicit_k_and_no_ccd(self):
-        with patch.object(cli, 'ADASCX', side_effect=AssertionError('No CCD in constant mode')):
-            solver, report = self.mocked_run(['--cx-mode', 'constant'])
-        p = report['parameters']
-        expected = p['L_cm']*p['n0_cm3']/p['U_star_cm_per_s']*p['k_cx_cm3_per_s']
-        self.assertEqual(solver.call_args.kwargs['D'], expected)
-        self.assertEqual(report['data_sha256'], {})
-        self.assertIsNone(solver.call_args.kwargs['theta_bounds'])
+    def test_cli_obsolete_cx_option_rejected_before_loading_data(self):
+        for mode in ('constant', 'temperature'):
+            with self.subTest(mode=mode), patch.object(cli, 'ADASCX') as reader:
+                with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as error:
+                    self.mocked_run(['--cx-mode', mode])
+            self.assertEqual(error.exception.code, 2)
+            reader.assert_not_called()
 
     def test_cli_zero_density_disables_CCD_loading(self):
         with patch.object(cli, 'ADASCX', side_effect=AssertionError('CX disabled')):

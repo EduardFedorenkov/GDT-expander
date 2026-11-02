@@ -1,6 +1,6 @@
 """CCD96_D charge-exchange rate and D_cx; CGS, temperature argument in eV.
 
-Coefficient layer; transport receives make_D's scalar/D(theta). k_model(T)=CCD(T) is
+Coefficient layer; transport receives make_D's D(theta), or zero if n0=0. k_model(T)=CCD(T) is
 an explicit approximation, not an assertion of identical cold-neutral
 averaging to the old cx.py. No cross section or arbitrary-drift rate can
 be recovered from this one-temperature table. For D+ + D the CX particle
@@ -136,25 +136,19 @@ def D_cx(theta, parameters, n0_cm3=None, *, data=None):
     return float(value) if theta.ndim == 0 else value
 
 
-def make_D(parameters, mode='temperature', n0_cm3=None, *, data=None):
-    """Return number D or a callable D(theta), as in the old cx.py.
+def make_D(parameters, *, n0_cm3=None, data=None):
+    """Return CCD(theta*T_star)-based D(theta), or zero if n0=0.
 
-    temperature (DEFAULT): CCD(theta*T_star), snapshot source scales.
-    constant: use explicit k_cx_cm3_per_s from parameters, NOT ADAS.
-    No data loaded in constant/off modes. Arrays supported by D(theta).
+    Snapshot source scales; arrays supported by D(theta). No table is
+    loaded in the off case. A legacy k_cx_cm3_per_s field is never used.
+    n0_cm3 is keyword-only: old positional mode arguments must not silently
+    become neutral-density overrides.
     """
-    if mode not in ('constant', 'temperature'):
-        raise ValueError("mode must be 'constant' or 'temperature'.")
     n0 = _neutral_density(parameters, n0_cm3)
     length = _parameter(parameters, 'L_cm')
     speed = _parameter(parameters, 'U_star_cm_per_s')
     if n0 == 0:
         return 0.
-    if mode == 'constant':
-        value = length*n0/speed*_parameter(parameters, 'k_cx_cm3_per_s', nonnegative=True)
-        if not np.isfinite(value):
-            raise ValueError('Unrepresentable constant D normalization.')
-        return float(value)
     snapshot = dict(L_cm=length, U_star_cm_per_s=speed,
                     T_star_eV=_parameter(parameters, 'T_star_eV'), n0_cm3=n0)
     tables = _default_data() if data is None else data

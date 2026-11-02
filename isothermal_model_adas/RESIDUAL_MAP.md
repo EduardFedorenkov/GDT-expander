@@ -66,7 +66,7 @@ inlet = make_inlet_momentum(p, geometry, inlet_mode)
 
 # Такие же коэффициенты и замыкания, как в run_stationary.py.
 recombination = make_adas_coefficients(p, scale=1.)
-D = make_D(p, mode='temperature')
+D = make_D(p)
 ionization = make_ionization_coefficients(p, scale=1.)
 excitation = make_E_exc(p, scale=1.)
 
@@ -86,7 +86,7 @@ starts = choose_starts(scan, max_starts=12, separation=2)
 output = Path('residual_map_adas_run_001')
 output.mkdir(exist_ok=False)
 save_residuals(output/'residuals.npz', scan, metadata={
-    'parameters': p, 'inlet_momentum': inlet_mode, 'cx_mode': 'temperature',
+    'parameters': p, 'inlet_momentum': inlet_mode,
     'recombination_scale': 1., 'ionization_scale': 1., 'excitation_scale': 1.,
 })
 

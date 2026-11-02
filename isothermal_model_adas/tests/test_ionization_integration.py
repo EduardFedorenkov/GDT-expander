@@ -19,6 +19,7 @@ from isothermal_model_adas.sources import adas_sources, ionization_at
 from isothermal_model_adas.profiles import dimensional_profiles
 from isothermal_model_adas.recombination_adas import ADASDomainError
 from isothermal_model_adas.ionization_adas import SCD_PATH
+from isothermal_model_adas.cx_adas import CCD_PATH
 
 
 PACKAGE = Path(__file__).parents[1]
@@ -196,13 +197,14 @@ class PlumbingTests(unittest.TestCase):
         np.testing.assert_array_equal(output['E_ion'],state['E_ion_profile'])
 
 
+@unittest.skipUnless(CCD_PATH.exists(), 'Active CX requires the CCD table.')
 class CommandTests(unittest.TestCase):
     def mocked_run(self,extra):
         temp=tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         output=Path(temp.name)/'output'
         argv=['run_stationary','--config',str(PACKAGE/'config.json'),'--guess','5','2','.8',
-              '--scale','0','--cx-mode','constant','--excitation-scale','0','--output',str(output),*extra]
+              '--scale','0','--excitation-scale','0','--output',str(output),*extra]
         outcome=dict(status='mock_not_solved',diagnostic=dict(evaluations=0))
         with patch.object(sys,'argv',argv),patch.object(cli,'solve_stationary',return_value=outcome) as solver:
             with patch.object(cli,'ADASRecombination',side_effect=AssertionError('ACD/PRB off')):
@@ -212,9 +214,9 @@ class CommandTests(unittest.TestCase):
     @unittest.skipUnless(SCD_PATH.exists(),'SCD not distributed with code.')
     def test_default_enabled_local_SCD_and_hash(self):
         solver,report=self.mocked_run([])
-        self.assertEqual(report['schema_version'],4)
+        self.assertEqual(report['schema_version'],5)
         self.assertEqual(report['ionization_scale'],1.)
-        self.assertEqual(set(report['data_sha256']),{'scd12_h.dat'})
+        self.assertEqual(set(report['data_sha256']),{'ccd96_d.dat','scd12_h.dat'})
         provider=solver.call_args.kwargs['ionization']
         self.assertTrue(callable(provider))
         theta=5/report['parameters']['T_star_eV']
@@ -225,8 +227,8 @@ class CommandTests(unittest.TestCase):
         with patch.object(cli,'ADASIonization',side_effect=AssertionError('SCD off')):
             solver,report=self.mocked_run(['--ionization-scale','0'])
         self.assertEqual(solver.call_args.kwargs['ionization'],(0.,0.))
-        self.assertEqual(report['data_sha256'],{})
-        self.assertIsNone(solver.call_args.kwargs['theta_bounds'])
+        self.assertEqual(set(report['data_sha256']),{'ccd96_d.dat'})
+        self.assertIsNotNone(solver.call_args.kwargs['theta_bounds'])
 
     def test_zero_neutrals_disable_both_neutral_channels(self):
         with patch.object(cli,'ADASIonization',side_effect=AssertionError('No SCD')):

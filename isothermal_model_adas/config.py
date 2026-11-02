@@ -50,15 +50,13 @@ def load_config(path):
                              'n_star_cm3', 'beta')]
     if not np.isfinite(scales).all() or min(scales) <= 0:
         raise ValueError('Derived scales are not representable.')
-    # Backward compatibility: no n0 disables both CX and ionization.
-    for key in ('n0_cm3', 'k_cx_cm3_per_s'):
-        if key == 'k_cx_cm3_per_s' and key not in config:
-            continue  # Required only by the explicit constant-CX mode.
-        try:
-            value = float(config.get(key, 0.))
-        except (TypeError, ValueError, OverflowError) as error:
-            raise ValueError(f'Invalid optional CX field: {key}') from error
-        if not np.isfinite(value) or value < 0:
-            raise ValueError(f'{key} must be finite and nonnegative.')
-        p[key] = value
+    # No n0 disables CX, ionization and PLT. Legacy constant k_cx fields
+    # are accepted as unused JSON keys, never propagated into ADAS parameters.
+    try:
+        n0 = float(config.get('n0_cm3', 0.))
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError('Invalid optional CX field: n0_cm3') from error
+    if not np.isfinite(n0) or n0 < 0:
+        raise ValueError('n0_cm3 must be finite and nonnegative.')
+    p['n0_cm3'] = n0
     return p

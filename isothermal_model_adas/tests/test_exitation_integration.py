@@ -18,6 +18,7 @@ from isothermal_model_adas.geometry import constant_B
 from isothermal_model_adas.profiles import dimensional_profiles
 from isothermal_model_adas.config import load_config
 from isothermal_model_adas.exitation_adas import PLT_PATH, make_E_exc, ADASExcitation
+from isothermal_model_adas.cx_adas import CCD_PATH
 from isothermal_model_adas.recombination_adas import ADASDomainError
 from isothermal_model_adas.tests.test_ionization_integration import fabricated_integrator
 
@@ -193,13 +194,14 @@ class PlumbingTests(unittest.TestCase):
         self.assertAlmostEqual(provider(theta,N)/expected,1.,places=13)
 
 
+@unittest.skipUnless(CCD_PATH.exists(), 'Active CX requires the CCD table.')
 class CommandTests(unittest.TestCase):
     def mocked_run(self,extra):
         temp=tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         output=Path(temp.name)/'output'
         argv=['run_stationary','--config',str(PACKAGE/'config.json'),'--guess','5','2','.8',
-              '--scale','0','--ionization-scale','0','--cx-mode','constant','--output',str(output),*extra]
+              '--scale','0','--ionization-scale','0','--output',str(output),*extra]
         outcome=dict(status='mock_not_solved',diagnostic=dict(evaluations=0))
         with patch.object(sys,'argv',argv),patch.object(cli,'solve_stationary',return_value=outcome) as solver:
             with patch('builtins.print'):
@@ -211,21 +213,21 @@ class CommandTests(unittest.TestCase):
         with (patch.object(cli,'ADASRecombination',side_effect=AssertionError('Recombination off')),
               patch.object(cli,'ADASIonization',side_effect=AssertionError('Ionization off'))):
             solver,report=self.mocked_run([])
-        self.assertEqual(report['schema_version'],4)
+        self.assertEqual(report['schema_version'],5)
         self.assertEqual(report['excitation_scale'],1.)
-        self.assertEqual(set(report['data_sha256']),{'plt12_h.dat'})
+        self.assertEqual(set(report['data_sha256']),{'ccd96_d.dat','plt12_h.dat'})
         provider=solver.call_args.kwargs['excitation']
         self.assertTrue(callable(provider))
         theta=5/report['parameters']['T_star_eV']
         self.assertNotEqual(provider(theta,1.),provider(theta,2.))
         self.assertIsNotNone(solver.call_args.kwargs['theta_bounds'])
 
-    def test_off_no_PLT_loading_or_temperature_limit(self):
+    def test_off_no_PLT_loading_but_CCD_temperature_limit_remains(self):
         with patch.object(cli,'ADASExcitation',side_effect=AssertionError('PLT off')):
             solver,report=self.mocked_run(['--excitation-scale','0'])
         self.assertEqual(solver.call_args.kwargs['excitation'],0.)
-        self.assertEqual(report['data_sha256'],{})
-        self.assertIsNone(solver.call_args.kwargs['theta_bounds'])
+        self.assertEqual(set(report['data_sha256']),{'ccd96_d.dat'})
+        self.assertIsNotNone(solver.call_args.kwargs['theta_bounds'])
 
     def test_zero_neutrals_disable_all_neutral_channels(self):
         with patch.object(cli,'ADASExcitation',side_effect=AssertionError('No PLT')):
@@ -238,7 +240,7 @@ class CommandTests(unittest.TestCase):
     @unittest.skipUnless(all((PACKAGE/'processes_data'/name).exists() for name in
         ('acd12_h.dat','prb12_h.dat','ccd96_d.dat','scd12_h.dat','plt12_h.dat')),'Full ADAS set not distributed.')
     def test_all_five_active_files_in_report(self):
-        solver,report=self.mocked_run(['--scale','1','--ionization-scale','1','--cx-mode','temperature'])
+        solver,report=self.mocked_run(['--scale','1','--ionization-scale','1'])
         self.assertEqual(set(report['data_sha256']),{'acd12_h.dat','prb12_h.dat','ccd96_d.dat','scd12_h.dat','plt12_h.dat'})
         self.assertTrue(callable(solver.call_args.kwargs['ionization']))
         self.assertTrue(callable(solver.call_args.kwargs['excitation']))

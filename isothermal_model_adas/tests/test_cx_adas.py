@@ -28,7 +28,7 @@ class CoefficientTests(unittest.TestCase):
         self.path.write_text(table_text(), encoding='utf-8')
         self.data = cx.ADASCX(self.path)
         self.p = dict(L_cm=100., U_star_cm_per_s=1e7, T_star_eV=100.,
-                      n0_cm3=1e13, k_cx_cm3_per_s=2e-8)
+                      n0_cm3=1e13)
 
     def test_nodes_and_log_midpoint(self):
         for T, expected in ((1., 1e-9), (10., 10**-8.5), (100., 1e-8)):
@@ -69,15 +69,18 @@ class CoefficientTests(unittest.TestCase):
         expected = self.p['L_cm']*self.p['n0_cm3']/self.p['U_star_cm_per_s']*self.data.evaluate(theta*100)
         np.testing.assert_allclose(actual, expected)
 
-    def test_factory_snapshot_and_default_mode(self):
+    def test_factory_snapshot_uses_CCD(self):
         coefficient = cx.make_D(self.p, data=self.data)
         before = coefficient(.1)
         self.p.update(L_cm=1., T_star_eV=1., n0_cm3=1.)
         self.assertEqual(coefficient(.1), before)
 
-    def test_constant_mode_does_not_load_ADAS(self):
-        with patch.object(cx, '_default_data', side_effect=AssertionError('No ADAS needed')):
-            self.assertAlmostEqual(cx.make_D(self.p, 'constant'), 2.)
+    def test_removed_mode_arguments_are_rejected(self):
+        for mode in ('temperature', 'constant'):
+            with self.subTest(mode=mode), self.assertRaises(TypeError):
+                cx.make_D(self.p, mode=mode, data=self.data)
+            with self.subTest(positional_mode=mode), self.assertRaises(TypeError):
+                cx.make_D(self.p, mode, data=self.data)
 
     def test_off_needs_no_table_or_temperature_scale(self):
         self.p.pop('T_star_eV')
@@ -86,11 +89,26 @@ class CoefficientTests(unittest.TestCase):
             self.assertEqual(cx.D_cx(0., self.p, n0_cm3=0.), 0.)
             np.testing.assert_array_equal(cx.D_cx([0., 1.], self.p, n0_cm3=0.), [0., 0.])
 
-    def test_zero_constant_coefficient(self):
+    def test_legacy_constant_coefficient_is_ignored(self):
+        expected = cx.make_D(self.p, data=self.data)(.1)
         self.p['k_cx_cm3_per_s'] = 0.
-        self.assertEqual(cx.make_D(self.p, 'constant'), 0.)
+        self.assertEqual(cx.make_D(self.p, data=self.data)(.1), expected)
+        self.assertGreater(expected, 0.)
 
-    def test_invalid_parameters_and_mode(self):
+    def test_active_factory_requires_CCD_even_with_legacy_constant(self):
+        self.p['k_cx_cm3_per_s'] = 1e-8
+        with patch.object(cx, '_default_data', side_effect=FileNotFoundError('Missing CCD')):
+            with self.assertRaisesRegex(FileNotFoundError, 'Missing CCD'):
+                cx.make_D(self.p)
+
+    def test_factory_keyword_density_override_preserves_parameters(self):
+        original = dict(self.p)
+        coefficient = cx.make_D(self.p, n0_cm3=2e13, data=self.data)
+        expected = 2*self.p['L_cm']*self.p['n0_cm3']/self.p['U_star_cm_per_s']*self.data.evaluate(10.)
+        self.assertAlmostEqual(coefficient(.1)/expected, 1., places=13)
+        self.assertEqual(self.p, original)
+
+    def test_invalid_parameters(self):
         for key in ('L_cm', 'U_star_cm_per_s', 'T_star_eV', 'n0_cm3'):
             bad = dict(self.p)
             bad[key] = -1.
@@ -99,8 +117,6 @@ class CoefficientTests(unittest.TestCase):
         for theta in (-1., np.nan, np.inf):
             with self.assertRaises(ValueError):
                 cx.D_cx(theta, self.p, data=self.data)
-        with self.assertRaises(ValueError):
-            cx.make_D(self.p, 'unknown', n0_cm3=0.)
         with self.assertRaisesRegex(ValueError, 'n0_cm3'):
             cx.make_D({k:v for k,v in self.p.items() if k != 'n0_cm3'}, data=self.data)
 

@@ -25,8 +25,6 @@ def main():
     parser.add_argument('--scale', type=float, default=1., help='Entire ACD/PRB channel, including bremsstrahlung.')
     parser.add_argument('--ionization-scale', type=float, default=1., help='0: off; 1: full local SCD and I*SCD cost.')
     parser.add_argument('--excitation-scale', type=validate_excitation_scale, default=1., help='0: off; 1: local PLT line cooling.')
-    parser.add_argument('--cx-mode', choices=('temperature', 'constant'), default='temperature',
-                        help='temperature: CCD96_D(theta); constant: explicit k_cx from config.')
     parser.add_argument('--density', type=float, help='Override neutral n0 [cm^-3]; 0 disables CX, ionization and PLT.')
     parser.add_argument('--j-min', type=float, default=1e-12, help='Positive numerical search lower bound.')
     parser.add_argument('--j-max', type=float, help='Optional numerical search upper bound; values >1 allowed.')
@@ -56,8 +54,8 @@ def main():
             raise ValueError('Kinetic inlet requires central-source inputs.')
         tables = ADASRecombination() if args.scale != 0 else None
         coefficients = make_adas_coefficients(p, args.scale, data=tables)
-        cx_tables = ADASCX() if p['n0_cm3'] > 0 and args.cx_mode == 'temperature' else None
-        D = make_D(p, args.cx_mode, data=cx_tables)
+        cx_tables = ADASCX() if p['n0_cm3'] > 0 else None
+        D = make_D(p, data=cx_tables)
         ion_tables = ADASIonization() if p['n0_cm3'] > 0 and args.ionization_scale > 0 else None
         ionization = make_ionization_coefficients(p, args.ionization_scale, data=ion_tables)
         plt_tables = ADASExcitation() if p['n0_cm3'] > 0 and args.excitation_scale > 0 else None
@@ -81,14 +79,14 @@ def main():
     if plt_tables is not None:
         data_paths.append(plt_tables.path)
     hashes = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in data_paths}
-    report = dict(schema_version=4, model='isothermal_adas', status=outcome['status'],
+    report = dict(schema_version=5, model='isothermal_adas', status=outcome['status'],
         parameters=p, geometry=geometry.to_dict(), inlet_momentum=mode,
         scale=args.scale, ionization_scale=args.ionization_scale,
-        excitation_scale=args.excitation_scale, cx_mode=args.cx_mode,
+        excitation_scale=args.excitation_scale,
         j_min=args.j_min, j_max=args.j_max, data_sha256=hashes, guess_T_j_alpha=args.guess,
         diagnostic=outcome['diagnostic'], reason=outcome.get('reason'),
         physical_scope='ACD/PRB, optional CX, local effective SCD ionization and PLT excitation radiation; constant Ti=Te; prescribed cold stationary '
-                       'neutral moment closure with k_model(T)=CCD(T) approximation in temperature mode; '
+                       'neutral moment closure with k_model(T)=CCD(T) approximation; '
                        'SCD binding-energy cost and PLT photon power are distinct channels; '
                        'no radiation transport/reabsorption, molecules, impurities or neutral dynamics; PRB includes bremsstrahlung.')
     state = outcome.get('solution')

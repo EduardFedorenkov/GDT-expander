@@ -57,7 +57,7 @@ python -B -m isothermal_model_adas.scan_stationary --temperature-count 8 --j-cou
   для A/A_m=K*(z/L)^2. Без обоих параметров K=500.
 - `--inlet-momentum auto|kinetic|constant`: auto выбирает kinetic при
   центральных параметрах и constant при явных J0,M0,W0, как run_stationary.py.
-- `--cx-mode temperature|constant`: CCD(T) или k_cx из конфига.
+- Перезарядка всегда использует CCD(T); флага выбора коэффициента нет.
 - `--rr-scale` (синоним `--scale`): общий множитель всего канала ACD/PRB,
   включая тормозное излучение PRB, не только радиационной рекомбинации.
 - `--ionization-scale`, `--excitation-scale`: множители SCD и PLT.
@@ -109,7 +109,9 @@ ADAS-коэффициенты продолжают зависеть от лок�
 
 В provenance сохранены SHA256 активных таблиц, исходного конфига и исходников
 пакета, версии Python/NumPy/SciPy. Сырые .dat не копируются. Формат отчёта:
-model=isothermal_adas, kind=stationary_scan_3d, format_version=1. Это не старый
+model=isothermal_adas, kind=stationary_scan_3d, format_version=2. Поля выбора
+коэффициента перезарядки больше нет, используется только CCD(T). Формат
+NPZ-куба остаётся прежним; сохранённые ранее отчёты не переписываются. Это не старый
 двухпараметрический формат Case-A.
 
 Карта сохраняется **до уточнения**. Отчёт атомарно обновляется после каждой

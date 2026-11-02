@@ -90,7 +90,7 @@ budgets = balance_checks(state, recombination, ionization, excitation=E_of_state
 --excitation-scale 0 выключает его без чтения файла; --density 0 выключает
 все каналы с n0 (CX, ионизацию, PLT). --scale управляет только ACD/PRB,
 --ionization-scale — только SCD/I*SCD. Отключение ионизации не выключает PLT.
-Отчёт schema_version=4 хранит excitation_scale и SHA256 активного plt12_h.dat.
+Отчёт schema_version=5 хранит excitation_scale и SHA256 активного plt12_h.dat.
 Старый низкоплотностной L_exc из isothermal_cx_model не импортируется и не
 добавляется: повторного учёта возбуждения нет.
 

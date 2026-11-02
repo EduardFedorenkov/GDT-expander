@@ -31,7 +31,6 @@ def build_parser():
     parser.add_argument('--config', type=Path, default=Path(__file__).with_name('config.json'))
     parser.add_argument('--density', type=float, help='Override neutral n0 [cm^-3].')
     parser.add_argument('--lambda-sh', type=float)
-    parser.add_argument('--cx-mode', choices=('constant', 'temperature'), default='temperature')
     parser.add_argument('--rr-scale', '--scale', dest='rr_scale', type=validate_excitation_scale, default=1.,
                         help='Entire ACD/PRB channel, including bremsstrahlung.')
     parser.add_argument('--ionization-scale', type=validate_excitation_scale, default=1.)
@@ -121,7 +120,7 @@ def _prepare(args):
         raise ValueError('Kinetic inlet requires central-source config.')
     inlet = make_inlet_momentum(p, geometry, mode)
     rr = ADASRecombination() if args.rr_scale else None
-    cx = ADASCX() if p['n0_cm3'] > 0 and args.cx_mode == 'temperature' else None
+    cx = ADASCX() if p['n0_cm3'] > 0 else None
     ion = ADASIonization() if p['n0_cm3'] > 0 and args.ionization_scale else None
     exc = ADASExcitation() if p['n0_cm3'] > 0 and args.excitation_scale else None
     active = [table for table in (rr, cx, ion, exc) if table is not None]
@@ -134,7 +133,7 @@ def _prepare(args):
             raise ValueError(f'Temperature grid exceeds active ADAS domain '
                              f'[{10.**log_lower:g}, {10.**log_upper:g}] eV.')
     coefficients = make_adas_coefficients(p, args.rr_scale, data=rr)
-    processes = dict(D=make_D(p, args.cx_mode, data=cx),
+    processes = dict(D=make_D(p, data=cx),
         ionization=make_ionization_coefficients(p, args.ionization_scale, data=ion),
         excitation=make_E_exc(p, scale=args.excitation_scale, data=exc), inlet_momentum=inlet)
     paths = [] if rr is None else [rr.acd_path, rr.prb_path]
@@ -200,7 +199,7 @@ def run_scan(args):
         print('Dry run: no plasma integration and no output files.')
         return 0
     args.output.mkdir(parents=True, exist_ok=True)
-    options = dict(cx_mode=args.cx_mode, rr_scale=args.rr_scale,
+    options = dict(rr_scale=args.rr_scale,
                    ionization_scale=args.ionization_scale, excitation_scale=args.excitation_scale,
                    inlet_momentum=mode)
     controls = {key: getattr(args, key) for key in ('iterations', 'points', 'map_points',
@@ -208,7 +207,7 @@ def run_scan(args):
         'max_starts', 'separation', 'j_grid')}
     controls.update(theta_bounds=(T[[0, -1]]/p['T_star_eV']).tolist(),
         refinement_j_bounds=[1e-12, None], refinement_alpha_bounds=[geometry.g_min, 1.])
-    report = dict(format_version=1, model='isothermal_adas', kind='stationary_scan_3d',
+    report = dict(format_version=2, model='isothermal_adas', kind='stationary_scan_3d',
         stage='mapping', parameters=p, geometry=geometry.to_dict(), model_options=options,
         provenance=provenance, controls=controls,
         grid=dict(T_eV=T.tolist(), j_target=js.tolist(), alpha=alphas.tolist()),

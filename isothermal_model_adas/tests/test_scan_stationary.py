@@ -14,6 +14,7 @@ from isothermal_model_adas import scan_stationary as cli
 from isothermal_model_adas import stationary
 from isothermal_model_adas import residual_map
 from isothermal_model_adas.config import load_config
+from isothermal_model_adas.cx_adas import ADASCX
 from isothermal_model_adas.geometry import constant_B
 from isothermal_model_adas.tests.test_residual_map import manufactured_trial
 
@@ -140,15 +141,26 @@ class ScanCLITests(unittest.TestCase):
             self.assertEqual(prepared[5]['data_sha256'], {})
             self.assertEqual(prepared[3]['D'], 0.)
 
-    def test_constant_cx_does_not_read_ccd_and_override_changes_D(self):
-        with tempfile.TemporaryDirectory() as folder, patch.object(cli, 'ADASCX') as reader:
+    def test_density_override_uses_CCD_not_a_constant(self):
+        with tempfile.TemporaryDirectory() as folder, patch.object(cli, 'ADASCX', wraps=ADASCX) as reader:
             args = cli.build_parser().parse_args(self.arguments(Path(folder)/'out',
-                '--cx-mode', 'constant', '--density', '2e13', '--lambda-sh', '5'))
+                '--density', '2e13', '--lambda-sh', '5'))
             p, _, _, processes, _, provenance, *_ = cli._prepare(args)
-        reader.assert_not_called()
-        self.assertNotIn('ccd96_d.dat', provenance['data_sha256'])
+        reader.assert_called_once()
+        self.assertIn('ccd96_d.dat', provenance['data_sha256'])
         self.assertEqual(p['lambda_sh'], 5.)
-        self.assertAlmostEqual(processes['D'], p['L_cm']*2e13*p['k_cx_cm3_per_s']/p['U_star_cm_per_s'])
+        self.assertTrue(callable(processes['D']))
+        for temperature in (1., 5.):
+            expected = p['L_cm']*2e13/p['U_star_cm_per_s']*ADASCX().evaluate(temperature)
+            self.assertAlmostEqual(processes['D'](temperature/p['T_star_eV'])/expected, 1., places=13)
+
+    def test_obsolete_cx_option_rejected_even_for_dry_run(self):
+        with tempfile.TemporaryDirectory() as folder:
+            for mode in ('constant', 'temperature'):
+                with self.subTest(mode=mode), self.assertRaises(SystemExit) as error:
+                    self.execute(Path(folder)/'unused', '--dry-run', '--cx-mode', mode)
+                self.assertEqual(error.exception.code, 2)
+                self.assertFalse((Path(folder)/'unused').exists())
 
     def test_geometry_file_and_flow_source_auto_inlet(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -208,7 +220,12 @@ class ScanCLITests(unittest.TestCase):
             self.assertEqual(report['summary']['n_trials'], 8)
             with np.load(output/'residuals.npz', allow_pickle=False) as cube:
                 self.assertEqual(cube['F_E'].shape, (2, 2, 2))
+                metadata = json.loads(str(cube['metadata_json']))
+                self.assertEqual(metadata['model_options'], report['model_options'])
             self.assertEqual(report['kind'], 'stationary_scan_3d')
+            self.assertEqual(report['format_version'], 2)
+            self.assertEqual(set(report['model_options']),
+                {'rr_scale', 'ionization_scale', 'excitation_scale', 'inlet_momentum'})
             self.assertEqual(report['solutions'], [])
             self.assertTrue((output/'source_config.json').exists())
             self.assertTrue((output/'geometry.json').exists())
