@@ -180,3 +180,58 @@ def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
                  verification=dict(residual_tol=residual_tol, balance_tol=balance_tol,
                                    n_points=n_points, **tight))
     return finish('converged', solution=state)
+
+
+def find_stationary_solutions(guesses, beta, lambda_sh, recombination,
+                              geometry=None, *, dedup_tol=1e-7,
+                              progress=None, **kwargs):
+    """Run the existing local solver from several (theta,j_t,alpha) starts.
+
+    Deduplicate in log(theta), log(j_t) and absolute alpha, never temperature
+    alone. IDs label discoveries, not physical branches. Every attempt keeps
+    its own diagnostic, even duplicate convergences. Numerical failures are
+    recorded; programming/data exceptions propagate. No completeness claim.
+    progress(done,total,attempt,new_solution_or_None) can checkpoint results.
+    """
+    geometry = quadratic_area_legacy() if geometry is None else geometry
+    points = np.asarray(list(guesses), dtype=float)
+    if points.size == 0:
+        points = points.reshape(0, 3)
+    if (points.ndim != 2 or points.shape[1] != 3 or not np.isfinite(points).all()
+            or np.any(points[:, :2] <= 0) or np.any(points[:, 2] <= geometry.g_min)
+            or np.any(points[:, 2] >= 1)
+            or not np.isfinite([beta, lambda_sh]).all() or min(beta, lambda_sh) <= 0
+            or not np.isfinite(dedup_tol) or dedup_tol <= 0):
+        raise ValueError('Need finite (theta>0,j_t>0,g_min<alpha<1) triples and dedup_tol>0.')
+    solutions, attempts = [], []
+    for index, guess in enumerate(points, start=1):
+        outcome = solve_stationary(*map(float, guess), beta, lambda_sh,
+                                   recombination, geometry, **kwargs)
+        attempt = dict(status=outcome['status'], diagnostic=outcome['diagnostic'],
+                       reason=outcome.get('reason'), converged_to=None)
+        added = None
+        if outcome['status'] == 'converged':
+            state = outcome['solution']
+            if not state.get('stationary_verified', False):
+                raise RuntimeError('Local solver returned an unverified convergence.')
+            coordinates = np.array([state[k] for k in ('theta', 'j_target', 'alpha')], float)
+            if (not np.isfinite(coordinates).all() or min(coordinates[:2]) <= 0
+                    or not geometry.g_min < coordinates[2] < 1):
+                raise RuntimeError('Local solver returned invalid root coordinates.')
+            matched = None
+            for old in solutions:
+                difference = np.log(coordinates[:2])-np.log([old['theta'], old['j_target']])
+                if max(abs(difference)) <= dedup_tol and abs(state['alpha']-old['alpha']) <= dedup_tol:
+                    matched = old
+                    break
+            if matched is None:
+                state['solution_id'] = f'root_{len(solutions)+1:03d}'
+                solutions.append(state)
+                matched = added = state
+            attempt['converged_to'] = matched['solution_id']
+        attempts.append(attempt)
+        if progress is not None:
+            progress(index, len(points), attempt, added)
+    return solutions, dict(attempts=attempts, n_solutions=len(solutions),
+        duplicate_convergences=sum(a['status'] == 'converged' for a in attempts)-len(solutions),
+        warning='Multistart local search, not proof of existence, absence or completeness.')
