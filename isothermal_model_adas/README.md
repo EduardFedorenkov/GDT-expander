@@ -1,5 +1,8 @@
 # Изотермическая модель с ACD/PRB, CCD, SCD и PLT
 
+Повторное построение T(n0), a(n0), j_t(n0) из CSV без запуска модели:
+[PLOT_LAMBDA_RESULTS.md](PLOT_LAMBDA_RESULTS.md).
+
 Пакетный перебор lambda_sh и n0 с сохранением CSV и продолжением по завершённым
 парам: [SCAN_LAMBDA.md](SCAN_LAMBDA.md). Сначала используйте `--dry-run`:
 
