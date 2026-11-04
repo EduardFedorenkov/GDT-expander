@@ -1,0 +1,48 @@
+Grid: T=16, j_t=16, alpha=7; trial IVPs: 1792
+Maximum automatic starts: 16; additional manual starts: 0
+The number of corrector IVPs is additional and is not known in advance.
+Map trials: 1/1792
+Map trials: 89/1792
+Map trials: 178/1792
+Map trials: 267/1792
+Map trials: 356/1792
+Map trials: 445/1792
+Map trials: 534/1792
+Map trials: 623/1792
+Map trials: 712/1792
+Map trials: 801/1792
+Map trials: 890/1792
+Map trials: 979/1792
+Map trials: 1068/1792
+Map trials: 1157/1792
+Map trials: 1246/1792
+Map trials: 1335/1792
+Map trials: 1424/1792
+Map trials: 1513/1792
+Map trials: 1602/1792
+Map trials: 1691/1792
+Map trials: 1780/1792
+Map trials: 1792/1792
+Valid trials: 598/1792; starts: 16
+root_001: T=62.427543 eV, a=162.4789 cm, jt=2.346317852
+Refinement: 1/16: converged
+Refinement: 2/16: converged
+Refinement: 3/16: converged
+root_002: T=9.5828829 eV, a=109.03306 cm, jt=8.842142563
+Refinement: 4/16: converged
+Refinement: 5/16: converged
+Refinement: 6/16: converged
+Refinement: 7/16: converged
+Refinement: 8/16: converged
+Refinement: 9/16: converged
+Refinement: 10/16: converged
+Refinement: 11/16: line_search_failed
+Refinement: 12/16: converged
+Refinement: 13/16: line_search_failed
+Refinement: 14/16: line_search_failed
+Refinement: 15/16: converged
+Refinement: 16/16: iteration_limit
+Attempt statuses: {'converged': 12, 'line_search_failed': 3, 'iteration_limit': 1}
+Verified distinct roots: 2
+Finite grid and multistart correction are not a completeness/nonexistence proof. Root IDs are discoveries, not physical branches. PRB includes bremsstrahlung.
+Output: C:\Projects\1D-plasma-expander-model\adas_lambda_test_2\cases\L000_N001\attempt_001

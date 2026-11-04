@@ -17,6 +17,7 @@ from unittest.mock import patch
 import numpy as np
 from scipy.integrate import simpson
 from isothermal_model_adas import transport as tr
+from isothermal_model_adas import atomic_coefficients as atomic
 from isothermal_model_adas import run_stationary as cli
 from isothermal_model_adas.config import load_config
 from isothermal_model_adas.cx_adas import make_D, ADASCX, CCD_PATH
@@ -196,33 +197,33 @@ class CommandTests(unittest.TestCase):
         output = Path(temp.name)/'report'
         outcome = dict(status='mock_not_solved', diagnostic=dict(evaluations=0))
         argv = ['run_stationary', '--config', str(PACKAGE/'config.json'), '--guess',
-                '5', '.8', '.8', '--scale', '0', '--ionization-scale', '0',
+                '5', '.8', '.8', '--atomic-model', 'full-adas', '--scale', '0', '--ionization-scale', '0',
                 '--excitation-scale', '0', '--output', str(output), *extra]
         with patch.object(sys, 'argv', argv), patch.object(cli, 'solve_stationary', return_value=outcome) as solver:
-            with patch.object(cli, 'ADASRecombination', side_effect=AssertionError('Recombination disabled')):
+            with patch.object(atomic, 'ADASRecombination', side_effect=AssertionError('Recombination disabled')):
                 self.assertEqual(cli.main(), 1)
         return solver, json.loads((output/'report.json').read_text())
 
     @unittest.skipUnless(CCD_PATH.exists(), 'CCD not distributed with code/tests.')
-    def test_cli_defaults_ADAS_and_records_ccd_hash(self):
+    def test_cli_full_ADAS_records_ccd_hash(self):
         solver, report = self.mocked_run([])
         self.assertEqual(set(report), {'schema_version', 'model', 'status', 'parameters',
             'geometry', 'inlet_momentum', 'scale', 'ionization_scale', 'excitation_scale',
-            'j_min', 'j_max', 'data_sha256', 'guess_T_j_alpha', 'diagnostic', 'reason', 'physical_scope'})
+            'j_min', 'j_max', 'data_sha256', 'atomic_model', 'code_sha256', 'guess_T_j_alpha', 'diagnostic', 'reason', 'physical_scope'})
         self.assertEqual(set(report['data_sha256']), {'ccd96_d.dat'})
         self.assertTrue(callable(solver.call_args.kwargs['D']))
         self.assertEqual(report['schema_version'], 5)
 
     def test_cli_obsolete_cx_option_rejected_before_loading_data(self):
         for mode in ('constant', 'temperature'):
-            with self.subTest(mode=mode), patch.object(cli, 'ADASCX') as reader:
+            with self.subTest(mode=mode), patch.object(atomic, 'ADASCX') as reader:
                 with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as error:
                     self.mocked_run(['--cx-mode', mode])
             self.assertEqual(error.exception.code, 2)
             reader.assert_not_called()
 
     def test_cli_zero_density_disables_CCD_loading(self):
-        with patch.object(cli, 'ADASCX', side_effect=AssertionError('CX disabled')):
+        with patch.object(atomic, 'ADASCX', side_effect=AssertionError('CX disabled')):
             solver, report = self.mocked_run(['--density', '0'])
         self.assertEqual(solver.call_args.kwargs['D'], 0.)
         self.assertEqual(report['parameters']['n0_cm3'], 0.)

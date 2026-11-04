@@ -1,0 +1,13 @@
+﻿case_id;lambda_sh;n0_cm3;n_roots;search_status;n_trials;n_valid;n_starts;n_converged_starts;failed_start_count;best_sample_norm;unresolved_numerical_count;attempt_statuses;case_report
+L000_N000;7.0;1000000000000.0;0;no_root_found_in_finite_search;1792;32;9;0;9;0.6363409451056276;0;"{""iteration_limit"": 2, ""line_search_failed"": 7}";cases/L000_N000/attempt_001/summary.json
+L000_N001;7.0;5000000000000.0;2;roots_found;1792;592;16;13;3;0.11620869275526649;0;"{""converged"": 13, ""iteration_limit"": 1, ""verification_line_search_failed"": 2}";cases/L000_N001/attempt_001/summary.json
+L000_N002;7.0;10000000000000.0;2;roots_found;1792;576;16;16;0;0.1817989006900069;0;"{""converged"": 16}";cases/L000_N002/attempt_001/summary.json
+L000_N003;7.0;50000000000000.0;2;roots_found;1792;522;16;10;6;0.12743165731495637;0;"{""converged"": 10, ""verification_line_search_failed"": 6}";cases/L000_N003/attempt_001/summary.json
+L000_N004;7.0;100000000000000.0;2;roots_found;1792;474;16;14;2;0.14334868214381546;0;"{""converged"": 14, ""line_search_failed"": 2}";cases/L000_N004/attempt_001/summary.json
+L000_N005;7.0;500000000000000.0;2;roots_found;1792;312;16;12;4;0.49689463190052896;0;"{""converged"": 12, ""line_search_failed"": 3, ""verification_line_search_failed"": 1}";cases/L000_N005/attempt_001/summary.json
+L000_N006;7.0;1000000000000000.0;2;roots_found;1792;242;16;13;3;0.8154363248944135;0;"{""converged"": 13, ""line_search_failed"": 2, ""verification_line_search_failed"": 1}";cases/L000_N006/attempt_001/summary.json
+L000_N007;7.0;5000000000000000.0;1;roots_found;1792;156;16;11;5;0.28507882038401955;0;"{""converged"": 11, ""iteration_limit"": 3, ""verification_line_search_failed"": 2}";cases/L000_N007/attempt_002/summary.json
+L001_N000;8.0;1000000000000.0;0;no_root_found_in_finite_search;1792;32;9;0;9;0.636340945105628;0;"{""iteration_limit"": 2, ""line_search_failed"": 7}";cases/L001_N000/attempt_001/summary.json
+L001_N001;8.0;5000000000000.0;2;roots_found;1792;592;16;14;2;0.11620869953101806;0;"{""converged"": 14, ""iteration_limit"": 1, ""line_search_failed"": 1}";cases/L001_N001/attempt_001/summary.json
+L001_N002;8.0;10000000000000.0;2;roots_found;1792;576;16;16;0;0.18179890069000795;0;"{""converged"": 16}";cases/L001_N002/attempt_001/summary.json
+L001_N003;8.0;50000000000000.0;2;roots_found;1792;522;16;8;8;0.2369904435017578;0;"{""converged"": 8, ""verification_line_search_failed"": 8}";cases/L001_N003/attempt_001/summary.json

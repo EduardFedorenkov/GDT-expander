@@ -16,25 +16,26 @@ import sys
 import numpy as np
 
 from . import scan_stationary as single
+from .atomic_coefficients import ATOMIC_MODELS, code_hashes
 from .recombination_adas import IONIZATION_ENERGY_ERG
 
 
-SCAN_KEYS = ('rr_scale', 'ionization_scale', 'excitation_scale', 'inlet_momentum',
+SCAN_KEYS = ('atomic_model', 'rr_scale', 'ionization_scale', 'excitation_scale', 'inlet_momentum',
     'temperature_min', 'temperature_max', 'temperature_count', 'j_min', 'j_max',
     'j_count', 'j_grid', 'alpha_min', 'alpha_max', 'alpha_count', 'max_starts',
     'separation', 'guess', 'iterations', 'points', 'map_points', 'residual_tol',
     'balance_tol', 'dedup_tol', 'rtol', 'atol', 'max_step', 'j_axis', 'alpha_slice', 'no_plot')
-CHOICES = dict(inlet_momentum=('auto', 'kinetic', 'constant'),
+CHOICES = dict(atomic_model=ATOMIC_MODELS, inlet_momentum=('auto', 'kinetic', 'constant'),
                j_grid=('log', 'linear'), j_axis=('log', 'linear', 'loss'))
 ROOT_FIELDS = ('case_id', 'solution_id', 'local_solution_id', 'lambda_sh', 'n0_cm3',
     'T_eV', 'theta', 'a_cm', 'alpha', 'j_target', 'net_particle_change', 'D',
-    'rr_scale', 'ionization_scale', 'excitation_scale', 'inlet_momentum',
+    'atomic_model', 'rr_scale', 'ionization_scale', 'excitation_scale', 'inlet_momentum',
     'recombination_count_per_inlet', 'ionization_count_per_inlet',
     'energy_loss_fraction', 'cx_energy_loss_fraction', 'excitation_energy_loss_fraction',
     'ionization_energy_loss_fraction', 'effective_energy_loss_fraction',
     'R_J', 'R_M', 'R_E', 'particle_balance_abs', 'momentum_balance_abs', 'energy_balance_abs',
     'outside_scan_j_range', 'outside_scan_alpha_range', 'case_report', 'profile_file')
-GRID_FIELDS = ('case_id', 'lambda_sh', 'n0_cm3', 'n_roots', 'search_status',
+GRID_FIELDS = ('case_id', 'lambda_sh', 'n0_cm3', 'atomic_model', 'n_roots', 'search_status',
     'n_trials', 'n_valid', 'n_starts', 'n_converged_starts', 'failed_start_count',
     'best_sample_norm', 'unresolved_numerical_count', 'attempt_statuses', 'case_report')
 
@@ -153,7 +154,7 @@ def _read_case(path, lam, density, signature, options):
     """Do not confuse a failed/partial process or old Case-A report with zero roots."""
     report = _json(path)
     p = dict(signature['parameters'], lambda_sh=float(lam), n0_cm3=float(density))
-    model_options = {key: options[key] for key in ('rr_scale', 'ionization_scale', 'excitation_scale')}
+    model_options = {key: options[key] for key in ('atomic_model', 'rr_scale', 'ionization_scale', 'excitation_scale')}
     model_options['inlet_momentum'] = signature['inlet_momentum']
     if (report.get('model') != 'isothermal_adas' or report.get('kind') != 'stationary_scan_3d'
             or report.get('format_version') != 2 or report.get('stage') != 'refinement_complete'
@@ -262,7 +263,8 @@ def _rows(case_id, relative, report):
     summary = report['summary']
     counts = Counter(a['status'] for a in report['diagnostic']['attempts'])
     best = summary['nearest_sample_not_root']
-    grid = dict(common, n_roots=len(roots), search_status='roots_found' if roots else 'no_root_found_in_finite_search',
+    grid = dict(common, atomic_model=report['model_options']['atomic_model'],
+        n_roots=len(roots), search_status='roots_found' if roots else 'no_root_found_in_finite_search',
         n_trials=summary['n_trials'], n_valid=summary['n_valid'], n_starts=len(report['starts']),
         n_converged_starts=counts['converged'], failed_start_count=len(report['starts'])-counts['converged'],
         best_sample_norm=None if best is None else best['residual_norm'],
@@ -332,7 +334,7 @@ def scan_lambda_neutral(lambdas, densities, config_path, output, *, geometry_pat
 
     def check_environment():
         package = Path(__file__).parent
-        if ({path.name: single._sha256(path) for path in sorted(package.glob('*.py'))} != signature['code_sha256']
+        if (code_hashes(options['atomic_model']) != signature['code_sha256']
                 or {name: single._sha256(package/'processes_data'/name) for name in signature['data_sha256']}
                    != signature['data_sha256']
                 or single._sha256(output/'source_config.json') != signature['source_config_sha256']

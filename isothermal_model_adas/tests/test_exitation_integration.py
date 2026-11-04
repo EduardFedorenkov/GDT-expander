@@ -12,6 +12,7 @@ import numpy as np
 from scipy.integrate import simpson
 from isothermal_model_adas import transport as tr
 from isothermal_model_adas import stationary
+from isothermal_model_adas import atomic_coefficients as atomic
 from isothermal_model_adas import run_stationary as cli
 from isothermal_model_adas.sources import adas_sources, excitation_at
 from isothermal_model_adas.geometry import constant_B
@@ -201,7 +202,7 @@ class CommandTests(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         output=Path(temp.name)/'output'
         argv=['run_stationary','--config',str(PACKAGE/'config.json'),'--guess','5','2','.8',
-              '--scale','0','--ionization-scale','0','--output',str(output),*extra]
+              '--atomic-model','full-adas','--scale','0','--ionization-scale','0','--output',str(output),*extra]
         outcome=dict(status='mock_not_solved',diagnostic=dict(evaluations=0))
         with patch.object(sys,'argv',argv),patch.object(cli,'solve_stationary',return_value=outcome) as solver:
             with patch('builtins.print'):
@@ -210,8 +211,8 @@ class CommandTests(unittest.TestCase):
 
     @unittest.skipUnless(PLT_PATH.exists(),'PLT not distributed with code.')
     def test_default_PLT_enabled_and_hash_recorded(self):
-        with (patch.object(cli,'ADASRecombination',side_effect=AssertionError('Recombination off')),
-              patch.object(cli,'ADASIonization',side_effect=AssertionError('Ionization off'))):
+        with (patch.object(atomic,'ADASRecombination',side_effect=AssertionError('Recombination off')),
+              patch.object(atomic,'ADASIonization',side_effect=AssertionError('Ionization off'))):
             solver,report=self.mocked_run([])
         self.assertEqual(report['schema_version'],5)
         self.assertEqual(report['excitation_scale'],1.)
@@ -223,14 +224,14 @@ class CommandTests(unittest.TestCase):
         self.assertIsNotNone(solver.call_args.kwargs['theta_bounds'])
 
     def test_off_no_PLT_loading_but_CCD_temperature_limit_remains(self):
-        with patch.object(cli,'ADASExcitation',side_effect=AssertionError('PLT off')):
+        with patch.object(atomic,'ADASExcitation',side_effect=AssertionError('PLT off')):
             solver,report=self.mocked_run(['--excitation-scale','0'])
         self.assertEqual(solver.call_args.kwargs['excitation'],0.)
         self.assertEqual(set(report['data_sha256']),{'ccd96_d.dat'})
         self.assertIsNotNone(solver.call_args.kwargs['theta_bounds'])
 
     def test_zero_neutrals_disable_all_neutral_channels(self):
-        with patch.object(cli,'ADASExcitation',side_effect=AssertionError('No PLT')):
+        with patch.object(atomic,'ADASExcitation',side_effect=AssertionError('No PLT')):
             solver,report=self.mocked_run(['--density','0'])
         self.assertEqual(solver.call_args.kwargs['D'],0.)
         self.assertEqual(solver.call_args.kwargs['ionization'],(0.,0.))

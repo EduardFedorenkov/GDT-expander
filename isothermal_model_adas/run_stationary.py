@@ -6,12 +6,10 @@ import json
 from pathlib import Path
 import numpy as np
 from .config import load_config
-from .cx_adas import ADASCX, make_D
-from .exitation_adas import ADASExcitation, make_E_exc, validate_excitation_scale
+from .atomic_coefficients import add_atomic_model_argument, build_atomic_coefficients, code_hashes
+from .exitation_adas import validate_excitation_scale
 from .geometry import add_geometry_arguments, geometry_from_args
 from .inlet import make_inlet_momentum
-from .ionization_adas import ADASIonization, make_ionization_coefficients
-from .recombination_adas import ADASRecombination, make_adas_coefficients
 from .stationary import solve_stationary
 from .profiles import dimensional_profiles, plot_profiles
 
@@ -22,10 +20,11 @@ def main():
     parser.add_argument('--guess', type=float, nargs=3, required=True,
                         metavar=('T_EV', 'J_TARGET', 'ALPHA'))
     parser.add_argument('--inlet-momentum', choices=('auto', 'kinetic', 'constant'), default='auto')
+    add_atomic_model_argument(parser)
     parser.add_argument('--scale', type=float, default=1., help='Entire ACD/PRB channel, including bremsstrahlung.')
-    parser.add_argument('--ionization-scale', type=float, default=1., help='0: off; 1: full local SCD and I*SCD cost.')
-    parser.add_argument('--excitation-scale', type=validate_excitation_scale, default=1., help='0: off; 1: local PLT line cooling.')
-    parser.add_argument('--density', type=float, help='Override neutral n0 [cm^-3]; 0 disables CX, ionization and PLT.')
+    parser.add_argument('--ionization-scale', type=float, default=1., help='0: off; 1: full ionization and binding-energy cost.')
+    parser.add_argument('--excitation-scale', type=validate_excitation_scale, default=1., help='0: off; 1: full line cooling.')
+    parser.add_argument('--density', type=float, help='Override neutral n0 [cm^-3]; 0 disables CX, ionization and excitation.')
     parser.add_argument('--j-min', type=float, default=1e-12, help='Positive numerical search lower bound.')
     parser.add_argument('--j-max', type=float, help='Optional numerical search upper bound; values >1 allowed.')
     parser.add_argument('--points', type=int, default=4000)
@@ -52,42 +51,31 @@ def main():
             mode = 'kinetic' if p['source_mode'] == 'central' else 'constant'
         if mode == 'kinetic' and p['source_mode'] != 'central':
             raise ValueError('Kinetic inlet requires central-source inputs.')
-        tables = ADASRecombination() if args.scale != 0 else None
-        coefficients = make_adas_coefficients(p, args.scale, data=tables)
-        cx_tables = ADASCX() if p['n0_cm3'] > 0 else None
-        D = make_D(p, data=cx_tables)
-        ion_tables = ADASIonization() if p['n0_cm3'] > 0 and args.ionization_scale > 0 else None
-        ionization = make_ionization_coefficients(p, args.ionization_scale, data=ion_tables)
-        plt_tables = ADASExcitation() if p['n0_cm3'] > 0 and args.excitation_scale > 0 else None
-        excitation = make_E_exc(p, scale=args.excitation_scale, data=plt_tables)
+        coefficients, processes, active, data_paths = build_atomic_coefficients(
+            p, args.atomic_model, args.scale, args.ionization_scale, args.excitation_scale)
         # Use nominal printed endpoints; the reader accounts for log-grid rounding.
         # All distributed active ADAS datasets cover nominal .2..1e4 eV.
-        bounds = (.2/p['T_star_eV'], 1e4/p['T_star_eV']) if any(
-            item is not None for item in (tables, cx_tables, ion_tables, plt_tables)) else None
+        bounds = (.2/p['T_star_eV'], 1e4/p['T_star_eV']) if active else None
         T, jt, alpha = args.guess
         outcome = solve_stationary(T/p['T_star_eV'], jt, alpha, p['beta'],
-            p['lambda_sh'], coefficients, geometry, D=D, ionization=ionization, excitation=excitation,
+            p['lambda_sh'], coefficients, geometry, **processes,
             inlet_momentum=make_inlet_momentum(p, geometry, mode),
             theta_bounds=bounds, j_bounds=j_bounds, n_points=args.points)
     except (ValueError, OSError) as error:
         parser.error(str(error))
-    data_paths = [] if tables is None else [tables.acd_path, tables.prb_path]
-    if cx_tables is not None:
-        data_paths.append(cx_tables.path)
-    if ion_tables is not None:
-        data_paths.append(ion_tables.path)
-    if plt_tables is not None:
-        data_paths.append(plt_tables.path)
     hashes = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in data_paths}
     report = dict(schema_version=5, model='isothermal_adas', status=outcome['status'],
         parameters=p, geometry=geometry.to_dict(), inlet_momentum=mode,
+        atomic_model=args.atomic_model, code_sha256=code_hashes(args.atomic_model),
         scale=args.scale, ionization_scale=args.ionization_scale,
         excitation_scale=args.excitation_scale,
         j_min=args.j_min, j_max=args.j_max, data_sha256=hashes, guess_T_j_alpha=args.guess,
         diagnostic=outcome['diagnostic'], reason=outcome.get('reason'),
-        physical_scope='ACD/PRB, optional CX, local effective SCD ionization and PLT excitation radiation; constant Ti=Te; prescribed cold stationary '
-                       'neutral moment closure with k_model(T)=CCD(T) approximation; '
-                       'SCD binding-energy cost and PLT photon power are distinct channels; '
+        physical_scope=('Local ACD/PRB; legacy temperature-only CX, ionization and excitation. '
+                       if args.atomic_model == 'hybrid' else
+                       'Local ACD/PRB, CCD(T) CX, local SCD ionization and PLT excitation. ') +
+                       'Constant Ti=Te; prescribed cold stationary neutrals. '
+                       'Ionization binding-energy cost and excitation photon power are distinct channels; '
                        'no radiation transport/reabsorption, molecules, impurities or neutral dynamics; PRB includes bremsstrahlung.')
     state = outcome.get('solution')
     if state is not None:

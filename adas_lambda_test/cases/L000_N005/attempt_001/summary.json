@@ -1,0 +1,3492 @@
+{
+  "format_version": 2,
+  "model": "isothermal_adas",
+  "kind": "stationary_scan_3d",
+  "stage": "refinement_complete",
+  "parameters": {
+    "A_m_cm2": 38.48451000647496,
+    "L_cm": 184.5,
+    "lambda_sh": 7.0,
+    "n_c_cm3": 30000000000000.0,
+    "T_c_eV": 150.0,
+    "chi_E": 8.0,
+    "m_D_g": 3.3435837724e-24,
+    "source_mode": "central",
+    "chi": 5.0,
+    "n_m_cm3": 15000000000000.0,
+    "J0_per_s": 3.9049187683314004e+21,
+    "M0_dyn": 277465.4221649102,
+    "W0_erg_per_s": 7507643529946.354,
+    "A_star_cm2": 38.48451000647496,
+    "A0_cm2": 38.48451000647496,
+    "U_star_cm_per_s": 21251258.60316408,
+    "T_star_erg": 1.9226119607999998e-09,
+    "T_star_eV": 1200.0,
+    "n_star_cm3": 4774648292756.861,
+    "beta": 1.273239544735163,
+    "n0_cm3": 500000000000000.0
+  },
+  "geometry": {
+    "type": "quadratic_area_legacy",
+    "K": 500.0,
+    "g_min": 1e-06
+  },
+  "model_options": {
+    "rr_scale": 1.0,
+    "ionization_scale": 1.0,
+    "excitation_scale": 1.0,
+    "inlet_momentum": "kinetic"
+  },
+  "provenance": {
+    "source_config": "C:\\Projects\\1D-plasma-expander-model\\adas_lambda_test\\source_config.json",
+    "source_config_sha256": "b4edd79400306c45cf07f50a6357f9b1eb052be5bcf1bb71f7724fcfc95061dc",
+    "data_sha256": {
+      "acd12_h.dat": "9558bf6936b21cd84b8d8dfc4d1fa233604cb8bc3183593edb3f8c53c95aa895",
+      "prb12_h.dat": "39113000d903798322a7881f8d402c43fab92bd1110713ff65f8586121968383",
+      "ccd96_d.dat": "68d9ef4a21e2f9da3d12ca588f4352e48802dde5d1ee30f17b1ef6a57065cb3c",
+      "scd12_h.dat": "de27ccf719b879046d0e558981c9b11057b21e70b37297bf92309616070550dc",
+      "plt12_h.dat": "a1d1acab476d1fdd16a0b86f4bd66a778c943d309223e89167398ecea4a3de6c"
+    },
+    "code_sha256": {
+      "__init__.py": "99c8d6bf1efd49c2e340febe1ebb7f88ef020c96526df59d8b6e41a2a20ab679",
+      "boundary_fluxes.py": "ba99e1106aff6e9809402b5060e574400e3cb71d6bb6fc7c6d94aac13db207bb",
+      "config.py": "a14d0b26103c5aa39d58b4175967a88d28d176c05f3d8f85961c670e54578dca",
+      "constants.py": "5911e3d029613560ffb5770f95ea92b99262963b2d71b8039f195c678bc4d999",
+      "cx_adas.py": "1bcdb5ea8ae09568f7b01427f0d9ba56416c54dfabb7b62e9cbe78eccde597bf",
+      "exitation_adas.py": "c39e80edb3f24a6490c168ed587f5b5ebab311c407e7b66dbf8eaae6c2886868",
+      "geometry.py": "22f1c00c9283169bbca240147d977e553f7d537afa83f25eeee32db8826c0a79",
+      "inlet.py": "a0772e8c8acf9eddc76691162a9514fb5ca4b950a813a9dcce2053e1f06fef61",
+      "ionization_adas.py": "c426de91512bc591b8f0c391eb2dab63e39ae490591ce730bf50572fe7ea7c6f",
+      "kinetic_momentum.py": "59ae26fb77e87f195c4dd609e8ca4bb5fd279252117335ca9c73ea808c9a23f1",
+      "parameter_scan.py": "26a2f2fb2d4eea47ac6062b0b3dee4a7d4ad1e55537df758c5718e598f7e7a79",
+      "plot_lambda_results.py": "9a17dcb98c90bd41adf84ebea43e5b40aa857af21ba5dcbc87af850aaec1c0fd",
+      "profiles.py": "a82e645c0339633d76043bc0188a41d18037ebfc97d43aee1a80a9848f3ef2f3",
+      "recombination_adas.py": "6229aa813d13b5c2b1869c3132fd5f0a8167307b585c5034c0d8042122a66437",
+      "residual_map.py": "0c68b9d59debe7ce3573d81ed1388f23c934805f7af4f923237ebccff3064a15",
+      "run_stationary.py": "039589593a860f65b1857fd7c7518fb47e8e29a73d20a194bc46346e11409cd6",
+      "scan_lambda.py": "72064dae2a54fd42f92d04f1d591137e4b35fed7e500f90022422f7f340ffa5a",
+      "scan_stationary.py": "e9c4720967f1322ad0c9e92bf68b0e8ec9fde1e79e7cee65cc2b943bf7c89eb8",
+      "sources.py": "358fda3e35c936013ca64c1d372c6830c0756262577d3bc5de7a5c63d5214914",
+      "stationary.py": "69177c366974655091a3cdf1316f53187f72863ec4201f23a59be168645f0c7d",
+      "transport.py": "a6a9db8ff15f1729fcfdc2d4c006d638a14629164f9d6e6ab38ec9eb2627a708"
+    },
+    "runtime": {
+      "python": "3.13.5",
+      "numpy": "2.3.0",
+      "scipy": "1.17.0"
+    }
+  },
+  "controls": {
+    "iterations": 40,
+    "points": 4000,
+    "map_points": 100,
+    "residual_tol": 1e-09,
+    "balance_tol": 5e-06,
+    "dedup_tol": 1e-07,
+    "rtol": 1e-09,
+    "atol": 1e-11,
+    "max_step": 0.02,
+    "max_starts": 16,
+    "separation": 2,
+    "j_grid": "log",
+    "theta_bounds": [
+      0.0001666666666666667,
+      0.125
+    ],
+    "refinement_j_bounds": [
+      1e-12,
+      null
+    ],
+    "refinement_alpha_bounds": [
+      1e-06,
+      1.0
+    ]
+  },
+  "grid": {
+    "T_eV": [
+      0.2,
+      0.31095729272336237,
+      0.4834721894892144,
+      0.7516960157530129,
+      1.168726790047474,
+      1.81712059283214,
+      2.8252345004947688,
+      4.392636357912471,
+      6.829611548873361,
+      10.618587587949348,
+      16.509636244473135,
+      25.66895895214434,
+      39.909749913929616,
+      62.05113893250995,
+      96.47627086427265,
+      150.0
+    ],
+    "j_target": [
+      1e-06,
+      2.9286445646252375e-06,
+      8.576958985908945e-06,
+      2.5118864315095822e-05,
+      7.356422544596421e-05,
+      0.00021544346900318845,
+      0.000630957344480193,
+      0.0018478497974222907,
+      0.0054116952654646375,
+      0.01584893192461114,
+      0.04641588833612782,
+      0.1359356390878527,
+      0.3981071705534969,
+      1.165914401179831,
+      3.414548873833601,
+      10.0
+    ],
+    "alpha": [
+      0.05,
+      0.20750000000000002,
+      0.365,
+      0.5225000000000001,
+      0.68,
+      0.8375,
+      0.995
+    ]
+  },
+  "starts": [
+    {
+      "theta": 0.00025913107726946867,
+      "j_target": 0.3981071705534969,
+      "alpha": 0.8375,
+      "alpha_index": 5,
+      "j_index": 12,
+      "theta_index": 1,
+      "source": "candidate_cell_corner",
+      "grid_residual_norm": 0.7257796219611109,
+      "start_id": "start_001",
+      "T_eV": 0.3109572927233624
+    },
+    {
+      "theta": 0.0006264133464608441,
+      "j_target": 0.3981071705534969,
+      "alpha": 0.8375,
+      "alpha_index": 5,
+      "j_index": 12,
+      "theta_index": 3,
+      "source": "candidate_cell_corner",
+      "grid_residual_norm": 0.9099529300420218,
+      "start_id": "start_002",
+      "T_eV": 0.7516960157530129
+    },
+    {
+      "theta": 0.000402893491241012,
+      "j_target": 0.1359356390878527,
+      "alpha": 0.5225000000000001,
+      "alpha_index": 3,
+      "j_index": 11,
+      "theta_index": 2,
+      "source": "candidate_cell_corner",
+      "grid_residual_norm": 1.6140811661825687,
+      "start_id": "start_003",
+      "T_eV": 0.4834721894892144
+    },
+    {
+      "theta": 0.0036605302982603925,
+      "j_target": 3.414548873833601,
+      "alpha": 0.995,
+      "alpha_index": 6,
+      "j_index": 14,
+      "theta_index": 7,
+      "source": "grid_local_minimum",
+      "grid_residual_norm": 0.6904326681378463,
+      "start_id": "start_004",
+      "T_eV": 4.392636357912471
+    },
+    {
+      "theta": 0.000402893491241012,
+      "j_target": 0.04641588833612782,
+      "alpha": 0.05,
+      "alpha_index": 0,
+      "j_index": 10,
+      "theta_index": 2,
+      "source": "grid_local_minimum",
+      "grid_residual_norm": 2.019519335577444,
+      "start_id": "start_005",
+      "T_eV": 0.4834721894892144
+    },
+    {
+      "theta": 0.00151426716069345,
+      "j_target": 3.414548873833601,
+      "alpha": 0.995,
+      "alpha_index": 6,
+      "j_index": 14,
+      "theta_index": 5,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 1.2185985079462747,
+      "start_id": "start_006",
+      "T_eV": 1.81712059283214
+    },
+    {
+      "theta": 0.0006264133464608441,
+      "j_target": 3.414548873833601,
+      "alpha": 0.995,
+      "alpha_index": 6,
+      "j_index": 14,
+      "theta_index": 3,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 1.228053581820601,
+      "start_id": "start_007",
+      "T_eV": 0.7516960157530129
+    },
+    {
+      "theta": 0.00025913107726946867,
+      "j_target": 3.414548873833601,
+      "alpha": 0.995,
+      "alpha_index": 6,
+      "j_index": 14,
+      "theta_index": 1,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 1.3601671234938315,
+      "start_id": "start_008",
+      "T_eV": 0.3109572927233624
+    },
+    {
+      "theta": 0.0001666666666666667,
+      "j_target": 0.04641588833612782,
+      "alpha": 0.5225000000000001,
+      "alpha_index": 3,
+      "j_index": 10,
+      "theta_index": 0,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 1.7174024535200076,
+      "start_id": "start_009",
+      "T_eV": 0.20000000000000004
+    },
+    {
+      "theta": 0.0036605302982603925,
+      "j_target": 0.3981071705534969,
+      "alpha": 0.995,
+      "alpha_index": 6,
+      "j_index": 12,
+      "theta_index": 7,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 2.3315500217333884,
+      "start_id": "start_010",
+      "T_eV": 4.392636357912471
+    },
+    {
+      "theta": 0.00151426716069345,
+      "j_target": 0.3981071705534969,
+      "alpha": 0.995,
+      "alpha_index": 6,
+      "j_index": 12,
+      "theta_index": 5,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 2.6282982283891467,
+      "start_id": "start_011",
+      "T_eV": 1.81712059283214
+    },
+    {
+      "theta": 0.00025913107726946867,
+      "j_target": 0.04641588833612782,
+      "alpha": 0.8375,
+      "alpha_index": 5,
+      "j_index": 10,
+      "theta_index": 1,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 3.0610372097109395,
+      "start_id": "start_012",
+      "T_eV": 0.3109572927233624
+    },
+    {
+      "theta": 0.0006264133464608441,
+      "j_target": 0.04641588833612782,
+      "alpha": 0.8375,
+      "alpha_index": 5,
+      "j_index": 10,
+      "theta_index": 3,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 3.069381483333041,
+      "start_id": "start_013",
+      "T_eV": 0.7516960157530129
+    },
+    {
+      "theta": 0.0009739389917062284,
+      "j_target": 0.1359356390878527,
+      "alpha": 0.5225000000000001,
+      "alpha_index": 3,
+      "j_index": 11,
+      "theta_index": 4,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 3.071933110009655,
+      "start_id": "start_014",
+      "T_eV": 1.168726790047474
+    },
+    {
+      "theta": 0.0001666666666666667,
+      "j_target": 0.0054116952654646375,
+      "alpha": 0.05,
+      "alpha_index": 0,
+      "j_index": 8,
+      "theta_index": 0,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 3.7463784251818835,
+      "start_id": "start_015",
+      "T_eV": 0.20000000000000004
+    },
+    {
+      "theta": 0.000402893491241012,
+      "j_target": 0.01584893192461114,
+      "alpha": 0.365,
+      "alpha_index": 2,
+      "j_index": 9,
+      "theta_index": 2,
+      "source": "low_residual_sample",
+      "grid_residual_norm": 4.082661038992513,
+      "start_id": "start_016",
+      "T_eV": 0.4834721894892144
+    }
+  ],
+  "solutions": [
+    {
+      "solution_id": "root_001",
+      "stationary_verified": true,
+      "theta": 0.0003123332221299606,
+      "T_eV": 0.37479986655595277,
+      "j_target": 0.8543911799682343,
+      "alpha": 0.8670246166655985,
+      "a_cm": 159.96604177480293,
+      "mu_target": 1.5935756385160353,
+      "R_J": -1.943112337698949e-12,
+      "R_M": 9.0383256434734e-12,
+      "R_E": 1.5947243525715749e-12,
+      "outside_scan_j_range": false,
+      "outside_scan_alpha_range": false,
+      "net_particle_change": -0.14560882003176567,
+      "coefficients": {
+        "D": 15.18340769239581,
+        "local_ranges": {
+          "R_profile": [
+            7.500070563641331e-05,
+            0.00037926885379287233
+          ],
+          "Q_eff_profile": [
+            -3.0138726861324695e-07,
+            1.3560334532492215e-09
+          ],
+          "D_ion_profile": [
+            4.662066367903655e-15,
+            2.5763115952843737e-14
+          ],
+          "E_ion_profile": [
+            5.283675216957476e-17,
+            2.919819807988957e-16
+          ],
+          "E_exc_profile": [
+            1.046514053756533e-12,
+            1.0480585305145581e-12
+          ]
+        }
+      },
+      "verification": {
+        "residual_tol": 1e-09,
+        "balance_tol": 5e-06,
+        "n_points": 4000,
+        "rtol": 1e-11,
+        "atol": 9.999999999999999e-14,
+        "max_step": 0.01
+      },
+      "balances": {
+        "particle_abs": 3.5608180293245084e-10,
+        "momentum_abs": 2.547114008599749e-08,
+        "energy_abs": 3.7972627042748286e-08,
+        "particle_recombination_integral": 0.14560881967644757,
+        "energy_loss_integral": 0.9981319787775754,
+        "particle_ionization_integral": 2.7067954480311934e-12,
+        "particle_net_source_integral": -0.14560881967374076,
+        "ion_energy_loss_integral": 6.82424226371809e-05,
+        "effective_energy_loss_integral": -0.00010163999632681789,
+        "cx_energy_loss_integral": 0.9981653762044705,
+        "cx_momentum_loss_integral": 1.789749455467942,
+        "ionization_energy_loss_integral": 3.0677015077686867e-14,
+        "excitation_energy_loss_integral": 1.4676368807321492e-10
+      },
+      "profile_file": "root_001_profiles.npz"
+    },
+    {
+      "solution_id": "root_002",
+      "stationary_verified": true,
+      "theta": 0.07930736425114196,
+      "T_eV": 95.16883710137036,
+      "j_target": 1.607676694936453,
+      "alpha": 0.9992715335409442,
+      "a_cm": 184.3655979383042,
+      "mu_target": 1.5936378592590277,
+      "R_J": -5.6066262743570405e-14,
+      "R_M": -1.554312234475219e-14,
+      "R_E": 8.43769498715119e-15,
+      "outside_scan_j_range": false,
+      "outside_scan_alpha_range": true,
+      "net_particle_change": 0.6076766949364529,
+      "coefficients": {
+        "D": 155.27262512807934,
+        "local_ranges": {
+          "R_profile": [
+            2.719475943076864e-07,
+            2.7227333416090917e-07
+          ],
+          "Q_eff_profile": [
+            5.373673627842836e-08,
+            5.373683522930576e-08
+          ],
+          "D_ion_profile": [
+            139.2729874489209,
+            140.46094677582357
+          ],
+          "E_ion_profile": [
+            1.5784271910877703,
+            1.5918907301260006
+          ],
+          "E_exc_profile": [
+            1.4175935754389626,
+            1.4307387158695868
+          ]
+        }
+      },
+      "verification": {
+        "residual_tol": 1e-09,
+        "balance_tol": 5e-06,
+        "n_points": 4000,
+        "rtol": 1e-11,
+        "atol": 9.999999999999999e-14,
+        "max_step": 0.01
+      },
+      "balances": {
+        "particle_abs": 1.4444132756530337e-07,
+        "momentum_abs": 4.141865461715355e-10,
+        "energy_abs": 9.417001733957875e-09,
+        "particle_recombination_integral": 1.4371057803577494e-11,
+        "energy_loss_integral": 0.10749578187922548,
+        "particle_ionization_integral": 0.6076765505095525,
+        "particle_net_source_integral": 0.6076765504951814,
+        "ion_energy_loss_integral": 1.9900183174956574e-12,
+        "effective_energy_loss_integral": 2.8388736767284554e-12,
+        "cx_energy_loss_integral": 0.0944457385737489,
+        "cx_momentum_loss_integral": 0.15043106713206764,
+        "ionization_energy_loss_integral": 0.006887000905774928,
+        "excitation_energy_loss_integral": 0.006163042394872777
+      },
+      "profile_file": "root_002_profiles.npz"
+    }
+  ],
+  "diagnostic": {
+    "attempts": [
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 136,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 0.7257796219611109,
+              "parameters": [
+                0.00025913107726946867,
+                0.3981071705534969,
+                0.8375
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 0.2411285082401149,
+              "parameters": [
+                0.0002708670910998463,
+                0.6760264967471271,
+                0.8198331316223494
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 0.09748606286792118,
+              "parameters": [
+                0.00028673020947325326,
+                0.8514763737661478,
+                0.8597091102531841
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 0.01849089447970392,
+              "parameters": [
+                0.0003072547245079003,
+                0.8574932612118847,
+                0.8660842534773078
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.0006389095627292167,
+              "parameters": [
+                0.0003121454734735533,
+                0.854491537400106,
+                0.8669893795706708
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 8.623394870388423e-07,
+              "parameters": [
+                0.0003123329641807681,
+                0.8543913014342662,
+                0.8670245676078386
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 1.216188038426343e-09,
+              "parameters": [
+                0.0003123332225229995,
+                0.8543911754468989,
+                0.8670246165917312
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 1.3768985951391712e-12,
+              "parameters": [
+                0.0003123332229087365,
+                0.8543911753111557,
+                0.8670246166659582
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 8.19604465435497e-09,
+              "parameters": [
+                0.0003123332229087365,
+                0.8543911753111557,
+                0.8670246166659582
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 2.8927749084609746e-11,
+              "parameters": [
+                0.00031233322213000664,
+                0.8543911799702341,
+                0.8670246166653972
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 2,
+              "norm": 1.5480505766283154e-11,
+              "parameters": [
+                0.00031233322212996116,
+                0.8543911799682353,
+                0.8670246166655988
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 3,
+              "norm": 1.376787572828179e-11,
+              "parameters": [
+                0.0003123332221299606,
+                0.8543911799682347,
+                0.8670246166655985
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 4,
+              "norm": 5.671685343583991e-12,
+              "parameters": [
+                0.0003123332221299606,
+                0.8543911799682343,
+                0.8670246166655985
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.00025913107726946867,
+            0.3981071705534969,
+            0.8375
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.0003123332221299606,
+            "j_target": 0.8543911799682343,
+            "alpha": 0.8670246166655985
+          }
+        },
+        "reason": null,
+        "converged_to": "root_001",
+        "start_id": "start_001"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 125,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 0.9099529300420236,
+              "parameters": [
+                0.0006264133464608439,
+                0.3981071705534969,
+                0.8375
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 0.8412989154534947,
+              "parameters": [
+                0.00023044459183834852,
+                0.7323293378078087,
+                0.8184042322771956
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 0.4348662384688041,
+              "parameters": [
+                0.0002622240002666152,
+                1.0115729435060912,
+                0.8638476016589423
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 0.07716389208946871,
+              "parameters": [
+                0.00029481885166617,
+                0.8691673661660572,
+                0.8637544596076121
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.007996608496699462,
+              "parameters": [
+                0.0003100677604023203,
+                0.8557156276752439,
+                0.866601131723636
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 0.00012719919129428346,
+              "parameters": [
+                0.00031229564643623747,
+                0.8544108373804028,
+                0.8670175421102183
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 3.3848843821185545e-08,
+              "parameters": [
+                0.0003123332118567846,
+                0.8543911783220066,
+                0.867024614461975
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 4.033418043921359e-11,
+              "parameters": [
+                0.00031233322289650614,
+                0.8543911753154189,
+                0.8670246166636013
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 8.020939500335134e-09,
+              "parameters": [
+                0.00031233322289650614,
+                0.8543911753154189,
+                0.8670246166636013
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 1.0229350700353973e-10,
+              "parameters": [
+                0.00031233322213655793,
+                0.854391179875585,
+                0.8670246166622868
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 2,
+              "norm": 4.831179900694055e-11,
+              "parameters": [
+                0.00031233322212339827,
+                0.8543911799286319,
+                0.8670246166620407
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 3,
+              "norm": 3.9171554887872345e-11,
+              "parameters": [
+                0.00031233322211049604,
+                0.8543911799200304,
+                0.8670246166589419
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 4,
+              "norm": 2.572608792694504e-11,
+              "parameters": [
+                0.0003123332221107185,
+                0.8543911799202667,
+                0.8670246166589995
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 5,
+              "norm": 1.8208323737833115e-11,
+              "parameters": [
+                0.0003123332221107263,
+                0.8543911799202839,
+                0.8670246166590021
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 6,
+              "norm": 2.1422863483189966e-12,
+              "parameters": [
+                0.0003123332221107307,
+                0.8543911799202907,
+                0.8670246166590032
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.0006264133464608441,
+            0.3981071705534969,
+            0.8375
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.0003123332221107307,
+            "j_target": 0.8543911799202907,
+            "alpha": 0.8670246166590032
+          }
+        },
+        "reason": null,
+        "converged_to": "root_001",
+        "start_id": "start_002"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 82,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 1.6140811661526628,
+              "parameters": [
+                0.00040289349124101215,
+                0.1359356390878527,
+                0.5225000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 0.39885194785528755,
+              "parameters": [
+                0.0002418231737927922,
+                0.32516560361788627,
+                0.7483930661967209
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 0.19952737183872754,
+              "parameters": [
+                0.0002641514425285859,
+                0.8787080129615267,
+                0.8641779635031113
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 0.03971629077425747,
+              "parameters": [
+                0.0003015242037707211,
+                0.8581637686513403,
+                0.8644637623030205
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.0031546085660437186,
+              "parameters": [
+                0.0003114101356669872,
+                0.85487608233605,
+                0.8668495942911912
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 2.109628294507518e-05,
+              "parameters": [
+                0.0003123269836039242,
+                0.8543944283126795,
+                0.8670234422911526
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 1.4183814113155204e-09,
+              "parameters": [
+                0.0003123332224945791,
+                0.8543911755430689,
+                0.8670246165894019
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 2.164268764201938e-12,
+              "parameters": [
+                0.00031233322290894454,
+                0.8543911753111236,
+                0.867024616666001
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 8.170993581822321e-09,
+              "parameters": [
+                0.00031233322290894454,
+                0.8543911753111236,
+                0.867024616666001
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 1.131510440963335e-10,
+              "parameters": [
+                0.00031233322212201347,
+                0.8543911799325091,
+                0.8670246166619313
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 2,
+              "norm": 1.8989698702218225e-11,
+              "parameters": [
+                0.0003123332221154411,
+                0.8543911799633805,
+                0.8670246166620178
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 3,
+              "norm": 8.62510063367072e-12,
+              "parameters": [
+                0.0003123332221154028,
+                0.8543911799632821,
+                0.8670246166620053
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.000402893491241012,
+            0.1359356390878527,
+            0.5225000000000001
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.0003123332221154028,
+            "j_target": 0.8543911799632821,
+            "alpha": 0.8670246166620053
+          }
+        },
+        "reason": null,
+        "converged_to": "root_001",
+        "start_id": "start_003"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 111,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 0.6904326681378474,
+              "parameters": [
+                0.003660530298260392,
+                3.4145488738336005,
+                0.9950000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 0.595721846162218,
+              "parameters": [
+                0.0021562784077160703,
+                2.5279497765133003,
+                0.9865243656615333
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 0.4181359832985365,
+              "parameters": [
+                0.0012527222214410963,
+                1.3704185168878407,
+                0.9641984124068569
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 0.2370646038723747,
+              "parameters": [
+                0.0004741893113035131,
+                0.8658746691991533,
+                0.9083210354479693
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.15805095377862066,
+              "parameters": [
+                0.00028761035581359906,
+                0.8776784540758685,
+                0.8752566911853704
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 0.01447706932681836,
+              "parameters": [
+                0.00030759892296561286,
+                0.8378784373915585,
+                0.8635610120706066
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 0.0009844516943046718,
+              "parameters": [
+                0.0003119838122080793,
+                0.8543937104934987,
+                0.8669441075122684
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 3.061371846272655e-06,
+              "parameters": [
+                0.00031233231071470653,
+                0.8543916367887416,
+                0.8670244453969045
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 7.651814734458562e-10,
+              "parameters": [
+                0.0003123332226724124,
+                0.854391175409318,
+                0.8670246166212969
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 7.3391908375720224e-09,
+              "parameters": [
+                0.0003123332226724124,
+                0.854391175409318,
+                0.8670246166212969
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 4.179145918127673e-11,
+              "parameters": [
+                0.0003123332221304855,
+                0.8543911798969047,
+                0.8670246166620251
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 2,
+              "norm": 1.6805890012819626e-11,
+              "parameters": [
+                0.00031233322213762094,
+                0.8543911798956667,
+                0.8670246166634576
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 3,
+              "norm": 1.4109158286046805e-11,
+              "parameters": [
+                0.0003123332221376043,
+                0.8543911798955868,
+                0.8670246166634502
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 4,
+              "norm": 1.4029222228274918e-11,
+              "parameters": [
+                0.0003123332221371216,
+                0.85439117988891,
+                0.8670246166630288
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 5,
+              "norm": 8.610667734350718e-12,
+              "parameters": [
+                0.0003123332221371405,
+                0.8543911798887762,
+                0.8670246166630264
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.0036605302982603925,
+            3.414548873833601,
+            0.995
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.0003123332221371405,
+            "j_target": 0.8543911798887762,
+            "alpha": 0.8670246166630264
+          }
+        },
+        "reason": null,
+        "converged_to": "root_001",
+        "start_id": "start_004"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 89,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 2.019519338041695,
+              "parameters": [
+                0.00040289349124101215,
+                0.046415888336127815,
+                0.05000000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 1.806099053133776,
+              "parameters": [
+                0.0003515547446585436,
+                0.04575947952427765,
+                0.12515968291959384
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 1.5933908767384117,
+              "parameters": [
+                0.0002890477929179841,
+                0.05068519957251755,
+                0.28000125010181726
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 1.3336089510290987,
+              "parameters": [
+                0.0002363916425063186,
+                0.07948920346566908,
+                0.5138821729354484
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.8306090484510079,
+              "parameters": [
+                0.00022462558804164223,
+                0.216074057339412,
+                0.7317789231753802
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 0.19273928100000215,
+              "parameters": [
+                0.00025811029328068325,
+                0.5873501836671414,
+                0.8286460952166931
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 0.0701877217704842,
+              "parameters": [
+                0.0002937678297347218,
+                0.8625296017284237,
+                0.8636926607068697
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 0.008149217895624452,
+              "parameters": [
+                0.0003100367188510851,
+                0.8557829966914947,
+                0.8666026196232708
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 0.0001302709884798996,
+              "parameters": [
+                0.0003122947557798923,
+                0.8544113512253417,
+                0.867017377675555
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 9,
+              "norm": 3.2583370803544575e-08,
+              "parameters": [
+                0.00031233321229275063,
+                0.8543911782496291,
+                0.8670246145478557
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 10,
+              "norm": 4.108113849015099e-11,
+              "parameters": [
+                0.00031233322289645176,
+                0.8543911753154121,
+                0.8670246166635894
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 8.060497635199024e-09,
+              "parameters": [
+                0.00031233322289645176,
+                0.8543911753154121,
+                0.8670246166635894
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 7.046652150925623e-11,
+              "parameters": [
+                0.00031233322213206224,
+                0.8543911798975109,
+                0.8670246166623896
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 2,
+              "norm": 9.230394226690952e-12,
+              "parameters": [
+                0.00031233322212328676,
+                0.8543911798925962,
+                0.8670246166603233
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.000402893491241012,
+            0.04641588833612782,
+            0.05
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.00031233322212328676,
+            "j_target": 0.8543911798925962,
+            "alpha": 0.8670246166603233
+          }
+        },
+        "reason": null,
+        "converged_to": "root_001",
+        "start_id": "start_005"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 108,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 1.2185985079462698,
+              "parameters": [
+                0.0015142671606934493,
+                3.4145488738336005,
+                0.9950000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 0.9532333247395813,
+              "parameters": [
+                0.004116204906345277,
+                3.419624381735784,
+                0.9978045131122537
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 0.9525501449355223,
+              "parameters": [
+                0.004151201170808314,
+                3.4256963375149208,
+                0.9978384774078246
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 0.9524043142513283,
+              "parameters": [
+                0.0041686407900895575,
+                3.4286746456074666,
+                0.9978552624332028
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.9305046915141965,
+              "parameters": [
+                0.005905337637555365,
+                3.4807656460808185,
+                0.9986980522088645
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 0.9115428383457268,
+              "parameters": [
+                0.012197122797304227,
+                3.116460146723873,
+                0.9995206456709242
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 0.8013739284675493,
+              "parameters": [
+                0.02594937393779224,
+                2.443212889821893,
+                0.9998236019469172
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 0.40932659981536623,
+              "parameters": [
+                0.07053771163498938,
+                1.64480321812387,
+                0.9998039709217695
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 0.16222672281064965,
+              "parameters": [
+                0.07478861367758705,
+                1.600920372742284,
+                0.9994673171442484
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 9,
+              "norm": 0.06459702611397747,
+              "parameters": [
+                0.08025538998751235,
+                1.5930448232426755,
+                0.9992154733926208
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 10,
+              "norm": 0.00360615730526262,
+              "parameters": [
+                0.07932456083903368,
+                1.6070485116855393,
+                0.9992683059849342
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 11,
+              "norm": 1.3773696495933161e-05,
+              "parameters": [
+                0.07930740478341579,
+                1.6076745727518669,
+                0.999271521096718
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 12,
+              "norm": 2.1424317877624287e-10,
+              "parameters": [
+                0.0793073642782738,
+                1.6076766945935301,
+                0.9992715335408296
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 2.428128809423584e-10,
+              "parameters": [
+                0.0793073642782738,
+                1.6076766945935301,
+                0.9992715335408296
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 5.6066262743571977e-14,
+              "parameters": [
+                0.07930736425114196,
+                1.607676694936453,
+                0.9992715335409442
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.00151426716069345,
+            3.414548873833601,
+            0.995
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.07930736425114196,
+            "j_target": 1.607676694936453,
+            "alpha": 0.9992715335409442
+          }
+        },
+        "reason": null,
+        "converged_to": "root_002",
+        "start_id": "start_006"
+      },
+      {
+        "status": "line_search_failed",
+        "diagnostic": {
+          "evaluations": 196,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 1.2280535818206009,
+              "parameters": [
+                0.0006264133464608439,
+                3.4145488738336005,
+                0.9950000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 1.2108729081671912,
+              "parameters": [
+                0.001702768016788732,
+                3.3768643657635327,
+                0.9978580177803894
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 1.1457340620937457,
+              "parameters": [
+                0.003927859631894219,
+                3.326687427669236,
+                0.9992109403973836
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 1.1371497853822463,
+              "parameters": [
+                0.005932674251079119,
+                3.2616414521862622,
+                0.9997095763364472
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 1.102646951975201,
+              "parameters": [
+                0.007772612545925023,
+                3.07922247934441,
+                0.9998931394871807
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 1.0804602067338167,
+              "parameters": [
+                0.008895169014014062,
+                2.972192908616591,
+                0.9999606855586175
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 1.0693621250758314,
+              "parameters": [
+                0.00943536905700972,
+                2.9230683707288727,
+                0.9999855366658389
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 1.0649263019050896,
+              "parameters": [
+                0.009652813892228572,
+                2.904088049977839,
+                0.9999946791880655
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 1.0632547909867875,
+              "parameters": [
+                0.00973516033247627,
+                2.8970389455041654,
+                0.9999980425760953
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 9,
+              "norm": 1.0626377065527952,
+              "parameters": [
+                0.00976566013763737,
+                2.89445312667354,
+                0.9999992799030969
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 10,
+              "norm": 1.0624111628313229,
+              "parameters": [
+                0.009776880401090017,
+                2.8935066315831857,
+                0.999999735091033
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 11,
+              "norm": 0.7831886571263924,
+              "parameters": [
+                0.015139723824075147,
+                2.0456914830135724,
+                0.999999735063168
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 12,
+              "norm": 0.7504212349966389,
+              "parameters": [
+                0.017208400795038974,
+                2.118078726050854,
+                0.9999997350560763
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 13,
+              "norm": 0.7502832982474796,
+              "parameters": [
+                0.017219765338165986,
+                2.1176682442903894,
+                0.9999999025325612
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.0006264133464608441,
+            3.414548873833601,
+            0.995
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.017219765338165986,
+            "j_target": 2.1176682442903894,
+            "alpha": 0.9999999025325612
+          }
+        },
+        "reason": null,
+        "converged_to": null,
+        "start_id": "start_007"
+      },
+      {
+        "status": "line_search_failed",
+        "diagnostic": {
+          "evaluations": 387,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 1.3601671234938446,
+              "parameters": [
+                0.00025913107726946867,
+                3.4145488738336005,
+                0.9950000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 1.2646940574921859,
+              "parameters": [
+                0.0007043912985306135,
+                3.4021685391561927,
+                0.9978990227171795
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 1.2142740757047814,
+              "parameters": [
+                0.0014974886918267638,
+                3.3699914696749698,
+                0.9992260658107526
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 1.2030074756996678,
+              "parameters": [
+                0.002198174910313973,
+                3.33621269617804,
+                0.9997151461667065
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 1.196328785759567,
+              "parameters": [
+                0.002598311064636629,
+                3.3123919684805685,
+                0.9998951892585456
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 1.192977203533307,
+              "parameters": [
+                0.0027784391673898205,
+                3.2987820246625,
+                0.9999614397282678
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 1.191581724015055,
+              "parameters": [
+                0.0028500160773246865,
+                3.2930133672337454,
+                0.9999858141230064
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 1.1910429706831276,
+              "parameters": [
+                0.002877145183437031,
+                3.290781040605202,
+                0.9999947812607016
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 1.1908412022849242,
+              "parameters": [
+                0.0028872370058512444,
+                3.2899463301348324,
+                0.9999980801267699
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 9,
+              "norm": 1.0998431501399761,
+              "parameters": [
+                0.005162428530733339,
+                3.0041840933166637,
+                0.9999980790151896
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 10,
+              "norm": 1.0996643746594736,
+              "parameters": [
+                0.005171072296475151,
+                3.0033367515093494,
+                0.9999992933083232
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 11,
+              "norm": 0.9347950651086454,
+              "parameters": [
+                0.008663304196320023,
+                2.5470421587845697,
+                0.9999992931476424
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 12,
+              "norm": 0.9346600558832637,
+              "parameters": [
+                0.008671071184002788,
+                2.54647593480097,
+                0.9999997399634334
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 13,
+              "norm": 0.8752841457487974,
+              "parameters": [
+                0.01433962393304334,
+                2.3997451936870875,
+                0.999999739937503
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 14,
+              "norm": 0.8751591945365278,
+              "parameters": [
+                0.014347931821255497,
+                2.3993261474447705,
+                0.9999999043283383
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 15,
+              "norm": 0.735288181964553,
+              "parameters": [
+                0.022708061627095103,
+                2.086155208378764,
+                0.9999999043244825
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 16,
+              "norm": 0.7351638155962871,
+              "parameters": [
+                0.02271875702698196,
+                2.085850117425146,
+                0.9999999648029421
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 17,
+              "norm": 0.6842960707648159,
+              "parameters": [
+                0.03573682621330666,
+                1.9824018775278072,
+                0.9999999648024454
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 18,
+              "norm": 0.5369715879824064,
+              "parameters": [
+                0.052966425060614955,
+                1.7108392609614378,
+                0.999999964802009
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 19,
+              "norm": 0.46953344730202323,
+              "parameters": [
+                0.07521878838136827,
+                1.5992657274709652,
+                0.9999999648016764
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 20,
+              "norm": 0.26263347125715125,
+              "parameters": [
+                0.09167135736858854,
+                1.3003633589467192,
+                0.9999999648014413
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.00025913107726946867,
+            3.414548873833601,
+            0.995
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.09167135736858854,
+            "j_target": 1.3003633589467192,
+            "alpha": 0.9999999648014413
+          }
+        },
+        "reason": null,
+        "converged_to": null,
+        "start_id": "start_008"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 140,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 1.7174024413439457,
+              "parameters": [
+                0.0001666666666666668,
+                0.046415888336127815,
+                0.5225000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 0.7913994728149089,
+              "parameters": [
+                0.0002348732787858504,
+                0.1261714658158804,
+                0.5756288833219685
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 0.49751252636175936,
+              "parameters": [
+                0.00022493996896775755,
+                0.3429696027973493,
+                0.7788286431710911
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 0.18038372060062385,
+              "parameters": [
+                0.00027135212299005205,
+                0.854883813295498,
+                0.8574002204188236
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.044554080282515146,
+              "parameters": [
+                0.0003013436852673502,
+                0.8632155357797969,
+                0.8651134694849298
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 0.003008801713917251,
+              "parameters": [
+                0.0003114630091808446,
+                0.8548800423369619,
+                0.8668620261271879
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 1.8733529836248777e-05,
+              "parameters": [
+                0.00031232768647264234,
+                0.8543940720975206,
+                0.8670235745604136
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 1.4278986871582727e-09,
+              "parameters": [
+                0.0003123332224830678,
+                0.8543911755261843,
+                0.8670246165864469
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 1.5412116027834547e-12,
+              "parameters": [
+                0.00031233322290909546,
+                0.8543911753110276,
+                0.8670246166660261
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 8.201765078536252e-09,
+              "parameters": [
+                0.00031233322290909546,
+                0.8543911753110276,
+                0.8670246166660261
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 6.744671487751851e-11,
+              "parameters": [
+                0.0003123332221082146,
+                0.8543911799268158,
+                0.8670246166587817
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 2,
+              "norm": 3.7839398282107735e-11,
+              "parameters": [
+                0.00031233322211180153,
+                0.8543911799211296,
+                0.8670246166592621
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 3,
+              "norm": 2.872480031653923e-11,
+              "parameters": [
+                0.00031233322211324124,
+                0.8543911799543528,
+                0.8670246166611273
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 4,
+              "norm": 2.052258363270907e-11,
+              "parameters": [
+                0.00031233322211304544,
+                0.8543911799542875,
+                0.8670246166610832
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 5,
+              "norm": 7.423506254183663e-12,
+              "parameters": [
+                0.00031233322211304544,
+                0.8543911799542877,
+                0.8670246166610832
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.0001666666666666667,
+            0.04641588833612782,
+            0.5225000000000001
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.00031233322211304544,
+            "j_target": 0.8543911799542877,
+            "alpha": 0.8670246166610832
+          }
+        },
+        "reason": null,
+        "converged_to": "root_001",
+        "start_id": "start_009"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 195,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 2.3315500217333947,
+              "parameters": [
+                0.003660530298260392,
+                0.3981071705534969,
+                0.9950000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 2.150922990117409,
+              "parameters": [
+                0.0062979071553868424,
+                0.5426878919405242,
+                0.9981547707515924
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 2.043018119296049,
+              "parameters": [
+                0.013247882461012654,
+                0.5008126359220763,
+                0.9993203853869943
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 1.9641440470486453,
+              "parameters": [
+                0.03113807187692038,
+                0.3798300908722061,
+                0.9997498763031158
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 1.9009036249804174,
+              "parameters": [
+                0.049509470007737734,
+                0.3299168423156012,
+                0.9999079700834556
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 1.871063778238068,
+              "parameters": [
+                0.057233508919825246,
+                0.31941924586542775,
+                0.99996614211608
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 1.8595820788692168,
+              "parameters": [
+                0.0600167853544802,
+                0.3167279110047574,
+                0.9999875441139998
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 1.8553401434025056,
+              "parameters": [
+                0.06101448056019972,
+                0.3159044486321447,
+                0.9999954176995396
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 1.853791546450236,
+              "parameters": [
+                0.06137327506139359,
+                0.3156301811051791,
+                0.9999983142609845
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 9,
+              "norm": 1.853226019193729,
+              "parameters": [
+                0.061503301943210645,
+                0.31553443821224075,
+                0.9999993798506122
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 10,
+              "norm": 1.8530191053226819,
+              "parameters": [
+                0.061550679479263855,
+                0.31550021612679663,
+                0.9999997718597005
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 11,
+              "norm": 0.6859372441243673,
+              "parameters": [
+                0.08597256054719886,
+                0.8576185043723727,
+                0.9999997718604348
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 12,
+              "norm": 0.6856257905259951,
+              "parameters": [
+                0.08599187868181614,
+                0.8577321951004934,
+                0.9999993798526083
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 13,
+              "norm": 0.6847764370266083,
+              "parameters": [
+                0.08604447811396916,
+                0.8580434206129218,
+                0.9999983142664106
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 14,
+              "norm": 0.6824584916874226,
+              "parameters": [
+                0.08618750674742937,
+                0.8588990283060677,
+                0.9999954177142893
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 15,
+              "norm": 0.6761394010014289,
+              "parameters": [
+                0.08657396133386243,
+                0.8612667812815067,
+                0.9999875441540931
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 16,
+              "norm": 0.6590413495917385,
+              "parameters": [
+                0.08759539109669467,
+                0.8678864325883653,
+                0.9999661422250602
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 17,
+              "norm": 0.6138977247329244,
+              "parameters": [
+                0.0901177388787337,
+                0.8867366577635178,
+                0.9999079703796604
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 18,
+              "norm": 0.5008276933162232,
+              "parameters": [
+                0.09518120082891857,
+                0.9432761498525531,
+                0.9997498771080299
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 19,
+              "norm": 0.2261657001464412,
+              "parameters": [
+                0.09863598117577041,
+                1.1564090939958227,
+                0.9993203875730977
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 20,
+              "norm": 0.014460487532622943,
+              "parameters": [
+                0.0808616142722534,
+                1.590708353945512,
+                0.9992628634154551
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 21,
+              "norm": 5.144168575066388e-05,
+              "parameters": [
+                0.07931567979642914,
+                1.6075967649726215,
+                0.9992715349578656
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 22,
+              "norm": 5.2840105484737215e-09,
+              "parameters": [
+                0.07930736452625063,
+                1.6076766934089766,
+                0.9992715335462212
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 23,
+              "norm": 9.492406860545539e-14,
+              "parameters": [
+                0.07930736427767289,
+                1.6076766946265695,
+                0.9992715335410229
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 1.1791323473175908e-10,
+              "parameters": [
+                0.07930736427767289,
+                1.6076766946265695,
+                0.9992715335410229
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 1.9340085088968356e-13,
+              "parameters": [
+                0.07930736425113848,
+                1.6076766949365218,
+                0.9992715335409444
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.0036605302982603925,
+            0.3981071705534969,
+            0.995
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.07930736425113848,
+            "j_target": 1.6076766949365218,
+            "alpha": 0.9992715335409444
+          }
+        },
+        "reason": null,
+        "converged_to": "root_002",
+        "start_id": "start_010"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 219,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 2.6282982283891587,
+              "parameters": [
+                0.0015142671606934493,
+                0.3981071705534969,
+                0.9950000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 2.553271229122331,
+              "parameters": [
+                0.004116204906345277,
+                0.41802052005896756,
+                0.9980299017611203
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 2.431935155861234,
+              "parameters": [
+                0.0067813160464255135,
+                0.460442401504366,
+                0.9992743376638811
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 2.3737200648547363,
+              "parameters": [
+                0.010739428795670674,
+                0.4249860231249774,
+                0.9997329212345331
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 2.344987384537601,
+              "parameters": [
+                0.014146165597770502,
+                0.39440420108345253,
+                0.9999017306225709
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 2.3320705313221732,
+              "parameters": [
+                0.0159449500441776,
+                0.38112361883185875,
+                0.9999638464705565
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 2.326983177473874,
+              "parameters": [
+                0.016662380364408372,
+                0.3764827452452395,
+                0.9999866995558313
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 2.3250755138541788,
+              "parameters": [
+                0.01692920150042036,
+                0.3748603386546809,
+                0.999995106998894
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 2.324372419355843,
+              "parameters": [
+                0.01702636697012341,
+                0.3742886598454479,
+                0.9999981999599201
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 9,
+              "norm": 2.3241142230165424,
+              "parameters": [
+                0.017061706905529574,
+                0.37408441464137177,
+                0.9999993378015078
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 10,
+              "norm": 1.144337814372459,
+              "parameters": [
+                0.0244443632681643,
+                1.0168668666293796,
+                0.9999993377801449
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 11,
+              "norm": 1.1441120011818053,
+              "parameters": [
+                0.02447164828884635,
+                1.0166130906682656,
+                0.9999997563828279
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 12,
+              "norm": 1.016385231798196,
+              "parameters": [
+                0.04297026012759647,
+                2.763440890937134,
+                0.9999997563707433
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 13,
+              "norm": 1.016048365770936,
+              "parameters": [
+                0.04297853993795612,
+                2.7629488838074603,
+                0.9999993377472959
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 14,
+              "norm": 1.0151246584624458,
+              "parameters": [
+                0.043001145150625635,
+                2.761607431458032,
+                0.999998199812557
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 15,
+              "norm": 1.0125772133051871,
+              "parameters": [
+                0.04306305935773731,
+                2.7579441529519952,
+                0.9999951065983219
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 16,
+              "norm": 1.0054836583331095,
+              "parameters": [
+                0.04323365768597347,
+                2.747920244009701,
+                0.999986698466982
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 17,
+              "norm": 0.9854028141560052,
+              "parameters": [
+                0.043709392942146104,
+                2.720444660212276,
+                0.9999638435108918
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 18,
+              "norm": 0.9268670668081008,
+              "parameters": [
+                0.045071744836195,
+                2.6452175609209467,
+                0.9999017225783677
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 19,
+              "norm": 0.746161716815987,
+              "parameters": [
+                0.049252026078604794,
+                2.4411817820168014,
+                0.9997328993755046
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 20,
+              "norm": 0.11482512475726464,
+              "parameters": [
+                0.06564066724955865,
+                1.8928631179192934,
+                0.9992742782993831
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 21,
+              "norm": 0.0029713976350173154,
+              "parameters": [
+                0.07941763169595063,
+                1.6061018540210845,
+                0.9992692190249123
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 22,
+              "norm": 5.341099267363624e-06,
+              "parameters": [
+                0.07930742182191793,
+                1.6076755376071574,
+                0.9992715287901387
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 23,
+              "norm": 3.0828561925964087e-11,
+              "parameters": [
+                0.07930736427778827,
+                1.6076766946214838,
+                0.9992715335409953
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 1.206685862342738e-10,
+              "parameters": [
+                0.07930736427778827,
+                1.6076766946214838,
+                0.9992715335409953
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 4.340972026284456e-14,
+              "parameters": [
+                0.07930736425113831,
+                1.607676694936524,
+                0.9992715335409442
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.00151426716069345,
+            0.3981071705534969,
+            0.995
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.07930736425113831,
+            "j_target": 1.607676694936524,
+            "alpha": 0.9992715335409442
+          }
+        },
+        "reason": null,
+        "converged_to": "root_002",
+        "start_id": "start_011"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 122,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 3.061037209710937,
+              "parameters": [
+                0.00025913107726946867,
+                0.046415888336127815,
+                0.8375
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 2.710979224419157,
+              "parameters": [
+                0.0001666666666666668,
+                0.04674631452836577,
+                0.6963684795807045
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 1.9277027999676815,
+              "parameters": [
+                0.00018094183140437444,
+                0.03833970190538528,
+                0.45761815067949885
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 1.0097971630159308,
+              "parameters": [
+                0.00023058647003428476,
+                0.10421811499794542,
+                0.5565329158868824
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.6322482333727916,
+              "parameters": [
+                0.00022296922645425845,
+                0.28329420819517015,
+                0.7607993648921928
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 0.10871952019766673,
+              "parameters": [
+                0.0002665620956208494,
+                0.7700734982446246,
+                0.8494076979797922
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 0.05538695667855937,
+              "parameters": [
+                0.0002988464259274536,
+                0.8652041262294728,
+                0.8647508783254365
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 0.004471042498364824,
+              "parameters": [
+                0.00031105179325939384,
+                0.855132854103719,
+                0.8667865717170966
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 4.037925212108331e-05,
+              "parameters": [
+                0.00031232127920472136,
+                0.8543973883405424,
+                0.8670223663706549
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 9,
+              "norm": 1.2133766221367827e-09,
+              "parameters": [
+                0.00031233322202422613,
+                0.8543911735667573,
+                0.8670246163958725
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 10,
+              "norm": 2.655653474899848e-12,
+              "parameters": [
+                0.00031233322290885075,
+                0.8543911753110438,
+                0.8670246166659749
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 8.068101885822911e-09,
+              "parameters": [
+                0.00031233322290885075,
+                0.8543911753110438,
+                0.8670246166659749
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 1.9286194861495135e-10,
+              "parameters": [
+                0.0003123332221377674,
+                0.8543911798847094,
+                0.8670246166629657
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 2,
+              "norm": 1.7841295109548072e-10,
+              "parameters": [
+                0.0003123332222123984,
+                0.854391179892226,
+                0.8670246166789182
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 3,
+              "norm": 1.433757557226055e-10,
+              "parameters": [
+                0.0003123332221928672,
+                0.8543911798855913,
+                0.8670246166745248
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 4,
+              "norm": 2.5605073617257794e-11,
+              "parameters": [
+                0.00031233322214460776,
+                0.854391179895619,
+                0.8670246166649208
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 5,
+              "norm": 1.4396595027325423e-11,
+              "parameters": [
+                0.0003123332221434798,
+                0.8543911798957287,
+                0.8670246166646888
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 6,
+              "norm": 1.882938249766038e-12,
+              "parameters": [
+                0.00031233322214243285,
+                0.8543911798948975,
+                0.8670246166644294
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.00025913107726946867,
+            0.04641588833612782,
+            0.8375
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.00031233322214243285,
+            "j_target": 0.8543911798948975,
+            "alpha": 0.8670246166644294
+          }
+        },
+        "reason": null,
+        "converged_to": "root_001",
+        "start_id": "start_012"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 141,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 3.069381483333041,
+              "parameters": [
+                0.0006264133464608439,
+                0.046415888336127815,
+                0.8375
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 2.8275752672762224,
+              "parameters": [
+                0.00023044459183834852,
+                0.05302981068695823,
+                0.7139781628535349
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 1.94122631528092,
+              "parameters": [
+                0.00018841374790954749,
+                0.05992276126455557,
+                0.602234549650154
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 0.6241004155201476,
+              "parameters": [
+                0.0002695961932849233,
+                0.16288695305653098,
+                0.5884868267083792
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.38484084278872316,
+              "parameters": [
+                0.00024104542554144549,
+                0.4152223039383105,
+                0.795387759843933
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 0.13308583482102915,
+              "parameters": [
+                0.0002790598140332143,
+                0.8611587083473997,
+                0.8608487493223426
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 0.0260683704561843,
+              "parameters": [
+                0.00030547816128218767,
+                0.8591856023391214,
+                0.8657879383631921
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 0.0011685824223604485,
+              "parameters": [
+                0.0003119913035305665,
+                0.8545765720169176,
+                0.8669604898925545
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 2.8556607389894244e-06,
+              "parameters": [
+                0.00031233237490148054,
+                0.8543916091530321,
+                0.8670244565974906
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 9,
+              "norm": 1.446753604758381e-09,
+              "parameters": [
+                0.0003123332224549614,
+                0.8543911754841799,
+                0.8670246165793906
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 10,
+              "norm": 2.2450930003944712e-12,
+              "parameters": [
+                0.00031233322290865993,
+                0.8543911753111534,
+                0.867024616665941
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 8.036349729107562e-09,
+              "parameters": [
+                0.00031233322290865993,
+                0.8543911753111534,
+                0.867024616665941
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 1.2713174958021038e-10,
+              "parameters": [
+                0.00031233322213884153,
+                0.8543911798622886,
+                0.8670246166621385
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 2,
+              "norm": 3.328848308059678e-11,
+              "parameters": [
+                0.0003123332221190912,
+                0.8543911799208669,
+                0.8670246166607697
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 3,
+              "norm": 1.5978773859742763e-11,
+              "parameters": [
+                0.0003123332221200938,
+                0.8543911799097946,
+                0.8670246166604616
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 4,
+              "norm": 1.0788259174829378e-11,
+              "parameters": [
+                0.0003123332221230404,
+                0.8543911799154799,
+                0.8670246166613464
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 5,
+              "norm": 7.920109013102305e-12,
+              "parameters": [
+                0.0003123332221230443,
+                0.854391179915478,
+                0.8670246166613454
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.0006264133464608441,
+            0.04641588833612782,
+            0.8375
+          ],
+          "invalid_trials": {
+            "sonic_return": 1
+          },
+          "last_parameters": {
+            "theta": 0.0003123332221230443,
+            "j_target": 0.854391179915478,
+            "alpha": 0.8670246166613454
+          }
+        },
+        "reason": null,
+        "converged_to": "root_001",
+        "start_id": "start_013"
+      },
+      {
+        "status": "verification_line_search_failed",
+        "diagnostic": {
+          "evaluations": 113,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 3.071933110009766,
+              "parameters": [
+                0.0009739389917062285,
+                0.1359356390878527,
+                0.5225000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 2.0371819384668837,
+              "parameters": [
+                0.0008181627418031539,
+                0.13304661799012196,
+                0.7483930661967209
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 0.9807939769772186,
+              "parameters": [
+                0.0004489191661743693,
+                0.3616582040204808,
+                0.8206505895495299
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 0.5093124554788031,
+              "parameters": [
+                0.00024283554372277774,
+                0.8826428524998012,
+                0.8505999812622328
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.18294837631072075,
+              "parameters": [
+                0.00028036935905977766,
+                0.9018255319534209,
+                0.8624662899991249
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 0.02739475880236605,
+              "parameters": [
+                0.0003051548579971994,
+                0.8593492018695335,
+                0.8657034418730287
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 0.0012912882756046641,
+              "parameters": [
+                0.00031195530948013476,
+                0.8545953983394158,
+                0.8669536598939586
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 3.533992376516315e-06,
+              "parameters": [
+                0.0003123321787869253,
+                0.8543917227471843,
+                0.8670244202243333
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 4.553595277585663e-10,
+              "parameters": [
+                0.0003123332227713676,
+                0.8543911753761437,
+                0.8670246166403824
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 8.582806613394803e-09,
+              "parameters": [
+                0.0003123332227713676,
+                0.8543911753761437,
+                0.8670246166403824
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 8.84408102347607e-11,
+              "parameters": [
+                0.0003123332218360716,
+                0.8543911800048682,
+                0.8670246166055464
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.0009739389917062284,
+            0.1359356390878527,
+            0.5225000000000001
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.0003123332218360716,
+            "j_target": 0.8543911800048682,
+            "alpha": 0.8670246166055464
+          }
+        },
+        "reason": null,
+        "converged_to": null,
+        "start_id": "start_014"
+      },
+      {
+        "status": "line_search_failed",
+        "diagnostic": {
+          "evaluations": 361,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 3.7463784126724584,
+              "parameters": [
+                0.0001666666666666668,
+                0.005411695265464637,
+                0.05000000000000001
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 3.7459383222525307,
+              "parameters": [
+                0.0001681232874625649,
+                0.005496917065465121,
+                0.04943292207030788
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 3.710641727450328,
+              "parameters": [
+                0.00017945360856431167,
+                0.00622882306936844,
+                0.045943402616165606
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 3.6798358807034224,
+              "parameters": [
+                0.00018498010429356462,
+                0.006630547642922438,
+                0.044740385063658406
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 3.679241749207937,
+              "parameters": [
+                0.0001850645028910228,
+                0.006637025949825923,
+                0.04472580041780505
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 3.679092297354235,
+              "parameters": [
+                0.00018508558935046283,
+                0.00663864651530434,
+                0.04472217843372365
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 3.6790735774320646,
+              "parameters": [
+                0.00018508822496929943,
+                0.006638849113809407,
+                0.04472172618577984
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 3.679064216708101,
+              "parameters": [
+                0.00018508954276128163,
+                0.00663895041538052,
+                0.04472150009813395
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 3.6790595763592933,
+              "parameters": [
+                0.00018509020164523445,
+                0.006639001066745732,
+                0.044721387066525786
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 9,
+              "norm": 3.6790589543380454,
+              "parameters": [
+                0.0001850902840079959,
+                0.006639007398193554,
+                0.04472137293713048
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 10,
+              "norm": 3.6790586336765987,
+              "parameters": [
+                0.00018509032519069924,
+                0.00663901056391973,
+                0.04472136587184464
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 11,
+              "norm": 3.6790586084821957,
+              "parameters": [
+                0.00018509033548643036,
+                0.006639011355351511,
+                0.044721364105598994
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 12,
+              "norm": 3.679058511135631,
+              "parameters": [
+                0.00018509035607710948,
+                0.006639012938215353,
+                0.04472136057328137
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 13,
+              "norm": 3.679053402520149,
+              "parameters": [
+                0.00018509033401262095,
+                0.00663901328005635,
+                0.04472135986167065
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.0001666666666666667,
+            0.0054116952654646375,
+            0.05
+          ],
+          "invalid_trials": {
+            "kinetic_inlet_outside_domain": 258,
+            "sonic_return": 12
+          },
+          "last_parameters": {
+            "theta": 0.00018509033401262095,
+            "j_target": 0.00663901328005635,
+            "alpha": 0.04472135986167065
+          }
+        },
+        "reason": null,
+        "converged_to": null,
+        "start_id": "start_015"
+      },
+      {
+        "status": "converged",
+        "diagnostic": {
+          "evaluations": 106,
+          "history": [
+            {
+              "phase": "search",
+              "iteration": 0,
+              "norm": 4.082661038992222,
+              "parameters": [
+                0.00040289349124101215,
+                0.01584893192461114,
+                0.365
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 1,
+              "norm": 2.43861028087621,
+              "parameters": [
+                0.0002737022687374908,
+                0.043081863651154906,
+                0.39353984512104767
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 2,
+              "norm": 1.195991391451064,
+              "parameters": [
+                0.0002277404648746974,
+                0.11710864709908463,
+                0.6264724090592301
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 3,
+              "norm": 0.5772836837852459,
+              "parameters": [
+                0.0002380402858464966,
+                0.31833430736486484,
+                0.7726693457010024
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 4,
+              "norm": 0.10286805734507098,
+              "parameters": [
+                0.0002763094388526171,
+                0.8223950267476603,
+                0.8572230971028217
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 5,
+              "norm": 0.030843680234787403,
+              "parameters": [
+                0.0003042677614071561,
+                0.859974605922804,
+                0.8655778553242116
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 6,
+              "norm": 0.0016100466331205442,
+              "parameters": [
+                0.0003118637005086981,
+                0.8546489211772196,
+                0.8669367652223771
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 7,
+              "norm": 5.400403572238632e-06,
+              "parameters": [
+                0.0003123316149071763,
+                0.8543919852569913,
+                0.8670243126152509
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 8,
+              "norm": 1.1587244490522149e-09,
+              "parameters": [
+                0.0003123332225515109,
+                0.8543911754627506,
+                0.8670246165985096
+              ]
+            },
+            {
+              "phase": "search",
+              "iteration": 9,
+              "norm": 2.420508238284837e-12,
+              "parameters": [
+                0.00031233322290879584,
+                0.8543911753111205,
+                0.8670246166659688
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 0,
+              "norm": 8.599871851652929e-09,
+              "parameters": [
+                0.00031233322290879584,
+                0.8543911753111205,
+                0.8670246166659688
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 1,
+              "norm": 3.598650266019877e-10,
+              "parameters": [
+                0.00031233322208058985,
+                0.8543911801849394,
+                0.8670246166651996
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 2,
+              "norm": 1.868787346917775e-10,
+              "parameters": [
+                0.0003123332221065968,
+                0.8543911799544955,
+                0.8670246166597447
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 3,
+              "norm": 6.568778854403684e-11,
+              "parameters": [
+                0.00031233322213908846,
+                0.8543911798758262,
+                0.8670246166628222
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 4,
+              "norm": 1.017586015445256e-11,
+              "parameters": [
+                0.00031233322212744673,
+                0.8543911799030214,
+                0.8670246166616787
+              ]
+            },
+            {
+              "phase": "verification",
+              "iteration": 5,
+              "norm": 8.321676681112486e-12,
+              "parameters": [
+                0.0003123332221272104,
+                0.8543911799025655,
+                0.8670246166616075
+              ]
+            }
+          ],
+          "initial_guess": [
+            0.000402893491241012,
+            0.01584893192461114,
+            0.365
+          ],
+          "invalid_trials": {},
+          "last_parameters": {
+            "theta": 0.0003123332221272104,
+            "j_target": 0.8543911799025655,
+            "alpha": 0.8670246166616075
+          }
+        },
+        "reason": null,
+        "converged_to": "root_001",
+        "start_id": "start_016"
+      }
+    ],
+    "n_solutions": 2,
+    "duplicate_convergences": 10,
+    "warning": "Multistart local search, not proof of existence, absence or completeness."
+  },
+  "warning": "Finite grid and multistart correction are not a completeness/nonexistence proof. Root IDs are discoveries, not physical branches. PRB includes bremsstrahlung.",
+  "summary": {
+    "n_trials": 1792,
+    "n_valid": 312,
+    "statuses": {
+      "adas_outside_domain": 778,
+      "integrated": 312,
+      "state_outside_domain": 670,
+      "sonic_return": 32
+    },
+    "reason_counts": {
+      "Query outside ACD12/PRB12: T_eV in (np.float64(0.20000000199681048), np.float64(10000.0)), n_e_cm3 in (np.float64(49999999.5007974), np.float64(2000000019968108.2)). No extrapolation.": 778,
+      "Nonpositive particle flux or reconstructed H.": 670
+    },
+    "warning": "Finite grid only: samples, sign-changing cells and selected starts do not prove existence, absence, uniqueness or completeness of roots.",
+    "unresolved_numerical_count": 0,
+    "nearest_sample_not_root": {
+      "theta": 0.00025913107726946867,
+      "j_target": 0.1359356390878527,
+      "alpha": 0.5225000000000001,
+      "residual_norm": 0.49689463190052896,
+      "F_J": -0.06233170131465105,
+      "F_M": -0.4568739198447195,
+      "F_E": 0.49689463190052896,
+      "R_J": -0.060428821898128704,
+      "R_M": -0.5842657205558532,
+      "R_E": 0.49689463190052896
+    },
+    "candidate_cell_count": 7
+  }
+}

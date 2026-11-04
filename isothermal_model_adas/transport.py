@@ -11,7 +11,7 @@ from scipy.integrate import solve_ivp, simpson
 from .geometry import quadratic_area_legacy
 from .inlet import evaluate_inlet, KineticInletDomainError
 from .recombination_adas import ADASDomainError
-from .sources import coefficients_at, ionization_at, excitation_at, adas_sources
+from .sources import TemperatureOnly, coefficients_at, ionization_at, excitation_at, adas_sources
 
 
 class StateDomainError(ValueError):
@@ -77,6 +77,7 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
     D is a scalar or D(theta), evaluated once because the layer is isothermal.
     ionization is a pair or (theta,N)->(D_ion,E_ion), evaluated LOCALLY.
     excitation is a nonnegative E_exc or local (theta,N)->E_exc from PLT.
+    TemperatureOnly providers are evaluated before entering the ODE loop.
     Default off preserves the old calls. Positive j_target>1 is permitted.
     """
     theta, jt, alpha, beta, lam, rtol, atol, max_step = map(float,
@@ -107,6 +108,10 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
     N_t = b*jt/(4*beta*theta*wall_area)
     try:
         D_value = cx_coefficient(D, theta)
+        if isinstance(ionization, TemperatureOnly):
+            ionization = ionization.at_temperature(theta)
+        if isinstance(excitation, TemperatureOnly):
+            excitation = excitation.at_temperature(theta)
         R_t, Q_t = coefficients_at(recombination, theta, N_t)
         D_ion_t, E_ion_t = ionization_at(ionization, theta, N_t)
         E_exc_t = excitation_at(excitation, theta, N_t)

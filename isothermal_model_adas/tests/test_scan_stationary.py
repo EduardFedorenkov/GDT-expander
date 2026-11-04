@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 import numpy as np
 
+from isothermal_model_adas import atomic_coefficients as atomic
 from isothermal_model_adas import scan_stationary as cli
 from isothermal_model_adas import stationary
 from isothermal_model_adas import residual_map
@@ -126,25 +127,25 @@ class ScanCLITests(unittest.TestCase):
 
     def test_setup_tracks_all_active_data_and_disabled_channels_need_no_tables(self):
         with tempfile.TemporaryDirectory() as folder:
-            args = cli.build_parser().parse_args(self.arguments(Path(folder)/'out'))
+            args = cli.build_parser().parse_args(self.arguments(Path(folder)/'out', '--atomic-model', 'full-adas'))
             prepared = cli._prepare(args)
             self.assertEqual(set(prepared[5]['data_sha256']),
                 {'acd12_h.dat', 'prb12_h.dat', 'ccd96_d.dat', 'scd12_h.dat', 'plt12_h.dat'})
             self.assertTrue(callable(prepared[3]['D']))
             args = cli.build_parser().parse_args(self.arguments(Path(folder)/'off',
-                '--rr-scale', '0', '--density', '0', '--temperature-min', '.001'))
-            with patch.object(cli, 'ADASRecombination', side_effect=AssertionError('loaded disabled table')), \
-                 patch.object(cli, 'ADASCX', side_effect=AssertionError('loaded disabled table')), \
-                 patch.object(cli, 'ADASIonization', side_effect=AssertionError('loaded disabled table')), \
-                 patch.object(cli, 'ADASExcitation', side_effect=AssertionError('loaded disabled table')):
+                '--rr-scale', '0', '--density', '0', '--temperature-min', '.001', '--atomic-model', 'full-adas'))
+            with patch.object(atomic, 'ADASRecombination', side_effect=AssertionError('loaded disabled table')), \
+                 patch.object(atomic, 'ADASCX', side_effect=AssertionError('loaded disabled table')), \
+                 patch.object(atomic, 'ADASIonization', side_effect=AssertionError('loaded disabled table')), \
+                 patch.object(atomic, 'ADASExcitation', side_effect=AssertionError('loaded disabled table')):
                 prepared = cli._prepare(args)
             self.assertEqual(prepared[5]['data_sha256'], {})
             self.assertEqual(prepared[3]['D'], 0.)
 
     def test_density_override_uses_CCD_not_a_constant(self):
-        with tempfile.TemporaryDirectory() as folder, patch.object(cli, 'ADASCX', wraps=ADASCX) as reader:
+        with tempfile.TemporaryDirectory() as folder, patch.object(atomic, 'ADASCX', wraps=ADASCX) as reader:
             args = cli.build_parser().parse_args(self.arguments(Path(folder)/'out',
-                '--density', '2e13', '--lambda-sh', '5'))
+                '--density', '2e13', '--lambda-sh', '5', '--atomic-model', 'full-adas'))
             p, _, _, processes, _, provenance, *_ = cli._prepare(args)
         reader.assert_called_once()
         self.assertIn('ccd96_d.dat', provenance['data_sha256'])
@@ -225,7 +226,7 @@ class ScanCLITests(unittest.TestCase):
             self.assertEqual(report['kind'], 'stationary_scan_3d')
             self.assertEqual(report['format_version'], 2)
             self.assertEqual(set(report['model_options']),
-                {'rr_scale', 'ionization_scale', 'excitation_scale', 'inlet_momentum'})
+                {'atomic_model', 'rr_scale', 'ionization_scale', 'excitation_scale', 'inlet_momentum'})
             self.assertEqual(report['solutions'], [])
             self.assertTrue((output/'source_config.json').exists())
             self.assertTrue((output/'geometry.json').exists())

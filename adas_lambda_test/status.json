@@ -1,0 +1,13 @@
+{
+  "format_version": 1,
+  "stage": "interrupted",
+  "n_completed": 12,
+  "n_total": 32,
+  "active_case": "L001_N004",
+  "lambda_sh": 8.0,
+  "n0_cm3": 100000000000000.0,
+  "error": {
+    "type": "KeyboardInterrupt",
+    "message": ""
+  }
+}

@@ -7,7 +7,19 @@ cost, but no conservative momentum for cold stationary atoms. Per g, not xi.
 PLT adds excitation radiation ONLY, separately from I*SCD and PRB.
 """
 
+from functools import lru_cache
+
 import numpy as np
+
+
+class TemperatureOnly:
+    """A cached theta-only coefficient compatible with local source APIs."""
+
+    def __init__(self, evaluate):
+        self.at_temperature = lru_cache(maxsize=512)(evaluate)
+
+    def __call__(self, theta, N):
+        return self.at_temperature(theta)
 
 
 def coefficients_at(provider, theta, N):

@@ -13,6 +13,7 @@ import numpy as np
 from scipy.integrate import simpson
 from isothermal_model_adas import transport as tr
 from isothermal_model_adas import stationary as stationary
+from isothermal_model_adas import atomic_coefficients as atomic
 from isothermal_model_adas import run_stationary as cli
 from isothermal_model_adas.geometry import constant_B, quadratic_area_legacy
 from isothermal_model_adas.sources import adas_sources, ionization_at
@@ -204,10 +205,10 @@ class CommandTests(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         output=Path(temp.name)/'output'
         argv=['run_stationary','--config',str(PACKAGE/'config.json'),'--guess','5','2','.8',
-              '--scale','0','--excitation-scale','0','--output',str(output),*extra]
+              '--atomic-model','full-adas','--scale','0','--excitation-scale','0','--output',str(output),*extra]
         outcome=dict(status='mock_not_solved',diagnostic=dict(evaluations=0))
         with patch.object(sys,'argv',argv),patch.object(cli,'solve_stationary',return_value=outcome) as solver:
-            with patch.object(cli,'ADASRecombination',side_effect=AssertionError('ACD/PRB off')):
+            with patch.object(atomic,'ADASRecombination',side_effect=AssertionError('ACD/PRB off')):
                 self.assertEqual(cli.main(),1)
         return solver,json.loads((output/'report.json').read_text())
 
@@ -224,14 +225,14 @@ class CommandTests(unittest.TestCase):
         self.assertGreater(solver.call_args.kwargs['j_bounds'][1],1.)
 
     def test_off_scale_does_not_load_SCD(self):
-        with patch.object(cli,'ADASIonization',side_effect=AssertionError('SCD off')):
+        with patch.object(atomic,'ADASIonization',side_effect=AssertionError('SCD off')):
             solver,report=self.mocked_run(['--ionization-scale','0'])
         self.assertEqual(solver.call_args.kwargs['ionization'],(0.,0.))
         self.assertEqual(set(report['data_sha256']),{'ccd96_d.dat'})
         self.assertIsNotNone(solver.call_args.kwargs['theta_bounds'])
 
     def test_zero_neutrals_disable_both_neutral_channels(self):
-        with patch.object(cli,'ADASIonization',side_effect=AssertionError('No SCD')):
+        with patch.object(atomic,'ADASIonization',side_effect=AssertionError('No SCD')):
             solver,report=self.mocked_run(['--density','0'])
         self.assertEqual(solver.call_args.kwargs['D'],0.)
         self.assertEqual(solver.call_args.kwargs['ionization'],(0.,0.))
