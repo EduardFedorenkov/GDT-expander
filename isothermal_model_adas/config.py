@@ -1,10 +1,38 @@
-"""CGS source scales and prescribed-neutral parameters for CX/ionization."""
+"""CGS source scales and prescribed neutral-gas parameters."""
 
 import json
 from pathlib import Path
+from typing import NamedTuple
 import numpy as np
 from .constants import EV_TO_ERG, M_D_G
 from .boundary_fluxes import throat_fluxes
+
+
+class NeutralDensities(NamedTuple):
+    n_d_cm3: float
+    n_d2_cm3: float
+
+
+def _neutral_parameters(parameters):
+    try:
+        n0 = float(parameters.get('n0_cm3', 0.))
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError('n0_cm3 must be finite and nonnegative.') from error
+    if not np.isfinite(n0) or n0 < 0:
+        raise ValueError('n0_cm3 must be finite and nonnegative.')
+    try:
+        fraction = float(parameters.get('molecular_fraction', 0.))
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError('molecular_fraction must be finite and in [0, 1].') from error
+    if not np.isfinite(fraction) or not 0 <= fraction <= 1:
+        raise ValueError('molecular_fraction must be finite and in [0, 1].')
+    return n0, fraction
+
+
+def neutral_densities(parameters):
+    """Split the current n0 by particle number, not by deuterium nuclei."""
+    n0, fraction = _neutral_parameters(parameters)
+    return NeutralDensities((1-fraction)*n0, fraction*n0)
 
 
 def load_config(path):
@@ -50,13 +78,6 @@ def load_config(path):
                              'n_star_cm3', 'beta')]
     if not np.isfinite(scales).all() or min(scales) <= 0:
         raise ValueError('Derived scales are not representable.')
-    # No n0 disables CX, ionization and PLT. Legacy constant k_cx fields
-    # are accepted as unused JSON keys, never propagated into ADAS parameters.
-    try:
-        n0 = float(config.get('n0_cm3', 0.))
-    except (TypeError, ValueError, OverflowError) as error:
-        raise ValueError('Invalid optional CX field: n0_cm3') from error
-    if not np.isfinite(n0) or n0 < 0:
-        raise ValueError('n0_cm3 must be finite and nonnegative.')
-    p['n0_cm3'] = n0
+    # Keep composition inputs, not cached densities: a scan can override n0.
+    p['n0_cm3'], p['molecular_fraction'] = _neutral_parameters(config)
     return p

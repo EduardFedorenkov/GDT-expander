@@ -4,6 +4,7 @@ from functools import lru_cache
 import hashlib
 from pathlib import Path
 
+from .config import neutral_densities
 from .cx_adas import ADASCX, make_D
 from .exitation_adas import ADASExcitation, make_E_exc
 from .ionization_adas import ADASIonization, make_ionization_coefficients
@@ -25,6 +26,10 @@ def build_atomic_coefficients(p, mode, rr_scale, ionization_scale, excitation_sc
     """Return RR provider, other providers, active table objects and paths."""
     if mode not in ATOMIC_MODELS:
         raise ValueError(f'Unknown atomic model: {mode}')
+    if neutral_densities(p).n_d2_cm3 > 0:
+        raise ValueError('Molecular densities can be used to evaluate coefficients, but '
+                         'MAR/MAD/MAI are not wired into transport yet. Set molecular_fraction=0 '
+                         'for an atomic-only stationary solve.')
     rr = ADASRecombination() if rr_scale else None
     recombination = make_adas_coefficients(p, rr_scale, data=rr)
     tables = [rr] if rr is not None else []

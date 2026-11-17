@@ -12,8 +12,10 @@ from typing import NamedTuple
 
 import numpy as np
 
+from .config import neutral_densities
 
 AMJUEL_PATH = Path(__file__).resolve().parent / 'processes_data' / 'amjuel_molecular_h4.json'
+MAD_FRAGMENT_ENERGY_EV = (1.5 + 4.3) / 2
 _REACTIONS = (('MAR', '3.2.3r'), ('MAD', '3.2.3d'), ('MAI', '3.2.3i'))
 _DENSITY_SCALE_CM3 = 1e8
 
@@ -130,6 +132,8 @@ def make_molecular_coefficients(parameters, scale=0., n_d2_v0_cm3=None, *, data=
     For a constant ground-state molecular density, D_X = scale*L*n_D2(v=0)
     /u_star * K_X(theta*T_star_eV, N*n_star_cm3). N is the local plasma
     density normalized by n_star; it is not the molecular density.
+    If given only the gas composition, approximate n_D2(v=0) by n_D2.
+    An explicit ground-state density overrides this approximation.
     """
     scale = _parameter(scale, 'Molecular scale', allow_zero=True)
     if scale > 1:
@@ -137,8 +141,11 @@ def make_molecular_coefficients(parameters, scale=0., n_d2_v0_cm3=None, *, data=
     if scale == 0:
         return MolecularRates(0., 0., 0.)
     key = 'n_d2_v0_cm3'
-    n_d2_v0_cm3 = _parameter(
-        parameters.get(key) if n_d2_v0_cm3 is None else n_d2_v0_cm3, key, allow_zero=True)
+    if n_d2_v0_cm3 is None:
+        n_d2_v0_cm3 = parameters.get(key)
+        if n_d2_v0_cm3 is None and 'molecular_fraction' in parameters:
+            n_d2_v0_cm3 = neutral_densities(parameters).n_d2_cm3
+    n_d2_v0_cm3 = _parameter(n_d2_v0_cm3, key, allow_zero=True)
     if n_d2_v0_cm3 == 0:
         return MolecularRates(0., 0., 0.)
     length, speed, temperature, density = (_parameter(parameters.get(key), key) for key in

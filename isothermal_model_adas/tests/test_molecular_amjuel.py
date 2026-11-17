@@ -8,6 +8,8 @@ import unittest
 import numpy as np
 
 from isothermal_model_adas import molecular_amjuel as amjuel
+from isothermal_model_adas.atomic_coefficients import build_atomic_coefficients
+from isothermal_model_adas.config import load_config, neutral_densities
 
 
 class TestAMJUELMolecular(unittest.TestCase):
@@ -61,6 +63,44 @@ class TestAMJUELMolecular(unittest.TestCase):
             {}, scale=1., n_d2_v0_cm3=0.), (0., 0., 0.))
         with self.assertRaisesRegex(ValueError, 'n_d2_v0_cm3'):
             amjuel.make_molecular_coefficients({}, scale=1.)
+
+    def test_config_split_and_density_override(self):
+        example = Path(amjuel.__file__).with_name('config.json')
+        config = json.loads(example.read_text(encoding='utf-8-sig'))
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / 'config.json'
+            config.pop('molecular_fraction', None)
+            path.write_text(json.dumps(config), encoding='utf-8')
+            p = load_config(path)
+            self.assertEqual(neutral_densities(p), (p['n0_cm3'], 0.))
+            config.update(n0_cm3=1e13, molecular_fraction=.3)
+            path.write_text(json.dumps(config), encoding='utf-8')
+            p = load_config(path)
+            np.testing.assert_allclose(neutral_densities(p), (7e12, 3e12), rtol=1e-14)
+            p['n0_cm3'] = 2e13
+            np.testing.assert_allclose(neutral_densities(p), (1.4e13, 6e12), rtol=1e-14)
+
+    def test_fraction_validation_and_boundaries(self):
+        for fraction in (-.1, 1.1, float('nan'), float('inf'), None):
+            with self.subTest(fraction=fraction), self.assertRaisesRegex(ValueError, 'molecular_fraction'):
+                neutral_densities(dict(n0_cm3=1e13, molecular_fraction=fraction))
+        self.assertEqual(neutral_densities(dict(n0_cm3=1e13, molecular_fraction=1.)), (0., 1e13))
+        self.assertEqual(neutral_densities(dict(n0_cm3=0., molecular_fraction=.3)), (0., 0.))
+
+    def test_molecular_provider_from_fraction_and_fragment_energy(self):
+        parameters = dict(self.parameters, n0_cm3=1e13, molecular_fraction=.3)
+        del parameters['n_d2_v0_cm3']
+        provider = amjuel.make_molecular_coefficients(parameters, scale=1., data=self.data)
+        explicit = amjuel.make_molecular_coefficients(
+            parameters, scale=1., n_d2_v0_cm3=3e12, data=self.data)
+        np.testing.assert_allclose(provider(.5, 1.), explicit(.5, 1.), rtol=1e-14)
+        self.assertAlmostEqual(amjuel.MAD_FRAGMENT_ENERGY_EV, 2.9)
+
+    def test_stationary_pipeline_does_not_silently_ignore_molecules(self):
+        p = dict(self.parameters, n0_cm3=1e13, molecular_fraction=.3)
+        for mode in ('hybrid', 'full-adas'):
+            with self.subTest(mode=mode), self.assertRaisesRegex(ValueError, 'not wired into transport'):
+                build_atomic_coefficients(p, mode, 0., 0., 0.)
 
     def test_invalid_matrix_and_explicit_temperature_range(self):
         doc = json.loads(amjuel.AMJUEL_PATH.read_text(encoding='utf-8-sig'))
