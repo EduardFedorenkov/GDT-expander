@@ -21,7 +21,8 @@ def build_parser():
     parser.add_argument('--lambda-min', type=float, default=5.)
     parser.add_argument('--lambda-max', type=float, default=9.)
     parser.add_argument('--lambda-count', type=int, default=5)
-    parser.add_argument('--densities', type=float, nargs='+', help='Neutral densities [cm^-3]; zero is a control case.')
+    parser.add_argument('--densities', type=float, nargs='+',
+                        help='Total neutral densities n_D+n_D2 [cm^-3]; zero is a control case.')
     parser.add_argument('--n0-min', type=float, default=1e12)
     parser.add_argument('--n0-max', type=float, default=1e15)
     parser.add_argument('--n0-count', type=int, default=7)

@@ -10,8 +10,11 @@ import numpy as np
 from scipy.integrate import solve_ivp, simpson
 from .geometry import quadratic_area_legacy
 from .inlet import evaluate_inlet, KineticInletDomainError
-from .recombination_adas import ADASDomainError
-from .sources import TemperatureOnly, coefficients_at, ionization_at, excitation_at, adas_sources
+from .molecular_amjuel import AMJUELDomainError, MAD_FRAGMENT_ENERGY_EV
+from .recombination_adas import ADASDomainError, IONIZATION_ENERGY_EV
+from .sources import (D2_DISSOCIATION_ENERGY_EV, MAR_ELECTRON_ENERGY_FACTOR,
+    TemperatureOnly, adas_sources, coefficients_at, excitation_at, ionization_at,
+    molecular_at, molecular_sources)
 
 
 class StateDomainError(ValueError):
@@ -43,19 +46,24 @@ def cx_coefficient(D, theta):
     return value
 
 
-def wall_slope_per_j(theta, jt, beta, R_t, D, geometry, *, D_ion_t=0.):
+def wall_slope_per_j(theta, jt, beta, R_t, D, geometry, *, D_ion_t=0., molecular_t=(0., 0., 0.)):
     """F_g(1)/j_t for F=mu-sqrt(8*beta*theta)*j; coefficients already evaluated."""
     b = sqrt(8*beta*theta)
     geom = -.5*b*float(geometry.dlnB_dg(1.))
     rec = R_t*b*jt/(4*beta*theta*float(geometry.A_ratio(1.)))
-    slope = geom-D-2*D_ion_t+rec
+    D_mar, D_mad, D_mai = molecular_t
+    # At the wall b*A*N/j_t = 2. Combine -D_sum from mu_g with
+    # -2*(D_MAI-D_MAR) from -b*j_g/j_t.
+    slope = geom-D-2*D_ion_t+rec+D_mar-D_mad-3*D_mai
     if not isfinite(slope):
         raise ValueError('Unrepresentable wall derivative.')
-    tolerance = 64*np.finfo(float).eps*max(1., abs(geom), D, 2*abs(D_ion_t), abs(rec))
+    tolerance = 64*np.finfo(float).eps*max(
+        1., abs(geom), D, 2*abs(D_ion_t), abs(rec), abs(D_mar), abs(D_mad), 3*abs(D_mai))
     return slope, tolerance
 
 
-def rhs_g(g, state, *, theta, beta, recombination, geometry, D=0., ionization=(0., 0.), excitation=0.):
+def rhs_g(g, state, *, theta, beta, recombination, geometry, D=0.,
+          ionization=(0., 0.), excitation=0., molecular=None, T_star_eV=None):
     """Right-hand side per g. D is the frozen nonnegative CX coefficient."""
     H, area, N, v = reconstruct(g, state, theta, beta, geometry)
     R, Q = coefficients_at(recombination, theta, N)
@@ -63,11 +71,18 @@ def rhs_g(g, state, *, theta, beta, recombination, geometry, D=0., ionization=(0
     E_exc = excitation_at(excitation, theta, N)
     particles, momentum, energy = adas_sources(state[0], N, v, area,
         theta=theta, beta=beta, R=R, Q_eff=Q, D=D, D_ion=D_ion, E_ion=E_ion, E_exc=E_exc)
+    if molecular is not None:
+        if T_star_eV is None:
+            raise ValueError('T_star_eV is required for molecular sources.')
+        j_mol, mu_mol, omega_mol = molecular_sources(state[0], N, v, area,
+            theta=theta, beta=beta, T_star_eV=T_star_eV, molecular=molecular)
+        particles, momentum, energy = particles+j_mol, momentum+mu_mol, energy+omega_mol
     return np.array([particles, -.5*geometry.dlnB_dg(g)*H+momentum, energy])
 
 
 def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
-                geometry=None, *, D=0., ionization=(0., 0.), excitation=0., inlet_momentum=None, n_points=1200,
+                geometry=None, *, D=0., ionization=(0., 0.), excitation=0.,
+                molecular=None, T_star_eV=None, inlet_momentum=None, n_points=1200,
                 rtol=1e-9, atol=1e-11, max_step=.02):
     """An IVP, NOT a BVP solution. Return status and all three inlet residuals.
 
@@ -77,6 +92,8 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
     D is a scalar or D(theta), evaluated once because the layer is isothermal.
     ionization is a pair or (theta,N)->(D_ion,E_ion), evaluated LOCALLY.
     excitation is a nonnegative E_exc or local (theta,N)->E_exc from PLT.
+    molecular is None (off), a triple or a local (theta,N)->(D_MAR,D_MAD,D_MAI).
+    A specified molecular provider requires a positive T_star_eV for energy costs.
     TemperatureOnly providers are evaluated before entering the ODE loop.
     Default off preserves the old calls. Positive j_target>1 is permitted.
     """
@@ -86,6 +103,10 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
         raise ValueError('Positive finite theta,j_target,beta,lambda,tolerances required.')
     if not isinstance(n_points, (int, np.integer)) or n_points < 2:
         raise ValueError('n_points must be an integer >=2.')
+    if molecular is not None:
+        if T_star_eV is None or not isfinite(float(T_star_eV)) or float(T_star_eV) <= 0:
+            raise ValueError('Molecular sources require a finite positive T_star_eV.')
+        T_star_eV = float(T_star_eV)
     geometry = quadratic_area_legacy() if geometry is None else geometry
     if not isfinite(alpha) or not geometry.g_min < alpha < 1:
         raise ValueError('Require geometry.g_min < alpha < 1.')
@@ -115,13 +136,20 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
         R_t, Q_t = coefficients_at(recombination, theta, N_t)
         D_ion_t, E_ion_t = ionization_at(ionization, theta, N_t)
         E_exc_t = excitation_at(excitation, theta, N_t)
+        molecular_t = (0., 0., 0.) if molecular is None else molecular_at(molecular, theta, N_t)
     except ADASDomainError as error:
         return stop('adas_outside_domain', error)
-    slope, tolerance = wall_slope_per_j(theta, jt, beta, R_t, D_value, geometry, D_ion_t=D_ion_t)
+    except AMJUELDomainError as error:
+        return stop('amjuel_outside_domain', error)
+    slope, tolerance = wall_slope_per_j(theta, jt, beta, R_t, D_value, geometry,
+                                       D_ion_t=D_ion_t, molecular_t=molecular_t)
     result.update(D=D_value, wall_slope_per_j=slope, R_wall=R_t, Q_eff_wall=Q_t,
                   N_wall=N_t, D_ion_wall=D_ion_t, E_ion_wall=E_ion_t, E_exc_wall=E_exc_t)
+    if molecular is not None:
+        result.update(T_star_eV=T_star_eV, D_mar_wall=molecular_t[0],
+                      D_mad_wall=molecular_t[1], D_mai_wall=molecular_t[2])
     if slope > tolerance:
-        return stop('inadmissible_wall', 'Geometry, recombination, CX and ionization cannot launch a backward subsonic branch.')
+        return stop('inadmissible_wall', 'Geometry and active sources cannot launch a backward subsonic branch.')
     if abs(slope) <= tolerance:
         return stop('critical_wall_unresolved', 'First wall derivative is zero within numerical tolerance.')
 
@@ -130,7 +158,8 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
     def rhs(xi, state):
         return length*rhs_g(alpha+length*xi, state, theta=theta, beta=beta,
                             recombination=recombination, geometry=geometry, D=D_value,
-                            ionization=ionization, excitation=excitation)
+                            ionization=ionization, excitation=excitation,
+                            molecular=molecular, T_star_eV=T_star_eV)
 
     def sonic_return(xi, state):
         return state[1]-b*state[0]
@@ -144,6 +173,8 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
                 max_step=max_step, first_step=min(1e-4, max_step))
     except ADASDomainError as error:
         return stop('adas_outside_domain', error)
+    except AMJUELDomainError as error:
+        return stop('amjuel_outside_domain', error)
     except StateDomainError as error:
         return stop('state_outside_domain', error)
     except (FloatingPointError, OverflowError) as error:
@@ -169,14 +200,21 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
         R, Q = coefficients_at(recombination, theta, N)
         D_ion, E_ion = ionization_at(ionization, theta, N)
         E_exc = excitation_at(excitation, theta, N)
+        D_mai = 0.
+        if molecular is not None:
+            D_mar, D_mad, D_mai = molecular_at(molecular, theta, N)
+            result.update(D_mar_profile=D_mar, D_mad_profile=D_mad, D_mai_profile=D_mai)
         inlet = evaluate_inlet(alpha, inlet_momentum)
     except ADASDomainError as error:
         return stop('adas_outside_domain', error)
+    except AMJUELDomainError as error:
+        return stop('amjuel_outside_domain', error)
     except KineticInletDomainError as error:
         return stop('kinetic_inlet_outside_domain', error)
-    # Only enforce decreasing J if ionization vanishes across the profile.
-    if not np.any(D_ion > 0) and np.any(np.diff(j) > 50*(atol+rtol*(1+float(np.max(j))))):
-        return stop('profile_validation_failed', 'Particle flux increases without ionization.')
+    # MAI can increase J even if the atomic ionization channel is off.
+    if (not np.any(D_ion > 0) and not np.any(D_mai > 0)
+            and np.any(np.diff(j) > 50*(atol+rtol*(1+float(np.max(j)))))):
+        return stop('profile_validation_failed', 'Particle flux increases without ionization or MAI.')
     result.update(xi=xi, g=g, j=j, mu=mu, omega=omega, H=H,
         A_over_A_star=area, n_over_n_star=N, u_over_u_star=v,
         u_over_cs=2*v/b, R_profile=R, Q_eff_profile=Q,
@@ -187,14 +225,14 @@ def solve_trial(theta, j_target, alpha, beta, lambda_sh, recombination,
     return stop('integrated')
 
 
-def balance_checks(state, recombination, ionization=None, *, excitation=None):
-    """Independent dimensional-form budgets, not a call to adas_sources.
+def balance_checks(state, recombination, ionization=None, *, excitation=None, molecular=None):
+    """Independent dimensional-form budgets, not a call to the local source assemblers.
 
     Re-evaluates local coefficients; no frozen wall/inlet values. W+I*J
     conservation offers an additional photon/chemical-energy audit in tests.
     Pass the active ionization provider explicitly. Omitting it is allowed
     only for old/off solutions, never silently drops a stored active source.
-    The same rule applies to the keyword-only excitation provider.
+    The same rule applies to the keyword-only excitation and molecular providers.
     """
     g, j, mu, w, N, v, A, H = (np.asarray(state[k]) for k in
         ('g', 'j', 'mu', 'omega', 'n_over_n_star', 'u_over_u_star', 'A_over_A_star', 'H'))
@@ -222,15 +260,42 @@ def balance_checks(state, recombination, ionization=None, *, excitation=None):
     excitation_loss = E_exc*A*N
     lost = float(simpson(removed, x=g))
     born = float(simpson(created, x=g))
-    energy_loss = float(simpson(cx_loss+ion_loss+effective_loss+ionization_loss+excitation_loss, x=g))
-    return dict(particle_abs=abs(float(j[-1]-j[0])-(born-lost)),
+    power_loss = cx_loss+ion_loss+effective_loss+ionization_loss+excitation_loss
+    net_source = born-lost
+    molecular_integrals = {}
+    if molecular is None:
+        if any(np.any(np.asarray(state.get(f'D_{branch}_profile', 0.)) != 0)
+               for branch in ('mar', 'mad', 'mai')):
+            raise ValueError('Pass the local molecular provider to balance_checks for an active solution.')
+    else:
+        D_mar, D_mad, D_mai = molecular_at(molecular, theta, N)
+        if 'T_star_eV' not in state:
+            raise ValueError('Molecular balance checks require T_star_eV in the trial state.')
+        T_star_eV = state['T_star_eV']
+        mar_events, mad_events, mai_events = D_mar*A*N, D_mad*A*N, D_mai*A*N
+        lost_mar, born_mai = float(simpson(mar_events, x=g)), float(simpson(mai_events, x=g))
+        net_source += born_mai-lost_mar
+        mar_loss = mar_events*(ion_energy+MAR_ELECTRON_ENERGY_FACTOR*theta)
+        mad_loss = mad_events*(ion_energy+(D2_DISSOCIATION_ENERGY_EV+MAD_FRAGMENT_ENERGY_EV)/T_star_eV)
+        mai_loss = mai_events*(ion_energy+(D2_DISSOCIATION_ENERGY_EV+IONIZATION_ENERGY_EV)/T_star_eV)
+        power_loss = power_loss+mar_loss+mad_loss+mai_loss
+        molecular_drag = j*(D_mar+D_mad+D_mai)
+        momentum = momentum-molecular_drag
+        molecular_integrals = dict(particle_mar_integral=lost_mar, particle_mai_integral=born_mai,
+            mad_event_integral=float(simpson(mad_events, x=g)),
+            mar_energy_loss_integral=float(simpson(mar_loss, x=g)),
+            mad_energy_loss_integral=float(simpson(mad_loss, x=g)),
+            mai_energy_loss_integral=float(simpson(mai_loss, x=g)),
+            molecular_momentum_loss_integral=float(simpson(molecular_drag, x=g)))
+    energy_loss = float(simpson(power_loss, x=g))
+    return dict(particle_abs=abs(float(j[-1]-j[0])-net_source),
         momentum_abs=abs(float(mu[-1]-mu[0])-float(simpson(momentum, x=g))),
         energy_abs=abs(float(w[0]-w[-1])-energy_loss),
         particle_recombination_integral=lost, energy_loss_integral=energy_loss,
-        particle_ionization_integral=born, particle_net_source_integral=born-lost,
+        particle_ionization_integral=born, particle_net_source_integral=net_source,
         ion_energy_loss_integral=float(simpson(ion_loss, x=g)),
         effective_energy_loss_integral=float(simpson(effective_loss, x=g)),
         cx_energy_loss_integral=float(simpson(cx_loss, x=g)),
         cx_momentum_loss_integral=float(simpson(D*j, x=g)),
         ionization_energy_loss_integral=float(simpson(ionization_loss, x=g)),
-        excitation_energy_loss_integral=float(simpson(excitation_loss, x=g)))
+        excitation_energy_loss_integral=float(simpson(excitation_loss, x=g)), **molecular_integrals)

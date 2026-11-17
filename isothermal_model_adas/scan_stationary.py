@@ -14,12 +14,13 @@ import platform
 import numpy as np
 import scipy
 
-from .config import load_config
-from .atomic_coefficients import add_atomic_model_argument, build_atomic_coefficients, code_hashes
+from .config import load_config, neutral_densities
+from .atomic_coefficients import (add_atomic_model_argument, build_atomic_coefficients,
+    code_hashes, coefficient_temperature_bounds)
 from .exitation_adas import validate_excitation_scale
 from .geometry import add_geometry_arguments, geometry_from_args
 from .inlet import make_inlet_momentum
-from .profiles import dimensional_profiles, plot_profiles
+from .profiles import MOLECULAR_PROFILE_FIELDS, dimensional_profiles, plot_profiles
 from .residual_map import scan_residuals, choose_starts, save_residuals, plot_residuals
 from .stationary import find_stationary_solutions
 
@@ -27,7 +28,7 @@ from .stationary import find_stationary_solutions
 def build_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, default=Path(__file__).with_name('config.json'))
-    parser.add_argument('--density', type=float, help='Override neutral n0 [cm^-3].')
+    parser.add_argument('--density', type=float, help='Override total neutral density n_D+n_D2 [cm^-3].')
     parser.add_argument('--lambda-sh', type=float)
     add_atomic_model_argument(parser)
     parser.add_argument('--rr-scale', '--scale', dest='rr_scale', type=validate_excitation_scale, default=1.,
@@ -121,13 +122,13 @@ def _prepare(args):
     coefficients, processes, active, paths = build_atomic_coefficients(
         p, args.atomic_model, args.rr_scale, args.ionization_scale, args.excitation_scale)
     processes['inlet_momentum'] = inlet
-    if active:
-        log_lower = max(np.log10(table.T_bounds_eV[0]) for table in active)
-        log_upper = min(np.log10(table.T_bounds_eV[1]) for table in active)
+    T_bounds = coefficient_temperature_bounds(active)
+    if T_bounds is not None:
+        log_lower, log_upper = np.log10(T_bounds)
         # Match only the readers' endpoint-rounding tolerance; no extrapolation.
         if (np.log10(args.temperature_min) < log_lower-1e-8
                 or np.log10(args.temperature_max) > log_upper+1e-8):
-            raise ValueError(f'Temperature grid exceeds active ADAS domain '
+            raise ValueError(f'Temperature grid exceeds the active coefficient temperature domain '
                              f'[{10.**log_lower:g}, {10.**log_upper:g}] eV.')
     provenance = dict(source_config=str(args.config.resolve()), source_config_sha256=_sha256(args.config),
         data_sha256={path.name: _sha256(path) for path in paths},
@@ -162,7 +163,10 @@ def _solution_record(state, p, args):
             or abs(residuals[1]) > args.residual_tol*(1+abs(target))):
         raise RuntimeError('Solver result failed export residual/balance checks.')
     ranges = {}
-    for key in ('R_profile', 'Q_eff_profile', 'D_ion_profile', 'E_ion_profile', 'E_exc_profile'):
+    fields = ('R_profile', 'Q_eff_profile', 'D_ion_profile', 'E_ion_profile', 'E_exc_profile')
+    if neutral_densities(p).n_d2_cm3 > 0:
+        fields += MOLECULAR_PROFILE_FIELDS
+    for key in fields:
         values = np.asarray(state[key])
         if not np.isfinite(values).all():
             raise RuntimeError(f'Nonfinite {key} in verified result.')
@@ -205,6 +209,8 @@ def run_scan(args):
         starts=[], solutions=[], diagnostic=dict(attempts=[], n_solutions=0, duplicate_convergences=0),
         warning='Finite grid and multistart correction are not a completeness/nonexistence proof. '
                 'Root IDs are discoveries, not physical branches. PRB includes bremsstrahlung.')
+    if p['molecular_fraction'] > 0:
+        report['neutral_densities_cm3'] = neutral_densities(p)._asdict()
     _save_json(args.output/'source_config.json', json.loads(args.config.read_text(encoding='utf-8-sig')))
     _save_json(args.output/'geometry.json', geometry.to_dict())
     _save_json(args.output/'summary.json', report)

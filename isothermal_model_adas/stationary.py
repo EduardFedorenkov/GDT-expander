@@ -13,7 +13,8 @@ from .transport import solve_trial, balance_checks
 
 
 def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
-                     recombination, geometry=None, *, D=0., ionization=(0., 0.), excitation=0., inlet_momentum=None,
+                     recombination, geometry=None, *, D=0., ionization=(0., 0.), excitation=0.,
+                     molecular=None, T_star_eV=None, inlet_momentum=None,
                      theta_bounds=None, j_bounds=None,
                      max_iterations=40, residual_tol=1e-9, balance_tol=5e-6,
                      n_points=4000, rtol=1e-9, atol=1e-11, max_step=.02):
@@ -22,7 +23,8 @@ def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
     D is a number or D(theta), passed unchanged into every trial/refinement.
     ionization is the local (theta,N)->(D_ion,E_ion) provider (default off).
     excitation is a local (theta,N)->E_exc provider or number (default off).
-    Ionization permits j_target>1. j_bounds=None means a numerical lower
+    Molecular sources are local and use T_star_eV for their energy costs.
+    Atomic ionization or MAI permits j_target>1. j_bounds=None means a numerical lower
     bound 1e-12 and no imposed upper bound beyond float representability.
     theta_bounds should be the intersection of active coefficient domains.
     The caller must explicitly choose a new alpha start for multiple roots.
@@ -75,6 +77,7 @@ def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
             return None
         state = solve_trial(theta, jt, alpha, beta, lambda_sh, recombination,
             geometry, D=D, ionization=ionization, excitation=excitation,
+            molecular=molecular, T_star_eV=T_star_eV,
             inlet_momentum=inlet_momentum, n_points=points, **settings)
         diagnostic['evaluations'] += 1
         if state['status'] != 'integrated':
@@ -173,7 +176,8 @@ def solve_stationary(theta_guess, j_guess, alpha_guess, beta, lambda_sh,
     if (abs(state['R_J']) > residual_tol or abs(state['R_E']) > residual_tol
             or abs(state['R_M']) > residual_tol*(1+abs(state['mu_target']))):
         return finish('verification_failed', 'Inlet BC mismatch.')
-    balances = balance_checks(state, recombination, ionization, excitation=excitation)
+    balances = balance_checks(state, recombination, ionization,
+                              excitation=excitation, molecular=molecular)
     if max(balances[k] for k in ('particle_abs', 'momentum_abs', 'energy_abs')) > balance_tol:
         return finish('balance_check_failed', 'Refine output sampling/ODE accuracy.')
     state.update(stationary_verified=True, balances=balances,

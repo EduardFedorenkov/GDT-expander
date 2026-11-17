@@ -96,11 +96,28 @@ class TestAMJUELMolecular(unittest.TestCase):
         np.testing.assert_allclose(provider(.5, 1.), explicit(.5, 1.), rtol=1e-14)
         self.assertAlmostEqual(amjuel.MAD_FRAGMENT_ENERGY_EV, 2.9)
 
-    def test_stationary_pipeline_does_not_silently_ignore_molecules(self):
-        p = dict(self.parameters, n0_cm3=1e13, molecular_fraction=.3)
+    def test_stationary_pipeline_splits_atomic_and_molecular_densities(self):
+        config = Path(amjuel.__file__).with_name('config.json')
+        p = dict(load_config(config), n0_cm3=1e13, molecular_fraction=.3)
+        theta, N = 5./p['T_star_eV'], 1.
+        expected = amjuel.make_molecular_coefficients(p, scale=1., n_d2_v0_cm3=3e12, data=self.data)
         for mode in ('hybrid', 'full-adas'):
-            with self.subTest(mode=mode), self.assertRaisesRegex(ValueError, 'not wired into transport'):
-                build_atomic_coefficients(p, mode, 0., 0., 0.)
+            with self.subTest(mode=mode):
+                _, base, _, _ = build_atomic_coefficients(dict(p, molecular_fraction=0.), mode, 0., 1., 1.)
+                _, mixed, tables, paths = build_atomic_coefficients(p, mode, 0., 1., 1.)
+                np.testing.assert_allclose(mixed['D'](theta), .7*base['D'](theta), rtol=1e-14)
+                for key in ('ionization', 'excitation'):
+                    np.testing.assert_allclose(mixed[key](theta, N),
+                        .7*np.asarray(base[key](theta, N)), rtol=1e-14, atol=0.)
+                np.testing.assert_allclose(mixed['molecular'](theta, N), expected(theta, N))
+                self.assertIsInstance(tables[-1], amjuel.AMJUELMolecular)
+                self.assertIn(amjuel.AMJUEL_PATH, paths)
+                _, only_mol, _, mol_paths = build_atomic_coefficients(
+                    dict(p, molecular_fraction=1.), mode, 0., 1., 1.)
+                self.assertEqual(mol_paths, [amjuel.AMJUEL_PATH])
+                self.assertEqual(only_mol['D'], 0.)
+                self.assertEqual(only_mol['ionization'], (0., 0.))
+                self.assertEqual(only_mol['excitation'], 0.)
 
     def test_invalid_matrix_and_explicit_temperature_range(self):
         doc = json.loads(amjuel.AMJUEL_PATH.read_text(encoding='utf-8-sig'))

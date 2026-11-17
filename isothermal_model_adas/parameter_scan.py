@@ -17,6 +17,8 @@ import numpy as np
 
 from . import scan_stationary as single
 from .atomic_coefficients import ATOMIC_MODELS, code_hashes
+from .config import neutral_densities
+from .profiles import MOLECULAR_PROFILE_FIELDS
 from .recombination_adas import IONIZATION_ENERGY_ERG
 
 
@@ -28,14 +30,17 @@ SCAN_KEYS = ('atomic_model', 'rr_scale', 'ionization_scale', 'excitation_scale',
 CHOICES = dict(atomic_model=ATOMIC_MODELS, inlet_momentum=('auto', 'kinetic', 'constant'),
                j_grid=('log', 'linear'), j_axis=('log', 'linear', 'loss'))
 ROOT_FIELDS = ('case_id', 'solution_id', 'local_solution_id', 'lambda_sh', 'n0_cm3',
+    'n_d_cm3', 'n_d2_cm3',
     'T_eV', 'theta', 'a_cm', 'alpha', 'j_target', 'net_particle_change', 'D',
     'atomic_model', 'rr_scale', 'ionization_scale', 'excitation_scale', 'inlet_momentum',
     'recombination_count_per_inlet', 'ionization_count_per_inlet',
     'energy_loss_fraction', 'cx_energy_loss_fraction', 'excitation_energy_loss_fraction',
     'ionization_energy_loss_fraction', 'effective_energy_loss_fraction',
+    'mar_count_per_inlet', 'mad_count_per_inlet', 'mai_count_per_inlet',
+    'mar_energy_loss_fraction', 'mad_energy_loss_fraction', 'mai_energy_loss_fraction',
     'R_J', 'R_M', 'R_E', 'particle_balance_abs', 'momentum_balance_abs', 'energy_balance_abs',
     'outside_scan_j_range', 'outside_scan_alpha_range', 'case_report', 'profile_file')
-GRID_FIELDS = ('case_id', 'lambda_sh', 'n0_cm3', 'atomic_model', 'n_roots', 'search_status',
+GRID_FIELDS = ('case_id', 'lambda_sh', 'n0_cm3', 'n_d_cm3', 'n_d2_cm3', 'atomic_model', 'n_roots', 'search_status',
     'n_trials', 'n_valid', 'n_starts', 'n_converged_starts', 'failed_start_count',
     'best_sample_norm', 'unresolved_numerical_count', 'attempt_statuses', 'case_report')
 
@@ -154,6 +159,7 @@ def _read_case(path, lam, density, signature, options):
     """Do not confuse a failed/partial process or old Case-A report with zero roots."""
     report = _json(path)
     p = dict(signature['parameters'], lambda_sh=float(lam), n0_cm3=float(density))
+    gas = neutral_densities(p)
     model_options = {key: options[key] for key in ('atomic_model', 'rr_scale', 'ionization_scale', 'excitation_scale')}
     model_options['inlet_momentum'] = signature['inlet_momentum']
     if (report.get('model') != 'isothermal_adas' or report.get('kind') != 'stationary_scan_3d'
@@ -207,15 +213,28 @@ def _read_case(path, lam, density, signature, options):
             raise ValueError('Root verification tolerances differ from the batch controls.')
         born, lost = (budgets[key] for key in ('particle_ionization_integral', 'particle_recombination_integral'))
         ion_energy = budgets['ionization_energy_loss_integral']
+        mol_keys = ('particle_mar_integral', 'particle_mai_integral', 'mad_event_integral',
+                    'mar_energy_loss_integral', 'mad_energy_loss_integral', 'mai_energy_loss_integral',
+                    'molecular_momentum_loss_integral')
+        if gas.n_d2_cm3 > 0:
+            if any(key not in budgets or budgets[key] < 0 for key in mol_keys):
+                raise ValueError('Missing or negative molecular budget.')
+        elif any(budgets.get(key, 0.) != 0 for key in mol_keys):
+            raise ValueError('Nonzero molecular budget without molecules.')
+        net_source = born-lost+budgets.get('particle_mai_integral', 0.)-budgets.get('particle_mar_integral', 0.)
         if (not np.isfinite([born, lost, ion_energy]).all() or min(born, lost, ion_energy) < 0
-                or abs(root['j_target']-1-(born-lost)) > options['balance_tol']+abs(root['R_J'])
+                or abs(root['j_target']-1-net_source) > options['balance_tol']+abs(root['R_J'])
+                or not np.isclose(budgets['particle_net_source_integral'], net_source, rtol=1e-10, atol=1e-15)
                 or not np.isclose(ion_energy, IONIZATION_ENERGY_ERG/p['T_star_erg']*born, rtol=1e-10, atol=1e-15)
-                or ((options['ionization_scale'] == 0 or density == 0) and born != 0)):
+                or ((options['ionization_scale'] == 0 or gas.n_d_cm3 == 0) and born != 0)):
             raise ValueError('Inconsistent particle/ionization-energy counts.')
         if not np.isfinite(root['coefficients']['D']) or root['coefficients']['D'] < 0:
             raise ValueError('Invalid D coefficient.')
         ranges = root['coefficients']['local_ranges']
-        if set(ranges) != {'R_profile', 'Q_eff_profile', 'D_ion_profile', 'E_ion_profile', 'E_exc_profile'}:
+        expected_ranges = {'R_profile', 'Q_eff_profile', 'D_ion_profile', 'E_ion_profile', 'E_exc_profile'}
+        if gas.n_d2_cm3 > 0:
+            expected_ranges.update(MOLECULAR_PROFILE_FIELDS)
+        if set(ranges) != expected_ranges:
             raise ValueError('Missing local coefficient ranges.')
         for key, limits in ranges.items():
             limits = np.asarray(limits, float)
@@ -229,6 +248,12 @@ def _read_case(path, lam, density, signature, options):
             if (profile['z_cm'].ndim != 1 or len(profile['z_cm']) < 100
                     or np.any(np.diff(profile['z_cm']) <= 0) or np.any(profile['n_cm3'] <= 0)):
                 raise ValueError('Invalid saved profile grid/density.')
+            if gas.n_d2_cm3 > 0:
+                for key in MOLECULAR_PROFILE_FIELDS:
+                    field = key.removesuffix('_profile')
+                    if (field not in profile or profile[field].shape != profile['z_cm'].shape
+                            or np.any(profile[field] < 0)):
+                        raise ValueError('Missing or invalid saved molecular coefficient profile.')
             for key, expected in ((key, root[key]) for key in ('T_eV', 'theta', 'alpha', 'j_target')):
                 if not np.isclose(float(profile[key]), expected, rtol=1e-10, atol=0):
                     raise ValueError('Profile/root mismatch.')
@@ -246,7 +271,8 @@ def _read_case(path, lam, density, signature, options):
 
 def _rows(case_id, relative, report):
     p, roots = report['parameters'], []
-    common = dict(case_id=case_id, lambda_sh=p['lambda_sh'], n0_cm3=p['n0_cm3'])
+    common = dict(case_id=case_id, lambda_sh=p['lambda_sh'], n0_cm3=p['n0_cm3'],
+                  **neutral_densities(p)._asdict())
     for root in report['solutions']:
         budgets = root['balances']
         row = dict(common, solution_id=case_id+'_'+root['solution_id'], local_solution_id=root['solution_id'],
@@ -258,6 +284,10 @@ def _rows(case_id, relative, report):
             profile_file=(Path(relative).parent/root['profile_file']).as_posix())
         for prefix in ('', 'cx_', 'excitation_', 'ionization_', 'effective_'):
             row[prefix+'energy_loss_fraction'] = budgets[prefix+'energy_loss_integral']
+        for branch, count in (('mar', 'particle_mar_integral'), ('mad', 'mad_event_integral'),
+                              ('mai', 'particle_mai_integral')):
+            row[branch+'_count_per_inlet'] = budgets.get(count, 0.)
+            row[branch+'_energy_loss_fraction'] = budgets.get(branch+'_energy_loss_integral', 0.)
         row.update({key+'_balance_abs': budgets[key+'_abs'] for key in ('particle', 'momentum', 'energy')})
         roots.append(row)
     summary = report['summary']

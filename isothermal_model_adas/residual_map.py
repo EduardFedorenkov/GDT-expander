@@ -34,7 +34,7 @@ def _axis(values, name, *, positive=True):
 
 def scan_residuals(theta_values, j_targets, alpha_values, beta, lambda_sh,
                    recombination, geometry=None, *, D=0., ionization=(0., 0.),
-                   excitation=0., inlet_momentum=None, n_points=100,
+                   excitation=0., molecular=None, T_star_eV=None, inlet_momentum=None, n_points=100,
                    rtol=1e-9, atol=1e-11, max_step=.02, progress=None):
     """Evaluate three inlet residuals without running a root corrector.
 
@@ -64,7 +64,8 @@ def scan_residuals(theta_values, j_targets, alpha_values, beta, lambda_sh,
     for ai, ji, ti in np.ndindex(shape):
         trial = solve_trial(float(theta[ti]), float(jt[ji]), float(alpha[ai]),
             beta, lambda_sh, recombination, geometry, D=D, ionization=ionization,
-            excitation=excitation, inlet_momentum=inlet_momentum,
+            excitation=excitation, molecular=molecular, T_star_eV=T_star_eV,
+            inlet_momentum=inlet_momentum,
             n_points=n_points, rtol=rtol, atol=atol, max_step=max_step)
         status = trial['status']
         for key in ('D', 'wall_slope_per_j'):

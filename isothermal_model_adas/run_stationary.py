@@ -5,8 +5,9 @@ import hashlib
 import json
 from pathlib import Path
 import numpy as np
-from .config import load_config
-from .atomic_coefficients import add_atomic_model_argument, build_atomic_coefficients, code_hashes
+from .config import load_config, neutral_densities
+from .atomic_coefficients import (add_atomic_model_argument, build_atomic_coefficients,
+    code_hashes, coefficient_temperature_bounds)
 from .exitation_adas import validate_excitation_scale
 from .geometry import add_geometry_arguments, geometry_from_args
 from .inlet import make_inlet_momentum
@@ -24,7 +25,7 @@ def main():
     parser.add_argument('--scale', type=float, default=1., help='Entire ACD/PRB channel, including bremsstrahlung.')
     parser.add_argument('--ionization-scale', type=float, default=1., help='0: off; 1: full ionization and binding-energy cost.')
     parser.add_argument('--excitation-scale', type=validate_excitation_scale, default=1., help='0: off; 1: full line cooling.')
-    parser.add_argument('--density', type=float, help='Override neutral n0 [cm^-3]; 0 disables CX, ionization and excitation.')
+    parser.add_argument('--density', type=float, help='Override total neutral density n_D+n_D2 [cm^-3].')
     parser.add_argument('--j-min', type=float, default=1e-12, help='Positive numerical search lower bound.')
     parser.add_argument('--j-max', type=float, help='Optional numerical search upper bound; values >1 allowed.')
     parser.add_argument('--points', type=int, default=4000)
@@ -54,8 +55,8 @@ def main():
         coefficients, processes, active, data_paths = build_atomic_coefficients(
             p, args.atomic_model, args.scale, args.ionization_scale, args.excitation_scale)
         # Use nominal printed endpoints; the reader accounts for log-grid rounding.
-        # All distributed active ADAS datasets cover nominal .2..1e4 eV.
-        bounds = (.2/p['T_star_eV'], 1e4/p['T_star_eV']) if active else None
+        T_bounds = coefficient_temperature_bounds(active, nominal_adas=True)
+        bounds = None if T_bounds is None else tuple(T/p['T_star_eV'] for T in T_bounds)
         T, jt, alpha = args.guess
         outcome = solve_stationary(T/p['T_star_eV'], jt, alpha, p['beta'],
             p['lambda_sh'], coefficients, geometry, **processes,
@@ -76,7 +77,11 @@ def main():
                        'Local ACD/PRB, CCD(T) CX, local SCD ionization and PLT excitation. ') +
                        'Constant Ti=Te; prescribed cold stationary neutrals. '
                        'Ionization binding-energy cost and excitation photon power are distinct channels; '
-                       'no radiation transport/reabsorption, molecules, impurities or neutral dynamics; PRB includes bremsstrahlung.')
+                       'no radiation transport/reabsorption, impurities or neutral dynamics; PRB includes bremsstrahlung. ' +
+                       ('MAR/MAD/MAI use hydrogen AMJUEL fits as a proxy for deuterium.'
+                        if 'molecular' in processes else 'Molecular sources off.'))
+    if p['molecular_fraction'] > 0:
+        report['neutral_densities_cm3'] = neutral_densities(p)._asdict()
     state = outcome.get('solution')
     if state is not None:
         report['solution'] = dict(theta=state['theta'], T_eV=state['theta']*p['T_star_eV'],

@@ -3,6 +3,9 @@
 import numpy as np
 
 
+MOLECULAR_PROFILE_FIELDS = ('D_mar_profile', 'D_mad_profile', 'D_mai_profile')
+
+
 def dimensional_profiles(solution, parameters):
     if not solution.get('stationary_verified', False):
         raise ValueError('Only a verified BVP solution may be exported as a solution.')
@@ -10,7 +13,7 @@ def dimensional_profiles(solution, parameters):
     if not np.isclose(p['beta'], s['beta'], rtol=1e-10, atol=0):
         raise ValueError('Source/solution beta mismatch.')
     A = p['A_star_cm2']*s['A_over_A_star']
-    return dict(z_cm=p['L_cm']*s['g'], xi=s['xi'],
+    profile = dict(z_cm=p['L_cm']*s['g'], xi=s['xi'],
         J_per_s=p['J0_per_s']*s['j'], M_dyn=p['M0_dyn']*s['mu'],
         W_erg_per_s=p['W0_erg_per_s']*s['omega'], omega=s['omega'],
         q_e_erg_cm2_s=p['W0_erg_per_s']*s['Aq_e_over_W0']/A,
@@ -22,6 +25,10 @@ def dimensional_profiles(solution, parameters):
         D_ion=np.asarray(s.get('D_ion_profile', np.zeros_like(s['g']))),
         E_ion=np.asarray(s.get('E_ion_profile', np.zeros_like(s['g']))),
         E_exc=np.asarray(s.get('E_exc_profile', np.zeros_like(s['g']))))
+    for key in MOLECULAR_PROFILE_FIELDS:
+        if key in s:
+            profile[key.removesuffix('_profile')] = np.asarray(s[key])
+    return profile
 
 
 def plot_profiles(profile):

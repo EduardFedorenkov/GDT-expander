@@ -17,6 +17,7 @@ from isothermal_model_adas import parameter_scan as batch
 from isothermal_model_adas import scan_lambda as cli
 from isothermal_model_adas import scan_stationary as single
 from isothermal_model_adas import stationary, residual_map
+from isothermal_model_adas.config import neutral_densities
 from isothermal_model_adas.transport import reconstruct
 from isothermal_model_adas.recombination_adas import IONIZATION_ENERGY_ERG
 from isothermal_model_adas.tests.test_residual_map import manufactured_trial
@@ -42,8 +43,13 @@ def synthetic_child(command, cwd, log_path, *, no_roots=False):
     if no_roots:
         outcome = dict(status='line_search_failed', diagnostic={})
     else:
-        ion_active = p['n0_cm3'] > 0 and args.ionization_scale > 0
-        state = fabricated_solution(jt=1.2 if ion_active else .9)
+        gas = neutral_densities(p)
+        ion_active = gas.n_d_cm3 > 0 and args.ionization_scale > 0
+        mol_active = gas.n_d2_cm3 > 0
+        born, lost = (.3, .1) if ion_active else (0., .1)
+        mar, mai = (.05, .15) if mol_active else (0., 0.)
+        net = born-lost+mai-mar
+        state = fabricated_solution(jt=1.+net)
         theta, jt, alpha = (state[key] for key in ('theta', 'j_target', 'alpha'))
         xi = state['xi']
         inlet = providers['inlet_momentum']
@@ -57,13 +63,18 @@ def synthetic_child(command, cwd, log_path, *, no_roots=False):
         state.update(A_over_A_star=area, n_over_n_star=N, u_over_u_star=v,
             u_over_cs=2*v/b, Aq_e_over_W0=state['omega']-state['j']*(v*v/(2*p['beta'])+5*theta),
             D=providers['D'](theta) if callable(providers['D']) else providers['D'])
-        born, lost = (.3, .1) if ion_active else (0., .1)
+        if mol_active:
+            state.update(D_mar_profile=np.full_like(xi, .05),
+                         D_mad_profile=np.full_like(xi, .2), D_mai_profile=np.full_like(xi, .15))
+            state['balances'].update(particle_mar_integral=mar, particle_mai_integral=mai,
+                mad_event_integral=.2, mar_energy_loss_integral=.01, mad_energy_loss_integral=.02,
+                mai_energy_loss_integral=.03, molecular_momentum_loss_integral=.04)
         total = 1-state['omega'][-1]
         ion_energy = IONIZATION_ENERGY_ERG/p['T_star_erg']*born
-        cx_loss = total+.2 if p['n0_cm3'] > 0 else 0.
-        excitation_loss = .05 if p['n0_cm3'] > 0 else 0.
+        cx_loss = total+.2 if gas.n_d_cm3 > 0 else 0.
+        excitation_loss = .05 if gas.n_d_cm3 > 0 else 0.
         state['balances'].update(particle_ionization_integral=born,
-            particle_recombination_integral=lost, particle_net_source_integral=born-lost,
+            particle_recombination_integral=lost, particle_net_source_integral=net,
             energy_loss_integral=total, cx_energy_loss_integral=cx_loss,
             excitation_energy_loss_integral=excitation_loss,
             ionization_energy_loss_integral=ion_energy,
@@ -157,6 +168,30 @@ class BatchTests(unittest.TestCase):
             self.assertEqual(grid[0]['n_roots'], 0)
             self.assertEqual(grid[0]['search_status'], 'no_root_found_in_finite_search')
             self.assertEqual(len(json.loads((output/'checkpoint.json').read_text())['completed']), 1)
+
+    def test_molecular_batch_reuses_fraction_and_validates_roots(self):
+        with tempfile.TemporaryDirectory() as folder, redirect_stdout(io.StringIO()), \
+                patch.object(batch, '_run_scan', side_effect=synthetic_child) as runner:
+            config_path = Path(folder)/'config.json'
+            config = json.loads((PACKAGE/'config.json').read_text(encoding='utf-8-sig'))
+            config.update(molecular_fraction=.3)
+            config_path.write_text(json.dumps(config), encoding='utf-8')
+            output = Path(folder)/'batch'
+            args = ([8.], [0., 1e13, 2e13], config_path, output)
+            roots, grid = batch.scan_lambda_neutral(*args, scan_options=SMALL)
+            self.assertEqual([row['n_roots'] for row in grid], [1, 1, 1])
+            np.testing.assert_allclose([row['n_d_cm3'] for row in grid], [0., 7e12, 1.4e13])
+            np.testing.assert_allclose([row['n_d2_cm3'] for row in grid], [0., 3e12, 6e12])
+            self.assertEqual([row['mar_count_per_inlet'] for row in roots], [0., .05, .05])
+            self.assertEqual([row['mad_count_per_inlet'] for row in roots], [0., .2, .2])
+            self.assertEqual([row['mai_count_per_inlet'] for row in roots], [0., .15, .15])
+            self.assertAlmostEqual(roots[1]['j_target'], 1.3)
+            no_gas, mix = [json.loads((output/row['case_report']).read_text(encoding='utf-8'))
+                           for row in grid[:2]]
+            self.assertNotIn('amjuel_molecular_h4.json', no_gas['provenance']['data_sha256'])
+            self.assertIn('amjuel_molecular_h4.json', mix['provenance']['data_sha256'])
+            self.assertEqual(batch.scan_lambda_neutral(*args, scan_options=SMALL, resume=True), (roots, grid))
+            self.assertEqual(runner.call_count, 3)
 
     def test_interrupted_case_is_preserved_and_retried_in_new_attempt_directory(self):
         calls = []
