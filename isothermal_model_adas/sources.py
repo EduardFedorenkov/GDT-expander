@@ -1,15 +1,25 @@
-"""Local integrated-tube ADAS sources per g=z/L, not per xi.
+"""Local integrated-tube reaction sources per g=z/L, not per xi.
 
 R>=0; Q_eff is signed. PRB already includes bremsstrahlung. CX is a
 separate momentum/energy sink with zero particle source. Geometry is
 added by the transport layer. Ionization adds particles and a binding-energy
 cost, but no conservative momentum for cold stationary atoms. Per g, not xi.
 PLT adds excitation radiation ONLY, separately from I*SCD and PRB.
+AMJUEL molecular coefficients cover complete branches via H2+; their
+shared ion-conversion step must not be added as a separate source.
 """
 
 from functools import lru_cache
+from math import isfinite
 
 import numpy as np
+
+from .molecular_amjuel import MAD_FRAGMENT_ENERGY_EV, MolecularRates
+from .recombination_adas import IONIZATION_ENERGY_EV
+
+
+D2_DISSOCIATION_ENERGY_EV = 4.56
+MAR_ELECTRON_ENERGY_FACTOR = 0.896
 
 
 class TemperatureOnly:
@@ -66,6 +76,45 @@ def excitation_at(provider, theta, N):
     if E.shape != np.shape(N):
         raise ValueError('E_exc must match the density profile shape.')
     return E
+
+
+def molecular_at(provider, theta, N):
+    """Local (theta,N)->(D_MAR,D_MAD,D_MAI), or a constant/off triple."""
+    value = provider(theta, N) if callable(provider) else provider
+    try:
+        D_mar, D_mad, D_mai = value
+    except (TypeError, ValueError) as error:
+        raise ValueError('Need a triple (D_MAR,D_MAD,D_MAI).') from error
+    density, *rates = np.broadcast_arrays(np.asarray(N, float), np.asarray(D_mar, float),
+                                         np.asarray(D_mad, float), np.asarray(D_mai, float))
+    if density.shape != np.shape(N):
+        raise ValueError('Molecular coefficients must match the density profile shape.')
+    if any(not np.isfinite(rate).all() or np.any(rate < 0) for rate in rates):
+        raise ValueError('Molecular coefficients must be finite and nonnegative.')
+    return MolecularRates(*(float(rate) for rate in rates)) if density.ndim == 0 else MolecularRates(*rates)
+
+
+def molecular_sources(j, N, v, area, *, theta, beta, T_star_eV, molecular=(0., 0., 0.)):
+    """Return molecular contributions to (j_g, mu_g, omega_g).
+
+    No geometry term and no factor (1-alpha). H2+ is not transported.
+    The first neutral takes the mean incoming ion momentum and energy in
+    each branch; the MAD breakup fragment carries energy but zero mean
+    axial momentum. W excludes binding energy and there is no separate
+    molecular radiation term in this closure.
+    """
+    T_star_eV = float(T_star_eV)
+    if not isfinite(T_star_eV) or T_star_eV <= 0:
+        raise ValueError('T_star_eV must be finite and positive.')
+    D_mar, D_mad, D_mai = molecular_at(molecular, theta, N)
+    D_total = D_mar + D_mad + D_mai
+    ion_energy = v*v/(2*beta) + 1.5*theta
+    mad_cost = (D2_DISSOCIATION_ENERGY_EV + MAD_FRAGMENT_ENERGY_EV)/T_star_eV
+    mai_cost = (D2_DISSOCIATION_ENERGY_EV + IONIZATION_ENERGY_EV)/T_star_eV
+    volume_factor = area*N
+    return (volume_factor*(D_mai-D_mar), -j*D_total,
+            -volume_factor*(D_total*ion_energy + D_mar*(MAR_ELECTRON_ENERGY_FACTOR*theta)
+                            + D_mad*mad_cost + D_mai*mai_cost))
 
 
 def adas_sources(j, N, v, area, *, theta, beta, R, Q_eff, D=0., D_ion=0., E_ion=0., E_exc=0.):
