@@ -7,6 +7,6 @@
   "lambda_sh": 8.0,
   "L_cm": 184.5,
   "n0_cm3": 1e14,
-  "molecular_fraction": 0.0,
+  "molecular_fraction": 0.3,
   "m_D_g": 3.3435837724e-24
 }
