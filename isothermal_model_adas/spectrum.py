@@ -2,7 +2,8 @@
 
 from dataclasses import dataclass
 import numpy as np
-from scipy.optimize import root
+from scipy.optimize import least_squares
+from .adaptive_contour import contour_count_adaptive
 
 
 class SearchUnresolved(RuntimeError):
@@ -52,7 +53,7 @@ def determinant(matrix):
     return np.linalg.det(matrix/scale)
 
 
-def contour_count(matrix_at, box, start_points=16, max_points=1024):
+def contour_count(matrix_at, box, start_points=16, max_points=1024, progress=None):
     """Argument-principle count with sampling refinement and phase-step guard.
 
     This is a convergence check, not interval-arithmetic certification.
@@ -68,31 +69,52 @@ def contour_count(matrix_at, box, start_points=16, max_points=1024):
         for s in path:
             sign, log_abs = np.linalg.slogdet(equilibrate(matrix_at(complex(s)))[0])
             if abs(sign) == 0 or not np.isfinite(log_abs):
-                raise SearchUnresolved("A contour touches a zero or a nonfinite determinant.")
+                raise SearchUnresolved(f"Unresolved determinant on contour at s={complex(s)}: "
+                    f"sign={sign}, log_abs={log_abs}. This can be a contour root OR numerical loss of rank.")
             phases.append(sign)
         increments = np.angle(np.array(phases[1:])/phases[:-1])
         raw = float(sum(increments)/(2*np.pi))
         count = int(round(raw))
         step = float(max(abs(increments)))
         history.append(dict(points_per_edge=n, count=count, max_phase_step=step))
+        if progress is not None:
+            progress(f"contour: {n} points/edge, count={count}, max phase step={step:.4g}")
         if count == previous and step < .65 and abs(raw-count) < 1e-6 and count >= 0:
             return count, history
         previous, n = count, n*2
     raise SearchUnresolved(f"Contour count did not converge: {history}")
 
 
-def find_modes(model, box, max_depth=7, growth_tolerance=1e-6):
+def find_modes(model, box, max_depth=7, growth_tolerance=1e-6, method="direct", progress=None,
+               contour_method="adaptive",contour_options=None):
     """Search a finite box and repeat counts/eigenpairs on refined coefficients.
 
     B columns correspond to (delta log j_t, delta alpha, delta log theta).
     This accepts temperature-free modes too.
     """
+    if method not in ("direct","qr"):
+        raise ValueError("Spectral transport must be direct or qr.")
+    if contour_method not in ("adaptive","uniform"):
+        raise ValueError("Contour method must be adaptive or uniform.")
     refined = type(model)(model.bg, model.controls.refined())
-    matrix = model.boundary_matrix
-    matrix_ref = refined.boundary_matrix
+    matrix = model.qr_boundary_matrix if method == "qr" else model.boundary_matrix
+    matrix_ref = refined.qr_boundary_matrix if method == "qr" else refined.boundary_matrix
+    options = {} if contour_options is None else dict(contour_options)
+    # Share phase evaluations between outer contour and subrectangles, but
+    # NEVER between initial and refined coefficient grids.
+    phase_cache,phase_cache_ref = {},{}
+    def count_in(provider,region,log=None):
+        if contour_method == "uniform":
+            return contour_count(provider,region,progress=log)
+        cache = phase_cache_ref if provider == matrix_ref else phase_cache
+        return contour_count_adaptive(provider,region,progress=log,cache=cache,**options)
     _, fixed_row, fixed_col = equilibrate(matrix_ref(0.))
-    total, history = contour_count(matrix, box)
-    total_ref, refined_history = contour_count(matrix_ref, box)
+    if progress is not None:
+        progress(f"{method}: counting on the initial coefficient grid")
+    total, history = count_in(matrix,box,progress)
+    if progress is not None:
+        progress(f"{method}: counting on the refined coefficient grid")
+    total_ref, refined_history = count_in(matrix_ref,box,progress)
     if total != total_ref:
         raise SearchUnresolved("Contour counts disagree between coefficient grids.")
     scale = max(box.real_max-box.real_min, box.imag_max-box.imag_min, 1.)
@@ -101,11 +123,25 @@ def find_modes(model, box, max_depth=7, growth_tolerance=1e-6):
     def refine_root(region, guess=None, solver=matrix):
         centre = complex((region.real_min+region.real_max)/2,
                          (region.imag_min+region.imag_max)/2)
+        # Freeze the residual preconditioner at the initial guess. Dividing by
+        # an s-dependent large matrix norm can make a nonzero determinant tiny
+        # far from a root, especially when the interface column grows as s.
+        initial_guess = guess if guess is not None else centre
+        B0 = solver(initial_guess)
+        _, row0, _ = equilibrate(B0)
+        row0 = np.maximum(row0,1e-12*max(float(max(row0)),1.))
+        col0 = np.maximum(np.max(abs(B0/row0[:,None]),axis=0),1e-12)
         def residual(y):
-            value = determinant(solver(complex(*y)*scale))
+            value = np.linalg.det(solver(complex(*y)*scale)/row0[:,None]/col0)
             return [value.real, value.imag]
-        fit = root(residual, [((guess or centre)/scale).real,
-                              ((guess or centre)/scale).imag], tol=2e-9)
+        # A local candidate is sought ONLY in its contour-counted rectangle.
+        # An unconstrained Newton step could request a huge s far outside it,
+        # overflowing direct shooting or exhausting the QR interval budget.
+        fit = least_squares(residual,[(initial_guess/scale).real,
+                                     (initial_guess/scale).imag],
+            bounds=([region.real_min/scale,region.imag_min/scale],
+                    [region.real_max/scale,region.imag_max/scale]),
+            xtol=1e-11,ftol=1e-11,gtol=1e-11,max_nfev=80)
         candidate = complex(*fit.x)*scale
         if not region.contains(candidate) or np.linalg.norm(fit.fun) > 1e-8:
             return None
@@ -129,7 +165,7 @@ def find_modes(model, box, max_depth=7, growth_tolerance=1e-6):
         if depth >= max_depth:
             raise SearchUnresolved("Root localization reached maximum subdivision depth.")
         children = region.split()
-        counts = [contour_count(matrix,child)[0] for child in children]
+        counts = [count_in(matrix,child,progress)[0] for child in children]
         if sum(counts) != expected:
             raise SearchUnresolved("Subcontour counts do not sum to the parent count.")
         for child, count in zip(children,counts):
@@ -156,16 +192,26 @@ def find_modes(model, box, max_depth=7, growth_tolerance=1e-6):
         # Direct BC residual, after the same row scaling, is independently reported.
         bc_residual = float(np.linalg.norm(normalized@(amplitude*col)) /
                             max(np.linalg.norm(amplitude*col),np.finfo(float).tiny))
-        audit = refined.mode_diagnostics(s,amplitude)
+        qr_coordinates = amplitude.copy() if method == "qr" else None
+        if method == "qr":
+            amplitude,audit = refined.qr_mode_diagnostics(s,amplitude)
+            rotation = np.exp(-1j*np.angle(amplitude[np.argmax(abs(amplitude))]))
+            amplitude *= rotation
+            qr_coordinates *= rotation
+        else:
+            audit = refined.mode_diagnostics(s,amplitude)
         if not audit["passed"]:
             raise SearchUnresolved(f"Mode failed independent integrated balances: {audit}")
-        modes.append(dict(s_per_s=[float(s.real),float(s.imag)],
+        mode = dict(s_per_s=[float(s.real),float(s.imag)],
             sigma=[float(s.real*model.bg.time_star),float(s.imag*model.bg.time_star)],
             growth_time_s=None if s.real <= 0 else float(1/s.real),
             frequency_Hz=float(abs(s.imag)/(2*np.pi)),
             singular_ratio=residual, boundary_residual=bc_residual,
             relative_refinement=change, independent_audit=audit,
-            amplitudes=[[float(a.real),float(a.imag)] for a in amplitude]))
+            amplitudes=[[float(a.real),float(a.imag)] for a in amplitude])
+        if qr_coordinates is not None:
+            mode["qr_coordinates"] = [[float(a.real),float(a.imag)] for a in qr_coordinates]
+        modes.append(mode)
     growing = any(r["s_per_s"][0] > growth_tolerance for r in modes)
     neutral = any(abs(r["s_per_s"][0]) <= growth_tolerance for r in modes)
     status = ("unstable" if growing else "near_neutral_unresolved" if neutral
@@ -177,6 +223,7 @@ def find_modes(model, box, max_depth=7, growth_tolerance=1e-6):
                      max(np.linalg.norm(matrix_ref(probe)),1e-100))
     if symmetry > 1e-8:
         raise SearchUnresolved("Complex conjugation check failed.")
-    return dict(status=status, box_s_per_s=vars(box), root_count=total_ref, modes=modes,
+    return dict(status=status, transport=method, contour_method=contour_method,
+                box_s_per_s=vars(box), root_count=total_ref, modes=modes,
                 contour=history, refined_contour=refined_history,
                 conjugation_error=symmetry, global_stability_proven=False)

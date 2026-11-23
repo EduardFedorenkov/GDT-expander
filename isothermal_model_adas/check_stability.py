@@ -9,6 +9,10 @@ Examples after installation, from the project root:
 By default each root uses 0<Re(s)<10*nu_ref, |Im(s)|<10*nu_ref.
 Both limits can be overridden independently. This is a heuristic search box,
 NEVER a proof of global stability. No changes to a scan or source configuration.
+Spectral transfer uses intermediate QR by default; --transport direct restores
+the old shooting implementation. QR does not alter the s=0 validation.
+Contour sampling is adaptive by default; --contour-grid uniform restores
+uniform doubling. Failed refinement remains unresolved, never a zero count.
 """
 
 import argparse
@@ -47,6 +51,22 @@ def main(argv=None):
                         help="Automatic real ceiling = factor*nu_ref (default 10). Ignored for explicit real ceiling.")
     parser.add_argument("--points", type=int, default=2049)
     parser.add_argument("--derivative-step", type=float, default=1e-5)
+    parser.add_argument("--transport",choices=("qr","direct"),default="qr",
+                        help="QR-stabilized transfer (default), or old direct shooting.")
+    parser.add_argument("--qr-max-step",type=float,default=.025,
+                        help="Maximum QR interval in x=sqrt((1-g)/(1-alpha)).")
+    parser.add_argument("--qr-max-growth",type=float,default=2.,
+                        help="Target maximum local |eigenvalue|*interval (default 2).")
+    parser.add_argument("--qr-max-segments",type=int,default=20000,
+                        help="Per-evaluation QR segment budget (default 20000).")
+    parser.add_argument("--contour-grid",choices=("adaptive","uniform"),default="adaptive",
+                        help="Adaptive contour refinement (default), or old uniform doubling.")
+    parser.add_argument("--contour-max-points",type=int,default=8192,
+                        help="Distinct s-point budget per adaptive contour (default 8192).")
+    parser.add_argument("--contour-max-depth",type=int,default=20,
+                        help="Maximum local bisection depth (default 20).")
+    parser.add_argument("--contour-phase-step",type=float,default=.65,
+                        help="Initial adaptive phase-step ceiling, radians (default .65).")
     parser.add_argument("--output", type=Path, help="New JSON report; existing files are not overwritten.")
     args = parser.parse_args(argv)
     if not all(isfinite(v) and v > 0 for v in (args.n0,args.lambda_sh,args.s_max_factor)):
@@ -59,14 +79,20 @@ def main(argv=None):
         parser.error("s-imag-max must be finite and positive.")
     if args.output and args.output.exists():
         parser.error("Output already exists; choose a new report path.")
+    if (args.contour_max_points < 16 or args.contour_max_depth < 1
+            or not isfinite(args.contour_phase_step) or not 0 < args.contour_phase_step < 1.5707963267948966):
+        parser.error("Invalid adaptive contour controls.")
     try:
-        controls = LinearControls(points=args.points, derivative_step=args.derivative_step)
+        controls = LinearControls(points=args.points, derivative_step=args.derivative_step,
+            qr_max_step=args.qr_max_step,qr_max_growth=args.qr_max_growth,
+            qr_max_segments=args.qr_max_segments)
         roots = saved_cases(args.scan,args.n0,args.lambda_sh)
         if args.root_index is not None:
             roots = [bg for bg in roots if bg.root_index in args.root_index]
     except (OSError, ValueError, KeyError) as exc:
         parser.error(str(exc))
-    report = dict(n0_cm3=args.n0,lambda_sh=args.lambda_sh,
+    report = dict(n0_cm3=args.n0,lambda_sh=args.lambda_sh,transport=args.transport,
+        contour_grid=args.contour_grid,
         assumptions=["fixed kinetic source and chi", "Ti=Te=T(t), uniform along the layer",
                      "prescribed neutrals and composition", "instantaneous ADAS/AMJUEL coefficients",
                      "moving source-free interface", "frozen stationary nondimensionalization"],
@@ -103,11 +129,17 @@ def main(argv=None):
             if args.static_only:
                 row["status"] = "static_check_passed_spectrum_not_searched"
             else:
-                row["spectrum"] = find_modes(model,box)
+                row["spectrum"] = find_modes(model,box,method=args.transport,
+                    progress=lambda message: print(f"root {bg.root_index}: {message}",file=sys.stderr,flush=True),
+                    contour_method=args.contour_grid,contour_options=dict(
+                        max_points=args.contour_max_points,max_depth=args.contour_max_depth,
+                        phase_limit=args.contour_phase_step))
                 row["status"] = row["spectrum"]["status"]
         except (ValueError, RuntimeError, FloatingPointError, OverflowError) as exc:
             row["status"] = "unresolved"
             row["error"] = str(exc)
+            if getattr(exc,"diagnostic",None) is not None:
+                row["error_details"] = exc.diagnostic
         report["roots"].append(row)
         print(f"root {row['root_index']}: T={row['T_eV']:.7g} eV: {row['status']}",
               file=sys.stderr,flush=True)

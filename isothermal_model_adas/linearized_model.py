@@ -23,6 +23,7 @@ from .inlet import make_inlet_momentum
 from .sources import (adas_sources, coefficients_at, excitation_at,
                       ionization_at, molecular_sources)
 from .transport import balance_checks, solve_trial
+from .qr_transport import propagate_basis, reconstruct_mode
 
 
 def read_json(path):
@@ -159,16 +160,23 @@ class LinearControls:
     derivative_step: float = 1e-5
     rtol: float = 2e-10
     max_step: float = .025
+    qr_max_step: float = .025
+    qr_max_growth: float = 2.
+    qr_max_segments: int = 20000
 
     def __post_init__(self):
         if self.points < 129 or not isinstance(self.points, int):
             raise ValueError("At least 129 coefficient points required.")
         if not 0 < self.derivative_step < .01 or not 0 < self.rtol < .01 or not 0 < self.max_step <= 1:
             raise ValueError("Invalid linear solver controls.")
+        if (not 0 < self.qr_max_step <= 1 or not 0 < self.qr_max_growth <= 10
+                or not isinstance(self.qr_max_segments,int) or self.qr_max_segments < 1):
+            raise ValueError("Invalid QR controls.")
 
     def refined(self):
         return LinearControls(2*self.points-1, self.derivative_step/3,
-                              self.rtol/5, self.max_step/2)
+                              self.rtol/5, self.max_step/2,
+                              self.qr_max_step/2,self.qr_max_growth/2,self.qr_max_segments*2)
 
 
 class LinearizedModel:
@@ -226,6 +234,71 @@ class LinearizedModel:
         step = min(1e-5, (1-bg.alpha)/20, (bg.alpha-bg.geometry.g_min)/20)
         mu = lambda a: bg.inlet.evaluate(a)["mu_target"]
         self.gradient[1] -= (mu(bg.alpha+step)-mu(bg.alpha-step))/(2*step)
+        # Fixed real-positive similarity scaling of the augmented variables
+        # (delta j, delta F, delta omega, delta log theta), not new physics.
+        self.qr_scales = np.array([bg.jt,bg.b*bg.jt,bg.lam*bg.theta*bg.jt,1.])
+
+    def _qr_boundary(self,s,retain_history=False):
+        bg,cfg = self.bg,self.controls
+        sigma = complex(s)*bg.time_star
+        def generator(x):
+            source,stock = self.coefficients(x)
+            c = source-sigma*stock
+            a = np.zeros((4,4),complex)
+            a[:3,:2],a[:3,3] = c[:,:2],c[:,2]
+            return a*self.qr_scales[None,:]/self.qr_scales[:,None]
+        initial = np.array([[bg.jt,0.],[0.,0.],
+            [bg.lam*bg.theta*bg.jt,bg.lam*bg.theta*bg.jt],[0.,1.]],complex)
+        try:
+            transfer = propagate_basis(generator,initial/self.qr_scales[:,None],
+                rtol=cfg.rtol,max_step=cfg.qr_max_step,max_growth=cfg.qr_max_growth,
+                max_segments=cfg.qr_max_segments,retain_history=retain_history)
+        except (ValueError,RuntimeError) as error:
+            raise RuntimeError(f"QR transfer failed at s={complex(s)}: {error}") from error
+        physical = self.qr_scales[:,None]*transfer.basis
+        endpoint = physical[:3].copy()
+        endpoint[1] += bg.b*endpoint[0]+.5*bg.b*self.end_flux[0]*physical[3]
+        matrix = np.column_stack((endpoint[:,0],self.gradient-sigma*self.jump,endpoint[:,1]))
+        if not np.isfinite(matrix).all():
+            raise ValueError(f"Nonfinite QR boundary matrix at s={complex(s)}.")
+        matrix.setflags(write=False)
+        return matrix,transfer
+
+    @lru_cache(maxsize=4096)
+    def qr_boundary_matrix(self,s):
+        """Same zeros/phase as direct B(s), NOT the same column amplitudes.
+
+        det(B_direct)=exp(log_volume)*det(B_qr), with a positive multiplier.
+        Null-vector coordinates are (inlet QR coefficient 1, eta, coefficient 2).
+        """
+        return self._qr_boundary(s)[0]
+
+    def qr_mode_diagnostics(self,s,coordinates,points=6001):
+        """Recover original amplitudes and a bounded mode using short R factors."""
+        bg = self.bg
+        matrix,transfer = self._qr_boundary(s,retain_history=True)
+        coordinates = np.asarray(coordinates,complex)
+        x = np.linspace(0,1,points)
+        scaled,eta = reconstruct_mode(transfer,coordinates[[0,2]],coordinates[1],x)
+        augmented = self.qr_scales[:,None]*scaled
+        a_T = augmented[3,0]
+        original = np.array([augmented[0,0]/bg.jt,eta,a_T])
+        norm = float(max(abs(original)))
+        if not np.isfinite(norm) or norm < 1e-280:
+            raise ValueError("Original QR modal amplitudes cannot be represented reliably.")
+        audit = self._audit_mode(s,x,augmented[:3],a_T)
+        temp_error = float(max(abs(augmented[3]-a_T))/max(float(np.max(abs(augmented))),1.))
+        inlet = augmented[:3,-1].copy()
+        inlet[1] += bg.b*inlet[0]+.5*bg.b*self.end_flux[0]*a_T
+        interface = inlet+(self.gradient-complex(s)*bg.time_star*self.jump)*eta
+        interface_error = float(max(abs(interface))/max(float(max(abs(inlet))),1.))
+        audit.update(temperature_constancy_error=temp_error,
+                     interface_residual=interface_error,
+                     qr_segments=transfer.segments,qr_log_volume=transfer.log_volume,
+                     qr_max_local_condition=transfer.max_condition,
+                     qr_orthogonality_error=transfer.orthogonality_error)
+        audit["passed"] = bool(audit["passed"] and temp_error < 2e-7 and interface_error < 2e-7)
+        return original/norm,audit
 
     @lru_cache(maxsize=4096)
     def boundary_matrix(self, s):
@@ -282,13 +355,18 @@ class LinearizedModel:
         if not ode.success:
             raise ValueError(ode.message)
         x = np.linspace(0,1,points)
+        return self._audit_mode(s,x,ode.sol(x),a_T)
+
+    def _audit_mode(self,s,x,mode,a_T):
+        """Direct source/storage directional differences on a bounded mode."""
+        bg = self.bg
+        sigma = complex(s)*bg.time_star
         ell = 1-bg.alpha
         g = 1-ell*x*x
         j,F,_ = self.base.sol(x)
         r = np.sqrt(F)
-        mode = ode.sol(x)
         dr = np.divide(mode[1],2*r,out=np.zeros_like(mode[1]),where=r>0)
-        dstock = np.zeros((3,points),complex)
+        dstock = np.zeros((3,len(x)),complex)
         dsource = np.zeros_like(dstock)
         # Reaction tables accept real inputs only. Differentiate separately in
         # real and imaginary directions; linearity then recovers the complex mode.
